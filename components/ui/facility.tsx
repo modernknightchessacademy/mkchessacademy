@@ -70,7 +70,7 @@ export default function FacilitiesSection() {
             <Star size={14} className="fill-amber-500" /> Infrastructure
           </div>
           <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter leading-tight">
-            Facilities at <span className="text-amber-500 italic">Aacharya</span> 🏰
+            Facilities at <span className="text-amber-500 italic">Future Mind Skills</span> 🏰
           </h2>
         </div>
         

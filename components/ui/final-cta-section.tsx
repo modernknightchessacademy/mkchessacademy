@@ -55,7 +55,7 @@ export default function FinalCTASection() {
           
           {/* Subheading */}
           <p className="text-xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Join 5,000+ students who transformed their chess skills with Aacharya. 
+            Join 5,000+ students who transformed their chess skills with Future Mind Skills. 
             Your first step to becoming a champion starts here.
           </p>
 

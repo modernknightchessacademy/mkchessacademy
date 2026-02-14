@@ -29,7 +29,7 @@ export default function ColorfulFAQSection() {
     },
     {
       question: "What curriculum do you follow ?",
-      answer: "Aacharya curriculum is mapped with EYFS (UK), Waldorf (German), NEP (Indian), Montissori (Italian), Reggio Emilia (Italian) and Project Zero (Harvard-USA). Traditional in name but global in standards.",
+      answer: "Future Mind Skills curriculum is mapped with EYFS (UK), Waldorf (German), NEP (Indian), Montissori (Italian), Reggio Emilia (Italian) and Project Zero (Harvard-USA). Traditional in name but global in standards.",
       theme: "red",
     },
   ]
@@ -135,7 +135,7 @@ export default function ColorfulFAQSection() {
                 </div>
                 <div>
                   <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Call Us</p>
-                  <p className="text-sm md:text-lg font-black text-slate-800 tracking-tight">+91 80741 03400</p>
+                  <p className="text-sm md:text-lg font-black text-slate-800 tracking-tight">+91 99481 98809</p>
                 </div>
               </div>
 

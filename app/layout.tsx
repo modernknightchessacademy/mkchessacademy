@@ -10,9 +10,9 @@ import Providers from "@/components/providers"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Aacharya – Complete Learning Center for Children in Bhavanipuram, Vijayawada",
+  title: "Future Mind Skills – Complete Learning Center for Children in Bhavanipuram, Vijayawada",
   description:
-    "Aacharya Learning Hub in Bhavanipuram, Vijayawada offers Pre Primary School, Chess Academy, Robotics Center, Abacus training and Tuition for children. One campus for complete child development.",
+    "Future Mind Skills Learning Hub in Bhavanipuram, Vijayawada offers Pre Primary School, Chess Academy, Robotics Center, Abacus training and Tuition for children. One campus for complete child development.",
 }
 
 export default function RootLayout({
@@ -32,7 +32,7 @@ export default function RootLayout({
         {
           "@context": "https://schema.org",
           "@type": "Organization",
-          "name": "  Aacharya Sensei  Academy",
+          "name": "  Future Mind Skills Sensei  Academy",
           "url": "https://telanganachessschool.com",
           "sameAs": [
             "https://thegeniuschessacademy.com"

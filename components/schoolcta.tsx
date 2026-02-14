@@ -25,7 +25,7 @@ export default function PrimaryCTA() {
           </h2>
           
           <p className="text-slate-500 font-bold text-base md:text-xl max-w-2xl mx-auto mb-10 md:mb-12">
-            Step inside Aacharya and witness the joy of learning. Witness the premium 
+            Step inside Future Mind Skills and witness the joy of learning. Witness the premium 
             infrastructure designed for your child's growth.
           </p>
 

@@ -7,121 +7,109 @@ import {
   Phone, 
   CheckCircle2, 
   Sparkles,
-  Calendar
+  Zap
 } from "lucide-react";
 
 export default function CTASection() {
   const benefits = [
-    "Free Assessment Report",
-    "1-on-1 Expert Interaction",
-    "Personalized Roadmap"
+    "Free Skill Assessment",
+    "Personalized Growth Roadmap",
+    "Expert Trainer Interaction"
   ];
 
   return (
-    <section className="relative py-12 md:py-20 lg:py-24 bg-white px-4">
-      <div className="container mx-auto max-w-7xl relative z-10">
+    <section className="py-12 md:py-16 bg-white px-4">
+      <div className="max-w-6xl mx-auto">
         
-        {/* --- Main Card --- */}
-        <div className="relative bg-slate-900 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl">
+        {/* --- COMPACT BOX --- */}
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#01539D]/5 to-transparent border border-[#01539D]/10 p-8 md:p-12 lg:p-16">
           
-          {/* Background Decorative Blurs */}
-          <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-amber-500/10 blur-[120px] pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-indigo-500/10 blur-[120px] pointer-events-none" />
-          
-          <div className="grid lg:grid-cols-12 items-stretch">
+          {/* Decorative Background Icons */}
+          <div className="absolute -top-10 -right-10 opacity-[0.03] text-[#01539D] rotate-12">
+            <Zap size={300} strokeWidth={1} />
+          </div>
+
+          <div className="relative z-10 flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
             
-            {/* --- LEFT: Content --- */}
-            <div className="lg:col-span-7 p-6 sm:p-10 lg:p-16 flex flex-col justify-center text-center lg:text-left">
-              
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 self-center lg:self-start px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-amber-400 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] mb-6">
+            {/* LEFT: CONTENT */}
+            <div className="flex-1 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#46B94A]/10 text-[#46B94A] font-bold text-[10px] uppercase tracking-widest mb-6">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Limited Slots Available</span>
+                <span>Join 500+ Future-Ready Kids</span>
               </div>
 
-              {/* Headline */}
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-black text-white leading-tight mb-6">
-                Unlock Your Child's <br className="hidden sm:block" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200">
-                  True Potential.
-                </span>
+              <h2 className="text-3xl md:text-5xl font-black text-slate-900 leading-[1.1] mb-6">
+                Ready to Sharpen Your <br className="hidden md:block" />
+                <span className="text-[#01539D]">Child's Cognitive Skills?</span>
               </h2>
 
-              {/* Subtext */}
-              <p className="text-slate-400 text-sm md:text-lg max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed">
-                Take the first step towards holistic excellence. Experience the Aacharya difference through our specialized skill programs.
+              <p className="text-slate-600 text-lg font-medium mb-8 max-w-xl mx-auto lg:mx-0">
+                Experience our professional coaching in Chess, Coding, and Logic. 
+                Start their journey to excellence with a free session.
               </p>
 
-              {/* Benefits List */}
-              <div className="flex flex-col sm:flex-row flex-wrap justify-center lg:justify-start gap-4 mb-10">
-                {benefits.map((benefit, i) => (
-                  <div key={i} className="flex items-center gap-2 justify-center lg:justify-start">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    <span className="text-slate-300 text-xs md:text-sm font-medium">{benefit}</span>
+              <div className="flex flex-wrap justify-center lg:justify-start gap-y-3 gap-x-6 mb-10">
+                {benefits.map((text, i) => (
+                  <div key={i} className="flex items-center gap-2 text-[#46B94A]">
+                    <CheckCircle2 size={18} strokeWidth={3} />
+                    <span className="text-slate-700 font-bold text-sm uppercase tracking-tight">{text}</span>
                   </div>
                 ))}
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 items-center justify-center lg:justify-start">
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 <Link href="/bookdemo" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto group flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-slate-900 rounded-xl font-bold text-base hover:bg-amber-400 transition-all shadow-lg active:scale-95">
-                    Book Free Demo
+                  <button className="group w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-4 bg-[#01539D] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-[#01427a] transition-all shadow-xl shadow-blue-100 active:scale-95">
+                    Get Free Demo
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </Link>
                 
-                <Link href="tel:+918074103400" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-transparent border border-slate-700 text-white rounded-xl font-bold text-base hover:bg-slate-800 transition-all active:scale-95">
-                    <Phone className="w-5 h-5 text-amber-500" />
-                    Call Us
+                <Link href="tel:+91 9948198809" className="w-full sm:w-auto">
+                  <button className="w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-4 bg-white border-2 border-slate-100 text-slate-700 rounded-2xl font-black text-sm uppercase tracking-widest hover:border-[#46B94A] hover:text-[#46B94A] transition-all active:scale-95">
+                    <Phone className="w-4 h-4" />
+                    Talk to Expert
                   </button>
                 </Link>
               </div>
-
             </div>
 
-            {/* --- RIGHT: Visual Mockup --- */}
-            <div className="lg:col-span-5 relative min-h-[250px] sm:min-h-[350px] lg:min-h-full bg-slate-800/30 flex items-center justify-center">
-              {/* Pattern Background */}
-              <div className="absolute inset-0 opacity-20" 
-                   style={{ backgroundImage: 'radial-gradient(circle, #475569 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-              
-              {/* Floating UI Mockup */}
-              <div className="relative group p-4 w-full flex justify-center">
-                <div className="bg-white/10 backdrop-blur-xl border border-white/10 p-6 md:p-8 rounded-3xl shadow-2xl transform lg:rotate-6 lg:group-hover:rotate-0 transition-all duration-700 max-w-[280px] md:max-w-[320px]">
-                   <div className="flex items-center gap-4 mb-6">
-                      <div className="w-12 h-12 rounded-2xl bg-amber-500 flex items-center justify-center shrink-0">
-                         <Calendar className="w-6 h-6 text-slate-900" />
-                      </div>
-                      <div>
-                         <p className="text-white font-bold text-base md:text-lg">Trial Session</p>
-                         <p className="text-amber-400 text-xs md:text-sm font-semibold tracking-wide uppercase">Free of Cost</p>
-                      </div>
-                   </div>
-                   
-                   <div className="space-y-3 mb-6">
-                      <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                        <div className="h-full w-2/3 bg-amber-500/50" />
-                      </div>
-                      <div className="h-2 w-4/5 bg-white/10 rounded-full overflow-hidden">
-                        <div className="h-full w-1/2 bg-amber-500/50" />
-                      </div>
-                   </div>
-
-                   <div className="flex justify-between items-center">
-                      <div className="flex -space-x-2">
-                         {[1,2,3].map(i => <div key={i} className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-700 border-2 border-slate-800 shadow-sm" />)}
-                      </div>
-                      <span className="text-[10px] md:text-xs text-slate-400 font-medium">Join 200+ students</span>
-                   </div>
+            {/* RIGHT: COMPACT VISUAL */}
+            <div className="lg:w-1/3 flex items-center justify-center">
+              <div className="relative">
+                {/* Floating Card Design */}
+                <div className="bg-white p-8 rounded-[2rem] shadow-2xl border border-slate-50 flex flex-col items-center text-center max-w-[260px] animate-bounce-slow">
+                  <div className="w-16 h-16 rounded-2xl bg-[#46B94A] flex items-center justify-center text-white mb-4 shadow-lg shadow-green-100">
+                    <Zap size={32} fill="currentColor" />
+                  </div>
+                  <h4 className="font-black text-slate-800 text-xl leading-tight mb-2">Next Batch Starting Soon!</h4>
+                  <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Limited Seats</p>
+                  <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="w-3/4 h-full bg-[#01539D]" />
+                  </div>
+                  <p className="mt-3 text-[10px] text-slate-500 font-bold italic">75% slots filled this week</p>
                 </div>
+
+                {/* Decorative circles */}
+                <div className="absolute -top-4 -left-4 w-12 h-12 bg-[#01539D]/10 rounded-full blur-xl -z-10" />
+                <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-[#46B94A]/10 rounded-full blur-2xl -z-10" />
               </div>
             </div>
 
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes bounce-slow {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-15px); }
+        }
+        .animate-bounce-slow {
+          animation: bounce-slow 4s ease-in-out infinite;
+        }
+      `}</style>
     </section>
   );
 }

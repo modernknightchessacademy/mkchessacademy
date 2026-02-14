@@ -119,7 +119,7 @@ export default function EventDetailPage() {
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
                 amount: data.amount,
                 currency: data.currency,
-                name: "Aacharya Academy",
+                name: "Future Mind Skills Academy",
                 description: event.title,
                 order_id: data.orderId,
                 handler: function (response: any) {
@@ -297,7 +297,7 @@ export default function EventDetailPage() {
                                         </div>
                                         <div className="flex items-center gap-2 text-slate-700">
                                             <Mail className="w-5 h-5 text-[#f97316]" />
-                                            <span className="font-semibold">info@aacharyaacademy.com</span>
+                                            <span className="font-semibold">info@Future Mind Skillsacademy.com</span>
                                         </div>
                                     </div>
                                 </div>

@@ -134,7 +134,7 @@ export default function ChessFAQSection() {
                 </div>
                 <div>
                   <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Talk to Coach</p>
-                  <p className="text-lg font-black text-slate-800">+91 80741 03400</p>
+                  <p className="text-lg font-black text-slate-800">+91 99481 98809</p>
                 </div>
               </div>
 

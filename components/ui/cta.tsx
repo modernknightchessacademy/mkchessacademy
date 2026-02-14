@@ -3,48 +3,70 @@
 import React from 'react';
 import { MapPin, Navigation, ExternalLink, Sparkles } from 'lucide-react';
 
-const MapSection: React.FC = () => {
-  // Correct Details for Bhavanipuram Hub
-  const businessName = "Aacharya-Pre School-Chess Academy-Abacus-Robotics-Tuition Point";
-  const address = "Opposite Indrakeeladri Apartment, Lalitha Nagar, Swathi Theatre Rd, Near Sivalayam Center, Bhavanipuram, Vijayawada, 520012";
-  const googleMapsLink = "https://maps.app.goo.gl/bDM9RyyYgaUD7M627";
+const MapSection = () => {
+  const businessName = "Future Mind Skills Academy";
+  const address = "Prestige High Fields, Flat No. 7028, ISB Road, Financial District, Nanakramguda, Hyderabad, Telangana, India";
+  const googleMapsLink = "https://maps.app.goo.gl/9R6q8XyT5Pz9Z5U29"; 
 
   return (
     <section className="py-20 bg-white" id="location">
       <div className="container mx-auto px-6 max-w-7xl">
-        
-        {/* --- Header --- */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 border border-amber-100 text-amber-600 text-xs font-bold uppercase tracking-widest mb-4">
-            <Sparkles className="w-3.5 h-3.5" />
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#01539D] text-xs font-bold uppercase tracking-widest mb-6">
+            <Sparkles className="w-3.5 h-3.5 text-[#46B94A]" />
             <span>Exact Location</span>
           </div>
-          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-            Visit Our <span className="text-amber-500">Vijayawada Hub</span>
+          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
+            Visit Our <span className="text-[#01539D]">Hyderabad Hub</span>
           </h2>
-          <p className="text-slate-500 max-w-2xl mx-auto font-medium">
-            {businessName}
+          <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto leading-relaxed">
+            Located in the heart of the Financial District, our premium academy hub is designed for excellence.
           </p>
         </div>
 
-        {/* --- Map Container --- */}
         <div className="relative w-full h-[500px] md:h-[650px] rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border-[10px] md:border-[16px] border-slate-50 shadow-2xl">
-          
-          {/* --- CORRECTED VIJAYAWADA EMBED --- */}
           <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3825.21175647313!2d80.59560447591605!3d16.51544482733919!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a35efe8474cbea9%3A0xa3e687823766f2b2!2sAacharya-Pre%20School-Chess%20Academy-Abacus-Robotics-Tuition%20Point-Bhavanipuram!5e0!3m2!1sen!2sin!4v1715632452312!5m2!1sen!2sin"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.843657864883!2d78.3378546!3d17.4192275!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93e870000001%3A0x6a0f7c706900f0!2sPrestige%20High%20Fields!5e0!3m2!1sen!2sin!4v1715632452312!5m2!1sen!2sin"
             width="100%" 
             height="100%" 
             style={{ border: 0 }} 
             allowFullScreen={true} 
             loading="lazy" 
             referrerPolicy="no-referrer-when-downgrade"
-            title="Aacharya Bhavanipuram Vijayawada"
-            className="contrast-[1.05]"
+            title="Future Mind Skills Academy Hyderabad"
           ></iframe>
 
-          {/* --- Floating Address Card --- */}
+          <div className="absolute bottom-6 left-6 right-6 md:bottom-12 md:left-12 md:right-auto md:w-[400px] bg-white p-8 rounded-3xl shadow-2xl border border-slate-100 z-20">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-[#01539D] flex items-center justify-center shrink-0 shadow-lg shadow-blue-100">
+                <MapPin className="text-white w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="font-black text-slate-900 text-xl leading-tight mb-2">{businessName}</h4>
+                <p className="text-slate-500 text-sm font-medium leading-relaxed">{address}</p>
+              </div>
+            </div>
 
+            <div className="flex flex-col sm:flex-row gap-3">
+              <a 
+                href={googleMapsLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-[#01539D] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#01427a] transition-all"
+              >
+                <Navigation className="w-4 h-4" />
+                Get Directions
+              </a>
+              <a 
+                href={googleMapsLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center px-6 py-4 bg-slate-50 text-slate-700 rounded-2xl font-black text-xs uppercase tracking-widest border border-slate-100 hover:bg-slate-100 transition-all"
+              >
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </section>

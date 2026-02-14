@@ -118,7 +118,7 @@ export default function CoachesAndMethodology() {
             <div className="relative rounded-[2rem] overflow-hidden border-4 border-white shadow-2xl">
               <img 
                 src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1888&auto=format&fit=crop" 
-                alt="Founder of Aacharya Academy" 
+                alt="Founder of Future Mind Skills Academy" 
                 className="w-full h-auto object-cover"
               />
             </div>
@@ -139,7 +139,7 @@ export default function CoachesAndMethodology() {
               <span className="block text-lg md:text-xl font-medium text-slate-500 mt-1">Founder & Academic Director</span>
             </h2>
             <p className="text-slate-600 text-lg leading-relaxed">
-              "Education is not just about filling a bucket, but lighting a fire. My vision for Aacharya was to create a space where academic rigor meets creative freedom. We don't just teach subjects; we build the thinking framework for a child's entire life."
+              "Education is not just about filling a bucket, but lighting a fire. My vision for Future Mind Skills was to create a space where academic rigor meets creative freedom. We don't just teach subjects; we build the thinking framework for a child's entire life."
             </p>
             
             <div className="grid grid-cols-2 gap-6 pt-4">
@@ -356,7 +356,7 @@ export default function CoachesAndMethodology() {
             Not Just Classes. <br/>A Complete Learning System.
           </h2>
           <p className="text-slate-400 text-lg mb-10">
-            Join 500+ parents who trust Aacharya for their child's holistic development.
+            Join 500+ parents who trust Future Mind Skills for their child's holistic development.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
              <button className="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2">

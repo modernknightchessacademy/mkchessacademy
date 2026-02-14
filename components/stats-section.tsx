@@ -1,32 +1,32 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, Minus, HelpCircle, ArrowUp } from "lucide-react";
+import { ChevronDown, MessageCircle, HelpCircle, ArrowUp } from "lucide-react";
 
 const faqData = [
   {
-    question: "Why choose Aacharya over others?",
-    answer: "We offer a unique blend of holistic education (Robotics, Abacus, Chess) along with core academics (CBSE). Our certified trainers, small batch sizes, and proven track record of national winners set us apart.",
+    question: "What makes FutureMind Skills Academy different?",
+    answer: "Unlike traditional tutoring, we focus on high-impact cognitive skills like Chess, Coding, and Memory Mastery. Our curriculum is designed to build logic and critical thinking, which are essential for future success in any field.",
   },
   {
-    question: "What is the ideal age to start skill training?",
-    answer: "For skills like Chess and Abacus, 5-7 years is ideal as it builds cognitive foundation. For Robotics, 8+ years is recommended. However, we have beginner programs for all age groups.",
+    question: "At what age should my child start these programs?",
+    answer: "Most of our programs, including Chess and Memory training, are ideal for ages 5 and up. Coding and Logic modules are typically introduced at ages 7-8 to ensure they have the foundational reasoning skills to succeed.",
   },
   {
-    question: "Are the classes online or offline?",
-    answer: "We offer both! Our offline center provides hands-on robotics and classroom learning, while our online programs for Chess and Abacus are optimized for interactive remote learning.",
+    question: "Are the programs available online or only at the campus?",
+    answer: "We offer a hybrid approach. While our Bhavanipuram campus provides a great collaborative environment, we also offer high-quality interactive online sessions for students who prefer learning from home.",
   },
   {
-    question: "Do you provide certification?",
-    answer: "Yes. Students receive course completion certificates. For Chess, we also prepare students for official FIDE ratings and district/state tournaments.",
+    question: "How do you track a student's progress?",
+    answer: "Every student undergoes periodic assessments. For skills like Chess, we track Elo ratings and tournament performance. For Coding and Logic, progress is measured through project completion and problem-solving speed.",
   },
   {
-    question: "How do I book a demo class?",
-    answer: "You can click the 'Book Demo' button on the top right or fill out the enquiry form. Our academic counselor will contact you to schedule a free trial session.",
+    question: "Can I choose multiple programs for my child?",
+    answer: "Absolutely! Many of our students combine Chess with Coding or Memory training. We design our schedules to be flexible, allowing children to develop a well-rounded set of future-ready skills.",
   },
   {
-    question: "What is the fee structure?",
-    answer: "Fees vary based on the program (School vs. Skills) and duration. Please contact our admission desk for the latest fee chart and scholarship opportunities.",
+    question: "Do you offer a trial session before enrollment?",
+    answer: "Yes, we believe parents should see the value firsthand. You can book a free demo session for any of our programs to see our teaching methodology and how your child responds to the trainer.",
   },
 ];
 
@@ -34,88 +34,85 @@ export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [showScroll, setShowScroll] = useState(false);
 
-  // Show scroll-to-top button after scrolling 400px
   useEffect(() => {
     const handleScroll = () => setShowScroll(window.scrollY > 400);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleAccordion = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-
   return (
-    <section className="relative bg-slate-50 py-12 md:py-24 px-4 overflow-hidden" id="faq">
-      {/* Background Ambience */}
-      <div 
-        className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-        style={{ backgroundImage: 'radial-gradient(#d97706 1px, transparent 1px)', backgroundSize: '24px 24px' }}
-      />
-
-      <div className="container mx-auto max-w-6xl relative z-10">
-        {/* Header */}
-        <div className="text-center mb-12 md:mb-16">
-          <div className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-amber-100 text-amber-600 mb-4 shadow-sm">
-            <HelpCircle className="w-5 h-5 md:w-6 md:h-6" />
+    <section className="relative bg-white py-16 md:py-24 px-4 overflow-hidden" id="faq">
+      <div className="max-w-3xl mx-auto relative z-10">
+        
+        {/* --- CENTERED HEADER --- */}
+        <div className="text-center mb-12 md:mb-20">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-[#01539D] text-xs font-bold uppercase tracking-widest mb-6">
+            <HelpCircle className="w-4 h-4" />
+            Support Center
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-            Frequently Asked <span className="text-amber-500">Questions</span>
+          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
+            Got Questions? <span className="text-[#46B94A]">We Have Answers.</span>
           </h2>
-          <p className="text-slate-600 text-sm md:text-lg max-w-2xl mx-auto leading-relaxed">
-            Quick answers to common questions about our programs and admissions.
+          <p className="text-slate-500 text-lg font-medium leading-relaxed">
+            Everything you need to know about our specialized skill programs and enrollment process.
           </p>
         </div>
 
-        {/* FAQ Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-          {faqData.map((item, index) => (
-            <div 
-              key={index}
-              className={`bg-white rounded-xl md:rounded-2xl border transition-all duration-300 overflow-hidden ${
-                openIndex === index 
-                  ? 'border-amber-400 shadow-lg' 
-                  : 'border-slate-200 shadow-sm hover:border-amber-200'
-              }`}
-            >
-              <button
-                onClick={() => toggleAccordion(index)}
-                className="w-full flex items-start justify-between p-5 md:p-6 text-left"
-              >
-                <span className={`font-bold text-base md:text-lg pr-4 ${openIndex === index ? 'text-amber-600' : 'text-slate-800'}`}>
-                  {item.question}
-                </span>
-                <div className={`mt-1 flex-shrink-0 w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center transition-all ${
-                  openIndex === index ? 'bg-amber-500 text-white rotate-180' : 'bg-slate-100 text-slate-400'
-                }`}>
-                  {openIndex === index ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                </div>
-              </button>
-              
+        {/* --- COMPACT ACCORDION LIST --- */}
+        <div className="space-y-4">
+          {faqData.map((item, index) => {
+            const isOpen = openIndex === index;
+            return (
               <div 
-                className={`px-5 md:px-6 transition-all duration-300 ease-in-out overflow-hidden ${
-                  openIndex === index ? 'max-h-[300px] pb-5 md:pb-6 opacity-100' : 'max-h-0 opacity-0'
+                key={index}
+                className={`group border rounded-2xl transition-all duration-300 ${
+                  isOpen ? 'border-[#01539D] bg-[#01539D]/[0.02]' : 'border-slate-100 hover:border-slate-200'
                 }`}
               >
-                <p className="text-slate-600 text-sm md:text-base leading-relaxed border-t border-slate-50 pt-4">
-                  {item.answer}
-                </p>
+                <button
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
+                  className="w-full flex items-center justify-between p-6 text-left"
+                >
+                  <span className={`font-bold text-lg md:text-xl pr-8 transition-colors ${
+                    isOpen ? 'text-[#01539D]' : 'text-slate-800 group-hover:text-[#01539D]'
+                  }`}>
+                    {item.question}
+                  </span>
+                  <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+                    isOpen ? 'bg-[#01539D] text-white rotate-180' : 'bg-slate-50 text-slate-400'
+                  }`}>
+                    <ChevronDown className="w-5 h-5" />
+                  </div>
+                </button>
+                
+                <div 
+                  className={`grid transition-all duration-300 ease-in-out overflow-hidden ${
+                    isOpen ? 'grid-rows-[1fr] opacity-100 pb-6' : 'grid-rows-[0fr] opacity-0'
+                  }`}
+                >
+                  <div className="overflow-hidden px-6">
+                    <p className="text-slate-600 text-base md:text-lg leading-relaxed border-t border-slate-100/50 pt-4">
+                      {item.answer}
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {/* Footer Support Box */}
-        <div className="mt-12 md:mt-16 text-center bg-white border border-slate-100 rounded-2xl p-6 md:p-10 shadow-sm max-w-3xl mx-auto">
-          <h3 className="text-slate-900 font-bold text-lg md:text-xl mb-2">Still have questions?</h3>
-          <p className="text-slate-500 text-sm md:text-base mb-6">Our academic counselors are ready to help you find the right fit.</p>
+        {/* --- COMPACT CTA BOX --- */}
+        <div className="mt-16 flex flex-col sm:flex-row items-center justify-between p-8 rounded-3xl bg-slate-50 border border-slate-100">
+          <div className="mb-6 sm:mb-0 text-center sm:text-left">
+            <h3 className="text-slate-900 font-black text-xl mb-1">Still confused?</h3>
+            <p className="text-slate-500 font-medium">Chat with our counselor for clarity.</p>
+          </div>
           <a 
-            href="https://wa.me/918074103400" 
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center px-8 py-3.5 bg-slate-900 text-white rounded-full font-bold hover:bg-amber-500 transition-all shadow-md active:scale-95"
+            href="https://wa.me/9199481 98809" 
+            className="flex items-center gap-2 px-8 py-4 bg-[#46B94A] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-[#3da341] transition-all shadow-lg shadow-green-100 active:scale-95"
           >
-            Contact Support
+            <MessageCircle className="w-5 h-5" />
+            WhatsApp Us
           </a>
         </div>
       </div>
@@ -123,7 +120,7 @@ export default function FaqSection() {
       {/* Floating Scroll To Top */}
       <button 
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className={`fixed bottom-6 right-6 z-50 w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center shadow-lg transition-all hover:bg-amber-600 hover:-translate-y-1 active:scale-90 text-white ${
+        className={`fixed bottom-8 right-8 z-50 w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center shadow-2xl transition-all hover:bg-[#01539D] hover:-translate-y-2 active:scale-90 text-white ${
           showScroll ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
         }`}
         aria-label="Scroll to top"

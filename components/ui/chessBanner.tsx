@@ -40,7 +40,7 @@ const ChessBanner: React.FC = () => {
         
         {/* Title */}
         <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight relative">
-          Aacharya Chess <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Academy</span>
+          Future Mind Skills Chess <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Academy</span>
           {/* Decorative Underline */}
           <svg className="absolute w-full h-3 -bottom-1 left-0 text-yellow-300 -z-10 opacity-60" viewBox="0 0 100 10" preserveAspectRatio="none">
              <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="6" fill="none" />
@@ -49,7 +49,7 @@ const ChessBanner: React.FC = () => {
         
         {/* Description / Subtext */}
         <p className="text-lg md:text-xl text-slate-600 max-w-2xl mb-8 leading-relaxed font-medium">
-          Aacharya Chess Academy - Where young minds learn the art of strategy and the joy of competition.
+          Future Mind Skills Chess Academy - Where young minds learn the art of strategy and the joy of competition.
         </p>
 
         {/* Breadcrumb Navigation (Pill Style) */}

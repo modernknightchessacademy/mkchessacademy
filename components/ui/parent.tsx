@@ -29,7 +29,7 @@ const CurriculumSun = () => {
           <div className="relative w-full max-w-[500px] md:max-w-[600px] aspect-square">
             <Image
               src="/sun2.png" // Put your image in the public folder
-              alt="Aacharya International Curriculum Chart"
+              alt="Future Mind Skills International Curriculum Chart"
               fill
               className="object-contain drop-shadow-2xl"
               priority
@@ -62,7 +62,7 @@ const CurriculumSun = () => {
           <motion.p 
             className="text-slate-900 text-lg md:text-2xl font-bold leading-tight max-w-xl mx-auto lg:mx-0"
           >
-            At Aacharya, we integrate the best of global 
+            At Future Mind Skills, we integrate the best of global 
             pedagogies to create a customized foundation for every child.
           </motion.p>
 

@@ -1,30 +1,12 @@
 "use client";
+
 import React from "react";
-import { Facebook, Instagram, Youtube, MapPin, Phone, Mail, ArrowRight, Linkedin } from "lucide-react";
-
-/* -------------------------------------------------------------------------- */
-/*                                DOODLE ICONS                                */
-/* -------------------------------------------------------------------------- */
-
-const ChessKnightDoodle = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
-    <path d="M19 22H5V20H19V22ZM17 18H7V16H17V18ZM15.5 14H8.5L7.5 8H9.5C9.5 8 10 9.5 11 9.5C12 9.5 13 8 13 8H16L15.5 14ZM12 2C10.5 2 9.5 3 9 4L8 6H13C14.5 6 15 5 15.5 4C16 3 14 2 12 2Z" />
-    <path d="M12 4C14 4 15 5 15 6L14 12H10L9 6C10 5 11 4 12 4Z" opacity="0.5" />
-  </svg>
-);
-
-const ChessPawnDoodle = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
-    <path d="M16 22H8V20H16V22ZM14 18H10V14.5C10 14.5 8 12 8 10C8 7.5 9.5 6 12 6C14.5 6 16 7.5 16 10C16 12 14 14.5 14 14.5V18Z" />
-    <circle cx="12" cy="4" r="2.5" />
-  </svg>
-);
-
-const StarDoodle = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-  </svg>
-);
+import Link from "next/link";
+import { 
+  Facebook, Instagram, Youtube, Linkedin, 
+  MapPin, Phone, Mail, ArrowUpRight, 
+  Send, Brain, Cpu, MessageCircle 
+} from "lucide-react";
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
@@ -32,203 +14,140 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const GoogleIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
-    <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" />
-  </svg>
-);
-
-/* -------------------------------------------------------------------------- */
-/*                               FOOTER COMPONENT                             */
-/* -------------------------------------------------------------------------- */
-
 export default function Footer() {
-  // Update the Google link with your actual Google Business CID or link
-  const googleMapsUrl = "https://share.google/yzTpHGFLIZhCbPQLb";
-
-  const socialLinks = [
-    {
-      Icon: Facebook,
-      href: "https://www.facebook.com/share/17MqucMzGu/",
-      label: "Facebook"
-    },
-    {
-      Icon: Instagram,
-      href: "https://www.instagram.com/aacharya_bhavanipuram?igsh=MWdoM3Yzeno4OHE3eA==",
-      label: "Instagram"
-    },
-    {
-      Icon: Youtube,
-      href: "https://youtube.com/@aacharyaclasses?si=dUtU_6gi25WcGssw",
-      label: "YouTube"
-    },
-    {
-      Icon: Linkedin,
-      href: "https://www.linkedin.com/company/aacharya/",
-      label: "LinkedIn"
-    },
-    {
-      Icon: GoogleIcon,
-      href: googleMapsUrl,
-      label: "Google Page"
-    },
-  ];
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-slate-900 text-slate-300 overflow-hidden pt-16 pb-8">
-
-      {/* -------------------- FLOATING WHATSAPP BUTTON -------------------- */}
+    <footer className="relative bg-[#020617] text-slate-400 pt-20 pb-10 overflow-hidden">
+      
+      {/* -------------------- PREMIUM WHATSAPP FAB -------------------- */}
       <a
-        href="https://wa.me/918074103400"
+        href="https://wa.me/919948198809"
         target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat on WhatsApp"
-        className="fixed bottom-6 right-6 z-[100] group flex items-center justify-center"
+        className="fixed bottom-8 right-8 z-[100] group"
       >
-        <span className="absolute w-full h-full bg-green-500 rounded-full animate-ping opacity-25"></span>
-        <span className="absolute w-14 h-14 bg-green-500 rounded-full animate-pulse opacity-40"></span>
-
-        <div className="relative w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-[0_10px_25px_rgba(37,211,102,0.4)] transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-1">
-          <WhatsAppIcon className="w-8 h-8" />
-          <span className="absolute right-16 bg-white text-slate-900 text-xs font-bold px-3 py-1.5 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 whitespace-nowrap">
-            Chat with us!
-            <span className="absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-white rotate-45"></span>
+        <div className="relative p-4 bg-[#25D366] text-white rounded-2xl shadow-[0_20px_50px_rgba(37,211,102,0.3)] transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-2 flex items-center gap-3">
+          <WhatsAppIcon className="w-7 h-7" />
+          <span className="max-w-0 overflow-hidden group-hover:max-w-[150px] transition-all duration-500 font-bold whitespace-nowrap text-xs uppercase tracking-widest">
+            Chat with Experts
           </span>
         </div>
       </a>
 
-      {/* -------------------- BACKGROUND DOODLES -------------------- */}
-      <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
-        <ChessKnightDoodle className="absolute -top-10 -right-10 w-48 h-48 text-slate-800/50 rotate-12" />
-        <ChessPawnDoodle className="absolute -bottom-10 -left-10 w-40 h-40 text-slate-800/50 -rotate-12" />
-        <StarDoodle className="absolute top-20 left-[20%] w-8 h-8 text-yellow-400/20 animate-pulse" />
-        <StarDoodle className="absolute bottom-32 right-[20%] w-6 h-6 text-yellow-400/20" />
+      {/* -------------------- BACKGROUND ACCENTS -------------------- */}
+      <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#01539D] rounded-full blur-[150px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-[#46B94A] rounded-full blur-[150px]" />
       </div>
 
-      <div className="container mx-auto px-4 md:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-
-          {/* 1. BRAND INFO */}
-          <div className="space-y-6">
-            <a href="/" className="flex items-center gap-3 group">
-              <img
-                src="/image.png"
-                alt="Aacharya Academy"
-                className="w-12 h-12 object-contain bg-white rounded-full p-1"
-              />
-              <div className="flex flex-col">
-                <span className="font-black text-2xl text-white leading-none tracking-tight">
-                  AACHARYA
-                </span>
+      <div className="container mx-auto px-6 max-w-7xl relative z-10">
+        
+        {/* --- TOP SECTION: BENTO GRID --- */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-16">
+          
+          {/* Brand Card */}
+          <div className="md:col-span-5 bg-white/5 backdrop-blur-md rounded-[2.5rem] p-10 border border-white/10 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-22 h-22 bg-white rounded-xl flex items-center justify-center p-2">
+                   <img src="/future.jpeg" alt="Logo" className="w-full h-full object-contain" />
+                </div>
+                <div>
+                   <h2 className="font-black text-2xl text-white tracking-tighter leading-none">FutureMind<span className="text-[#46B94A]">Skills</span></h2>
+                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em] mt-1">Academy</p>
+                </div>
               </div>
-            </a>
-            <p className="text-sm leading-relaxed text-slate-400">
-              Empowering young minds through academic excellence, strategic chess mastery, and creative robotics. Building the leaders of tomorrow.
-            </p>
-
-            {/* SOCIAL LINKS SECTION */}
-            <div className="flex flex-wrap gap-3">
-              {socialLinks.map((social, i) => (
-                <a
-                  key={i}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={social.label}
-                  className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-yellow-400 hover:text-slate-900 transition-all duration-300"
-                >
-                  <social.Icon className="w-5 h-5" />
-                </a>
+              <p className="text-lg font-medium text-slate-300 leading-relaxed mb-8">
+                Pioneering a new era of cognitive development. We equip the next generation with the mental tools to navigate and lead the future.
+              </p>
+            </div>
+            
+            <div className="flex gap-4">
+              {[Facebook, Instagram].map((Icon, i) => (
+                <Link key={i} href="#" className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-[#01539D] hover:border-[#01539D] transition-all">
+                  <Icon size={20} />
+                </Link>
               ))}
             </div>
           </div>
 
-          {/* 2. QUICK LINKS */}
-          <div>
-            <h3 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
-              <span className="w-2 h-6 bg-yellow-400 rounded-full"></span>
-              Quick Links
-            </h3>
-            <ul className="space-y-3">
-              {[
-                { name: "About Us", href: "/about" },
-                { name: "Success Stories", href: "/gallery" },
-                { name: "Events", href: "/events" },
-                { name: "Contact Us", href: "/contact" },
-                { name: "Book a Demo", href: "/bookdemo" },
-              ].map((link) => (
-                <li key={link.name}>
-                  <a href={link.href} className="flex items-center gap-2 text-sm hover:text-yellow-400 transition-colors group">
-                    <ArrowRight className="w-3 h-3 text-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    {link.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
+          {/* Links Grid */}
+          <div className="md:col-span-4 grid grid-cols-2 gap-6">
+             <div className="bg-white/5 backdrop-blur-md rounded-[2.5rem] p-8 border border-white/10">
+                <h3 className="text-white font-black text-[10px] uppercase tracking-widest mb-6 opacity-50">Programs</h3>
+                <ul className="space-y-4 font-bold text-sm">
+                  <li><Link href="/chess" className="hover:text-[#46B94A] transition-colors">Chess</Link></li>
+                  <li><Link href="/coding" className="hover:text-[#46B94A] transition-colors">Coding</Link></li>
+                  <li><Link href="/logic" className="hover:text-[#46B94A] transition-colors">Logic</Link></li>
+                  <li><Link href="/memory" className="hover:text-[#46B94A] transition-colors">Memory</Link></li>
+                  <li><Link href="/problem-solving" className="hover:text-[#46B94A] transition-colors">Problem Solving</Link></li>
+                  <li><Link href="/communication" className="hover:text-[#46B94A] transition-colors">Communication Skills</Link></li>
+                </ul>
+             </div>
+             <div className="bg-white/5 backdrop-blur-md rounded-[2.5rem] p-8 border border-white/10">
+                <h3 className="text-white font-black text-[10px] uppercase tracking-widest mb-6 opacity-50">Company</h3>
+                <ul className="space-y-4 font-bold text-sm">
+                  <li><Link href="/about" className="hover:text-[#01539D] transition-colors">About</Link></li>
+                  <li><Link href="/gallery" className="hover:text-[#01539D] transition-colors">Gallery</Link></li>
+                  <li><Link href="/contact" className="hover:text-[#01539D] transition-colors">Contact</Link></li>
+                  <li><Link href="/bookdemo" className="hover:text-[#01539D] transition-colors">Book Demo</Link></li>
+                </ul>
+             </div>
           </div>
 
-          {/* 3. PROGRAMS */}
-          <div>
-            <h3 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
-              <span className="w-2 h-6 bg-yellow-400 rounded-full"></span>
-              Programs
-            </h3>
-            <ul className="space-y-3">
-              {[
-                { name: "Pre Primary School", href: "/pre-school" },
-                { name: "Chess Coaching", href: "/chess-academy" },
-                { name: "Abacus Maths", href: "/abacus-training" },
-                { name: "Robotics, AI & IOT", href: "/robotics-center" },
-                { name: "Tution Point", href: "/tuition-center" },
-              ].map((link) => (
-                <li key={link.name}>
-                  <a href={link.href} className="flex items-center gap-2 text-sm hover:text-yellow-400 transition-colors group">
-                    <ArrowRight className="w-3 h-3 text-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    {link.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* 4. CONTACT */}
-          <div>
-            <h3 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
-              <span className="w-2 h-6 bg-yellow-400 rounded-full"></span>
-              Contact Us
-            </h3>
-            <div className="space-y-4">
-              <a
-                href={googleMapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-start gap-3 text-sm group hover:text-white transition-colors"
-              >
-                <MapPin className="w-5 h-5 text-yellow-400 shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
-                <span>
-                  Aacharya, Opposite Indrakeeladri Apartment, Lalitha Nagar, Swathi Road, Near Sivalayam Center, Bhavanipuram, Vijayawada - 520012. Andhra Pradesh.
-                </span>
-              </a>
-              <div className="flex items-center gap-3 text-sm">
-                <Phone className="w-5 h-5 text-yellow-400 shrink-0" />
-                <span>+91 80741 03400</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
-                <Mail className="w-5 h-5 text-yellow-400 shrink-0" />
-                <span>aacharyateam@gmail.com</span>
-              </div>
-            </div>
+          {/* Newsletter / CTA Card */}
+          <div className="md:col-span-3 bg-gradient-to-br from-[#01539D] to-[#01427a] rounded-[2.5rem] p-8 text-white flex flex-col justify-between overflow-hidden relative">
+             <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Brain size={120} />
+             </div>
+             <div className="relative z-10">
+                <h3 className="text-2xl font-black mb-4">Stay Future Ready</h3>
+                <p className="text-blue-100 text-sm font-medium mb-6">Join 2000+ parents receiving weekly cognitive growth tips.</p>
+                <div className="relative">
+                   <input type="email" placeholder="Email" className="w-full bg-white/10 border border-white/20 rounded-2xl px-5 py-4 text-sm placeholder:text-blue-200 outline-none focus:bg-white/20 transition-all" />
+                   <button className="absolute right-2 top-2 w-10 h-10 bg-[#46B94A] rounded-xl flex items-center justify-center shadow-lg">
+                      <Send size={18} />
+                   </button>
+                </div>
+             </div>
           </div>
         </div>
 
-        {/* BOTTOM BAR */}
-        <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} Aacharya. All Rights Reserved.</p>
-          <div className="flex gap-6">
-            <a href="/privacy" className="hover:text-yellow-400 transition-colors">Privacy Policy</a>
-            <a href="/terms" className="hover:text-yellow-400 transition-colors">Terms of Service</a>
+        {/* --- MIDDLE SECTION: CONTACT BAR --- */}
+        <div className="flex flex-col lg:flex-row gap-6 mb-16">
+           <div className="flex-1 bg-white/5 rounded-[2rem] p-6 border border-white/5 flex items-center gap-5">
+              <div className="w-12 h-12 rounded-xl bg-[#01539D]/20 text-[#01539D] flex items-center justify-center shrink-0">
+                 <MapPin size={24} />
+              </div>
+              <p className="text-sm font-medium text-slate-300">Prestige High Fields, Flat No. 7028, ISB Road, Financial District, Nanakramguda, Hyderabad, Telangana, India</p>
+           </div>
+           <div className="flex-1 bg-white/5 rounded-[2rem] p-6 border border-white/5 flex items-center gap-5">
+              <div className="w-12 h-12 rounded-xl bg-[#46B94A]/20 text-[#46B94A] flex items-center justify-center shrink-0">
+                 <Phone size={24} />
+              </div>
+              <p className="text-sm font-bold text-white">+91 99481 98809</p>
+           </div>
+           <div className="flex-1 bg-white/5 rounded-[2rem] p-6 border border-white/5 flex items-center gap-5">
+              <div className="w-12 h-12 rounded-xl bg-slate-800 text-slate-400 flex items-center justify-center shrink-0">
+                 <Mail size={24} />
+              </div>
+              <p className="text-sm font-bold text-white">futuremindskills@gmail.com</p>
+           </div>
+        </div>
+
+        {/* --- BOTTOM SECTION: LEGAL --- */}
+        <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">
+            <span>© {currentYear} Future Mind Skills Academy</span>
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+          </div>
+          <div className="flex items-center gap-2 text-slate-700">
+             <Cpu size={14} />
+             <span className="text-[10px] font-bold uppercase tracking-widest italic">Designed for the Next Generation</span>
           </div>
         </div>
+
       </div>
     </footer>
   );

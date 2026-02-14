@@ -8,97 +8,101 @@ import {
   CheckCircle2,
   Quote,
   Star,
-  BookOpen,
-  Trophy
+  Globe,
+  Trophy,
+  ShieldCheck
 } from "lucide-react";
 
 const FounderSection: React.FC = () => {
   return (
-    <section className="relative py-12 md:py-16 bg-white overflow-hidden font-sans">
+    <section className="relative py-12 md:py-20 bg-white overflow-hidden font-sans">
       
       {/* --- Background Texture --- */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-           style={{ backgroundImage: 'radial-gradient(#d97706 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none" 
+           style={{ backgroundImage: 'radial-gradient(#01539D 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
       </div>
       
       {/* Background Glows */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-amber-50/50 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-50/50 rounded-full blur-[100px] pointer-events-none"></div>
 
       <div className="container mx-auto px-4 md:px-6 relative z-10 max-w-7xl">
         
-        {/* --- CENTERED HEADER (Tighter Margins) --- */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 mb-3 rounded-full bg-amber-50 border border-amber-200">
-            <User className="w-3.5 h-3.5 text-amber-600" />
-            <span className="text-[10px] md:text-xs font-bold text-amber-800 uppercase tracking-[0.2em]">Our Leadership</span>
+        {/* --- CENTERED HEADER --- */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-4 rounded-full bg-blue-50 border border-blue-100">
+            <User className="w-3.5 h-3.5 text-[#01539D]" />
+            <span className="text-[10px] md:text-xs font-bold text-[#01539D] uppercase tracking-[0.2em]">Our Leadership</span>
           </div>
-          <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
-            The Visionary <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-yellow-500">Behind Aacharya</span>
+          <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">
+            The Mastery <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#01539D] to-[#46B94A]">Behind the Academy</span>
           </h2>
         </div>
 
-        {/* --- WIDE HORIZONTAL LAYOUT (Reduces Vertical Length) --- */}
-        <div className="flex flex-col lg:flex-row items-stretch gap-8 xl:gap-12">
+        {/* --- WIDE HORIZONTAL LAYOUT --- */}
+        <div className="flex flex-col lg:flex-row items-stretch gap-8 xl:gap-16">
           
-          {/* LEFT: Image (Horizontal/Square format to save height) */}
+          {/* LEFT: Image Container */}
           <div className="lg:w-1/3 shrink-0">
-            <div className="relative h-full min-h-[350px] md:min-h-[450px] rounded-[2rem] overflow-hidden border-[4px] border-white shadow-xl bg-slate-900 group">
+            <div className="relative h-full min-h-[400px] md:min-h-[500px] rounded-[2.5rem] overflow-hidden border-[6px] border-white shadow-2xl bg-slate-900 group">
               <img 
-                src="/chess-cen.jpeg" 
-                alt="Dr. Rajesh Gunti" 
-                className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
+                src="/profile5.jpg" // Ensure this image path is correct
+                alt="Ravindra Raju" 
+                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
-              <div className="absolute bottom-6 left-6">
-                <h3 className="text-2xl font-bold text-white tracking-tight">Dr. Rajesh Gunti</h3>
-                <p className="text-amber-400 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
-                  <Star className="w-3 h-3 fill-amber-400" /> Founder
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80"></div>
+              <div className="absolute bottom-8 left-8 right-8">
+                <h3 className="text-3xl font-black text-white tracking-tight mb-1">Ravindra Raju</h3>
+                <p className="text-[#46B94A] font-black uppercase tracking-widest text-xs flex items-center gap-2">
+                  <Star className="w-3.5 h-3.5 fill-[#46B94A]" /> International Coach
                 </p>
               </div>
             </div>
           </div>
 
-          {/* RIGHT: Content (Split into 2 internal columns to use width) */}
+          {/* RIGHT: Content Area */}
           <div className="lg:w-2/3 flex flex-col justify-center">
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 xl:gap-12">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 xl:gap-14">
               
-              {/* Internal Col 1: Bio */}
-              <div className="space-y-4">
+              {/* Internal Col 1: Bio & Philosophy */}
+              <div className="space-y-6">
                 <div className="relative">
-                  <Quote className="absolute -top-4 -left-4 w-10 h-10 text-slate-100 -z-10" />
-                  <p className="text-lg text-slate-700 font-medium leading-relaxed italic">
-                    "Education is the formation of character and competence. We build foundations for the leaders of tomorrow."
+                  <Quote className="absolute -top-6 -left-6 w-12 h-12 text-slate-100 -z-10" />
+                  <p className="text-xl text-slate-700 font-bold leading-relaxed italic">
+                    "Chess is the gymnasium of the mind. We don't just teach moves; we cultivate strategic vision for life."
                   </p>
                 </div>
-                <p className="text-slate-500 text-sm md:text-base leading-relaxed">
-                  A visionary academician with over <strong>20 years</strong> of experience. Dr. Rajesh (M.Tech, Ph.D) is a renowned researcher whose work is featured in SCI and SCOPUS indexed publications, with a mission to nurture a lifelong love for learning.
+                <p className="text-slate-500 text-base md:text-lg leading-relaxed font-medium">
+                  A globally recognized mentor with over <strong>25 years</strong> of professional coaching experience. 
+                  As a certified <strong>FIDE Instructor</strong>, Ravindra Raju has shaped thousands of young minds, 
+                  producing national champions and top-tier strategic thinkers across the globe.
                 </p>
-                <div className="flex flex-wrap gap-2 pt-2">
-                  <span className="px-3 py-1.5 rounded-lg bg-slate-900 text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-2">
-                    <GraduationCap className="w-3.5 h-3.5 text-amber-400" /> M.Tech, Ph.D
-                  </span>
-                  <span className="px-3 py-1.5 rounded-lg bg-amber-500 text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-amber-200/50">
-                    <Trophy className="w-3.5 h-3.5" /> Best Teacher Awardee
-                  </span>
+                
+                <div className="flex flex-wrap gap-3 pt-4">
+                  <div className="px-4 py-2 rounded-xl bg-[#01539D] text-white text-[11px] font-black uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-blue-100">
+                    <GraduationCap className="w-4 h-4" /> FIDE Instructor
+                  </div>
+                  <div className="px-4 py-2 rounded-xl bg-[#46B94A] text-white text-[11px] font-black uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-green-100">
+                    <Globe className="w-4 h-4" /> International Coach
+                  </div>
                 </div>
               </div>
 
-              {/* Internal Col 2: Credentials Grid (Moves facts horizontally) */}
-              <div className="bg-slate-50 p-6 md:p-8 rounded-[2rem] border border-slate-100 flex flex-col justify-center">
-                <div className="grid grid-cols-1 gap-4">
+              {/* Internal Col 2: Credentials Grid */}
+              <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 flex flex-col justify-center">
+                <div className="grid grid-cols-1 gap-6">
                   {[
-                    { icon: <BookOpen />, title: "20+ Years", desc: "Teaching & Leadership" },
-                    { icon: <Star />, title: "150+ Lectures", desc: "Invited Guest Speaker" },
-                    { icon: <Award />, title: "500+ Initiatives", desc: "Community Focused" },
-                    { icon: <CheckCircle2 />, title: "SCI Researcher", desc: "IIT & NIT Presentations" }
+                    { icon: <Trophy />, title: "25+ Years", desc: "Global Mentorship Experience", color: "text-[#01539D]" },
+                    { icon: <ShieldCheck />, title: "FIDE Certified", desc: "World Chess Federation Instructor", color: "text-[#46B94A]" },
+                    { icon: <Globe />, title: "5000+ Students", desc: "Trained Internationally", color: "text-[#01539D]" },
+                    { icon: <CheckCircle2 />, title: "Professional Strategy", desc: "Logic & Cognitive Development", color: "text-[#46B94A]" }
                   ].map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-4 group">
-                      <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-amber-600 shadow-sm border border-slate-100 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300">
-                        {React.cloneElement(item.icon as React.ReactElement, { size: 18 })}
+                    <div key={idx} className="flex items-center gap-5 group">
+                      <div className={`w-12 h-12 rounded-2xl bg-white flex items-center justify-center ${item.color} shadow-sm border border-slate-100 group-hover:scale-110 transition-transform duration-300`}>
+                        {React.cloneElement(item.icon as React.ReactElement, { size: 22, strokeWidth: 2.5 })}
                       </div>
                       <div>
-                        <h4 className="font-bold text-slate-900 text-sm">{item.title}</h4>
-                        <p className="text-xs text-slate-500">{item.desc}</p>
+                        <h4 className="font-black text-slate-900 text-sm md:text-base">{item.title}</h4>
+                        <p className="text-xs md:text-sm text-slate-500 font-medium">{item.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -107,19 +111,19 @@ const FounderSection: React.FC = () => {
 
             </div>
 
-            {/* Bottom Stats Ribbon (Full Width within content area) */}
-            <div className="mt-8 pt-8 border-t border-slate-100 flex flex-wrap gap-8 md:gap-16">
+            {/* Bottom Stats Ribbon */}
+            <div className="mt-12 pt-10 border-t border-slate-100 flex flex-wrap gap-10 md:gap-20 justify-center lg:justify-start">
               <div className="flex flex-col">
-                <span className="text-2xl font-black text-slate-900">20+</span>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Experience</span>
+                <span className="text-3xl font-black text-[#01539D]">25+</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Years of Excellence</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-2xl font-black text-slate-900">SCI</span>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Research</span>
+                <span className="text-3xl font-black text-[#46B94A]">FI</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">FIDE Designation</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-2xl font-black text-slate-900">JNTUH</span>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Alumni</span>
+                <span className="text-3xl font-black text-[#01539D]">50+</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Titles Produced</span>
               </div>
             </div>
           </div>
@@ -130,4 +134,4 @@ const FounderSection: React.FC = () => {
   );
 };
 
-export default FounderSection; 
+export default FounderSection;

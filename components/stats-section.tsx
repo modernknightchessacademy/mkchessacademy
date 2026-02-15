@@ -14,7 +14,7 @@ const faqData = [
   },
   {
     question: "Are the programs available online or only at the campus?",
-    answer: "We offer a hybrid approach. While our Bhavanipuram campus provides a great collaborative environment, we also offer high-quality interactive online sessions for students who prefer learning from home.",
+    answer: "We offer a hybrid approach. While our campus provides a great collaborative environment, we also offer high-quality interactive online sessions for students who prefer learning from home.",
   },
   {
     question: "How do you track a student's progress?",

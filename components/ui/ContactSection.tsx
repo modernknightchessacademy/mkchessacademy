@@ -114,7 +114,7 @@ const ContactSection: React.FC = () => {
 
                <div className="mt-16 pt-8 border-t border-white/10 relative z-10">
                   <p className="text-xs font-bold uppercase tracking-[0.3em] opacity-50 mb-4 text-white">Our Location</p>
-                  <p className="text-sm font-medium leading-relaxed">Bhavanipuram, Vijayawada, Andhra Pradesh</p>
+                  <p className="text-sm font-medium leading-relaxed">Nanakramguda, Hyderabad, Telangana</p>
                </div>
             </div>
           </div>

@@ -10,9 +10,9 @@ import Providers from "@/components/providers"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Future Mind Skills – Complete Learning Center for Children in Bhavanipuram, Vijayawada",
+  title: "Future Mind Skills – Complete Learning Center for Children",
   description:
-    "Future Mind Skills Learning Hub in Bhavanipuram, Vijayawada offers Pre Primary School, Chess Academy, Robotics Center, Abacus training and Tuition for children. One campus for complete child development.",
+    "Future Mind Skills Learning Hub offers Pre Primary School, Chess Academy, Robotics Center, Abacus training and Tuition for children. One campus for complete child development.",
 }
 
 export default function RootLayout({

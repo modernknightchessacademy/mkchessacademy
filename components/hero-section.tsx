@@ -70,7 +70,7 @@ const Hero: React.FC = () => {
             {/* Main Image Container */}
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-8 border-white">
               <img
-                src="https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=1000&auto=format&fit=crop" // Replace with a photo of a child learning/playing chess
+                src="/hero.jpg" // Replace with a photo of a child learning/playing chess
                 alt="Child Learning Future Skills"
                 className="w-full h-auto object-cover aspect-[4/5] lg:aspect-square"
               />

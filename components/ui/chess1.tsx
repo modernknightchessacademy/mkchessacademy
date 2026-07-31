@@ -73,7 +73,7 @@ export default function BenefitsSection() {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 border border-amber-100 text-amber-700 font-black text-[10px] md:text-xs uppercase tracking-widest mb-4 shadow-sm"
           >
             <Sparkles size={14} className="fill-amber-500" /> 
-            The Future Mind Skills Edge
+            The Modern Knight Chess Academy Edge
           </motion.div>
           
           <motion.h2 

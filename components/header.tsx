@@ -1,21 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-
-/* -------------------------------------------------------------------------- */
-/*                               INTERNAL ICONS                               */
-/* -------------------------------------------------------------------------- */
-const ChevronDown = ({ className }: { className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    fill="none" 
-    viewBox="0 0 24 24" 
-    strokeWidth={2} 
-    stroke="currentColor" 
-    className={className}
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-  </svg>
-);
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ModernKnightLogo } from "@/components/logo";
 
 const MenuIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className={className}>
@@ -29,30 +16,19 @@ const XIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-/* -------------------------------------------------------------------------- */
-/*                                MAIN COMPONENT                              */
-/* -------------------------------------------------------------------------- */
-
-interface SubMenuItem {
+interface NavItem {
   name: string;
   href: string;
 }
 
-interface NavItem {
-  name: string;
-  href?: string;
-  hasDropdown?: boolean;
-  subMenu?: SubMenuItem[];
-}
-
 const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [mobileSubMenuOpen, setMobileSubMenuOpen] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
+      if (window.scrollY > 20) {
         setScrolled(true);
       } else {
         setScrolled(false);
@@ -65,178 +41,148 @@ const Header: React.FC = () => {
   const navItems: NavItem[] = [
     { name: "Home", href: "/" },
     { name: "About Us", href: "/about" },
-    {
-      name: "Programs",
-      hasDropdown: true,
-      subMenu: [
-        { name: "Chess Coaching", href: "/chess" },
-        { name: "Memory Mastery", href: "/memory" },
-        { name: "Logical Reasoning", href: "/logic" },
-        { name: "Coding & AI", href: "/coding" },
-        { name: "Communication Skills", href: "/communication" },
-        { name: "Problem Solving", href: "/problem-solving" },
-      ],
-    },
+    { name: "Courses", href: "/courses" },
+    { name: "Coaches", href: "/coaches" },
+    { name: "Achievements", href: "/achievements" },
     { name: "Gallery", href: "/gallery" },
-    { name: "Contact", href: "/contact" },
+    { name: "Blogs", href: "/blogs" },
+    { name: "Contact Us", href: "/contact" },
   ];
 
   return (
     <>
-      {/* Spacer to prevent layout jump when header becomes fixed */}
-      <div className="h-20 lg:h-24 invisible" />
+      {/* Top Spacer */}
+      <div className="h-24 lg:h-21 invisible" />
 
+      {/* Main Header Container */}
       <header
         className={`w-full fixed top-0 left-0 z-[100] transition-all duration-300 ease-in-out ${
-          scrolled 
-            ? "bg-white/95 backdrop-blur-md shadow-md h-16 md:h-20" 
-            : "bg-white h-20 md:h-24"
+          scrolled ? "pt-3 px-4 md:px-8" : "bg-white border-b border-slate-100 py-3"
         }`}
       >
-        <div className="max-w-7xl mx-auto h-full px-4 md:px-8 flex items-center justify-between">
-          
+        <div
+          className={`mx-auto transition-all duration-300 flex items-center justify-between ${
+            scrolled
+              ? "max-w-8xl bg-slate-200/90 backdrop-blur-xl border border-white/60 shadow-2xl rounded-full px-6 py-2.5"
+              : "max-w-8xl px-6 md:px-8"
+          }`}
+        >
           {/* Logo Section */}
-          <a href="/" className="flex items-center gap-2 group shrink-0">
-            <div className="relative overflow-hidden">
-              <img
-                src="/future.png"
-                alt="Future Mind Skills Academy"
-                className={`transition-all duration-300 object-contain ${
-                    scrolled ? "w-50 h-10 md:w-60 md:h-12" : "w-52 h-auto md:w-66 md:h-16"
-                }`}
-              />
-            </div>
-          </a>
+          <Link href="/" className="flex items-center gap-2 group shrink-0">
+            <ModernKnightLogo size={scrolled ? "sm" : "md"} />
+          </Link>
 
-          {/* Desktop Nav - Centered */}
-          <nav className="hidden lg:flex items-center gap-6 xl:gap-10 h-full">
-            {navItems.map((item) => (
-              <div key={item.name} className="relative group h-full flex items-center">
-                {item.hasDropdown ? (
-                  <button className="flex items-center gap-1.5 text-[15px] font-bold text-slate-700 group-hover:text-[#01539D] transition-colors">
-                    {item.name}
-                    <ChevronDown className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:rotate-180 transition-all duration-300" />
-                  </button>
-                ) : (
-                  <a
-                    href={item.href}
-                    className="text-[15px] font-bold text-slate-700 hover:text-[#01539D] transition-colors"
-                  >
-                    {item.name}
-                  </a>
-                )}
-
-                {/* Dropdown Menu */}
-                {item.hasDropdown && (
-                  <div className="absolute top-[80%] left-1/2 -translate-x-1/2 pt-4 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50">
-                    <div className="bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden">
-                      <div className="h-1.5 w-full bg-gradient-to-r from-[#01539D] to-[#46B94A]" />
-                      {item.subMenu?.map((sub) => (
-                        <a
-                          key={sub.name}
-                          href={sub.href}
-                          className="block px-6 py-3.5 text-sm font-semibold text-slate-600 hover:text-[#01539D] hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0"
-                        >
-                          {sub.name}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
+          {/* Desktop Navigation - Balanced Perfectly Proportionate Text (14px) */}
+          <nav
+            className={`hidden xl:flex items-center transition-all duration-300 ${
+              scrolled
+                ? "bg-white/90 backdrop-blur-md rounded-full px-3 py-1 border border-slate-300/60 shadow-inner gap-1"
+                : "gap-6"
+            }`}
+          >
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`transition-all text-[14px] font-extrabold ${
+                    scrolled
+                      ? isActive
+                        ? "bg-white text-[#0B4398] rounded-full px-4 py-1.5 shadow-md border border-slate-200"
+                        : "text-slate-700 hover:text-[#0B4398] px-3.5 py-1.5 hover:bg-slate-100/80 rounded-full"
+                      : isActive
+                      ? "text-[#0B4398] font-black border-b-2 border-[#0B4398] pb-1"
+                      : "text-slate-700 hover:text-[#0B4398] py-1"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
           </nav>
 
-          {/* Action Button */}
-          <div className="flex items-center gap-4">
-            <a
-              href="/bookdemo"
-              className="hidden md:inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white transition-all duration-300 bg-[#01539D] rounded-full hover:bg-[#01427a] hover:shadow-lg active:scale-95"
+          {/* Right Action Buttons */}
+          <div className="hidden md:flex items-center gap-2.5">
+            <Link
+              href="/student"
+              className="text-xs font-extrabold px-3.5 py-2 rounded-full bg-white text-slate-800 hover:bg-[#0B4398] hover:text-white transition-all flex items-center gap-1 border border-slate-200 shadow-sm"
             >
-              Enroll Now
-            </a>
+              <span>♟</span> Student Portal
+            </Link>
 
+            <Link
+              href="/admin"
+              className="text-xs font-extrabold px-3.5 py-2 rounded-full bg-white text-slate-800 hover:bg-slate-900 hover:text-white transition-all flex items-center gap-1 border border-slate-200 shadow-sm"
+            >
+              <span>⚙️</span> Admin
+            </Link>
+
+            <Link
+              href="/bookdemo"
+              className="text-xs font-black px-5 py-2.5 rounded-full bg-[#0B4398] hover:bg-blue-900 text-white shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+            >
+              <span>👑</span> Book Trial Class
+            </Link>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <div className="xl:hidden flex items-center gap-2">
+            <Link
+              href="/bookdemo"
+              className="text-xs font-bold px-3.5 py-1.5 rounded-full bg-[#0B4398] text-white"
+            >
+              Book Demo
+            </Link>
             <button
-              onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden p-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 rounded-full text-slate-700 hover:bg-slate-200/60"
               aria-label="Toggle menu"
             >
-              <MenuIcon className="w-7 h-7" />
+              {isMobileMenuOpen ? <XIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
             </button>
           </div>
         </div>
-      </header>
 
-      {/* Mobile Menu Overlay */}
-      <div 
-        className={`fixed inset-0 z-[200] lg:hidden transition-opacity duration-300 ${
-          isMobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
-        }`}
-      >
-        <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
-        
-        <div className={`absolute top-0 right-0 h-full w-[85%] max-w-[350px] bg-white shadow-2xl transition-transform duration-500 ease-in-out flex flex-col ${
-          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}>
-          
-          <div className="p-5 flex items-center justify-between border-b border-slate-100">
-            <div className="flex items-center gap-2">
-                <span className="font-bold text-[#01539D]">Menu</span>
-            </div>
-            <button 
-                onClick={() => setIsMobileMenuOpen(false)} 
-                className="p-2 bg-slate-100 rounded-full text-slate-500 hover:bg-red-50 hover:text-red-500 transition-colors"
-            >
-              <XIcon className="w-6 h-6" />
-            </button>
-          </div>
-
-          <div className="flex-1 overflow-y-auto py-4 px-6">
-            <nav className="flex flex-col gap-2">
+        {/* Mobile Navigation Drawer */}
+        {isMobileMenuOpen && (
+          <div className="xl:hidden mt-2 bg-white/95 backdrop-blur-xl border border-slate-200 rounded-3xl px-6 py-6 space-y-3 shadow-2xl max-w-lg mx-auto max-h-[80vh] overflow-y-auto">
+            <div className="flex flex-col space-y-2">
               {navItems.map((item) => (
-                <div key={item.name} className="py-2">
-                  {item.hasDropdown ? (
-                    <>
-                      <button
-                        onClick={() => setMobileSubMenuOpen(mobileSubMenuOpen === item.name ? null : item.name)}
-                        className="flex items-center justify-between w-full text-left font-bold text-slate-700 py-2"
-                      >
-                        {item.name}
-                        <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${mobileSubMenuOpen === item.name ? "rotate-180 text-[#01539D]" : "text-slate-400"}`} />
-                      </button>
-                      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                        mobileSubMenuOpen === item.name ? "max-h-[400px] opacity-100 mt-2" : "max-h-0 opacity-0"
-                      }`}>
-                        <div className="pl-4 space-y-1 border-l-2 border-[#46B94A]/30">
-                          {item.subMenu?.map((sub) => (
-                            <a 
-                                key={sub.name} 
-                                href={sub.href} 
-                                className="block py-2.5 px-3 text-sm font-semibold text-slate-600 hover:text-[#01539D] hover:bg-slate-50 rounded-lg transition-colors"
-                            >
-                              {sub.name}
-                            </a>
-                          ))}
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <a href={item.href} className="block py-2 font-bold text-slate-700 hover:text-[#01539D]">
-                      {item.name}
-                    </a>
-                  )}
-                </div>
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-sm font-bold text-slate-800 hover:text-[#0B4398] py-2 border-b border-slate-100"
+                >
+                  {item.name}
+                </Link>
               ))}
-            </nav>
+              <Link
+                href="/bookdemo"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-sm font-bold text-[#E11D48] py-2 border-b border-slate-100 flex items-center gap-2"
+              >
+                👑 Book Trial Class
+              </Link>
+              <Link
+                href="/student"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-sm font-bold text-[#0B4398] py-2 border-b border-slate-100 flex items-center gap-2"
+              >
+                ♟ Student Portal
+              </Link>
+              <Link
+                href="/admin"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-sm font-bold text-slate-700 py-2 flex items-center gap-2"
+              >
+                ⚙️ Admin Panel
+              </Link>
+            </div>
           </div>
-
-          <div className="p-6 border-t border-slate-100">
-            <a href="/bookdemo" className="block w-full py-4 text-center text-white bg-[#01539D] font-bold rounded-xl shadow-lg hover:bg-[#01427a] transition-colors">
-              Get Started Today
-            </a>
-          </div>
-        </div>
-      </div>
+        )}
+      </header>
     </>
   );
 };

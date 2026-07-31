@@ -105,7 +105,7 @@ export default function WinnersSection() {
             <span className="text-[#5C4EE5] font-semibold text-sm">Achievements</span>
           </div>
           <h2 className="text-3xl md:text-5xl font-extrabold text-[#0F172A]">
-            Winners At  Future Mind Skills
+            Winners At Modern Knight Chess Academy
           </h2>
         </div>
 

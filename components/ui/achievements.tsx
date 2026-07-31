@@ -80,7 +80,7 @@ export default function AchievementsSection() {
             </h2>
             <p className="mt-4 text-slate-600 text-lg leading-relaxed border-l-4 border-amber-500 pl-4">
               We don't just teach; we transform potential into performance. 
-              Our track record speaks for the quality of education at Future Mind Skills.
+              Our track record speaks for the quality of education at Modern Knight Chess Academy.
             </p>
           </div>
 

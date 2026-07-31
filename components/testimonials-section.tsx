@@ -1,138 +1,146 @@
 "use client";
-
 import React from "react";
-import { Star, Quote, Users, ArrowRight } from "lucide-react";
-import Link from "next/link";
 
-const testimonials = [
-  {
-    id: 1,
-    name: "Sarah Jenkins",
-    role: "Parent of Grade 4 Student",
-    text: "The coding and logic programs have completely changed how my son approaches problems. He's more patient, analytical, and excited about technology than ever before.",
-    rating: 5,
-    initials: "SJ",
-    gradient: "from-[#01539D]/20 to-[#01539D]/5"
-  },
-  {
-    id: 2,
-    name: "David Chen",
-    role: "Parent of Grade 2 Student",
-    text: "Since joining the memory and abacus classes, her concentration levels in school have skyrocketed. The trainers are incredibly patient and know how to keep kids engaged.",
-    rating: 5,
-    initials: "DC",
-    gradient: "from-[#46B94A]/20 to-[#46B94A]/5"
-  },
-  {
-    id: 3,
-    name: "Robert Wilson",
-    role: "Parent of Grade 6 Student",
-    text: "The strategic thinking taught in the chess program has translated into better decision-making in his daily life. It's the best investment we've made in his extracurriculars.",
-    rating: 5,
-    initials: "RW",
-    gradient: "from-[#01539D]/20 to-[#01539D]/5"
-  },
-  {
-    id: 4,
-    name: "Elena Rodriguez",
-    role: "Mother of 7-year-old",
-    text: "The communication skills workshops gave my daughter the confidence to speak up in class. She’s no longer shy about sharing her ideas or leading a group project.",
-    rating: 5,
-    initials: "ER",
-    gradient: "from-[#46B94A]/20 to-[#46B94A]/5"
-  },
-];
+export const TestimonialsSection: React.FC = () => {
+  const testimonials = [
+    {
+      name: "Arjun Mehta",
+      role: "Parent of U-12 Student",
+      quote:
+        "The coaching here is exceptional! My son has improved not just in chess, but in confidence and concentration as well.",
+      rating: 5,
+      image: "/avatar1.jpg",
+      borderColor: "border-b-[6px] border-[#E11D48]",
+      arrowColor: "border-t-[#E11D48]",
+      roleColor: "text-[#E11D48]",
+    },
+    {
+      name: "Vihaan Kapoor",
+      role: "U-14 State Champion",
+      quote:
+        "I've learned strategies that helped me win my first national tournament. Grateful to my coach for believing in me!",
+      rating: 5,
+      image: "/avatar2.png",
+      borderColor: "border-b-[6px] border-[#0B4398]",
+      arrowColor: "border-t-[#0B4398]",
+      roleColor: "text-[#0B4398]",
+    },
+    {
+      name: "Rahul Sharma",
+      role: "Parent of U-16 Student",
+      quote:
+        "Professional approach, personal attention and regular tournaments — the perfect place for any chess enthusiast.",
+      rating: 5,
+      image: "/avatar3.jpeg",
+      borderColor: "border-b-[6px] border-[#E11D48]",
+      arrowColor: "border-t-[#E11D48]",
+      roleColor: "text-[#E11D48]",
+    },
+  ];
 
-export default function TestimonialsSection() {
   return (
-    <section className="relative py-16 md:py-24 bg-white overflow-hidden">
-      
-      {/* --- Subtle Background Elements --- */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none">
-        <div className="absolute top-10 right-10 w-64 h-64 rounded-full bg-[#01539D] blur-3xl" />
-        <div className="absolute bottom-10 left-10 w-64 h-64 rounded-full bg-[#46B94A] blur-3xl" />
-      </div>
+    <section className="py-28 bg-gradient-to-b from-white via-slate-50/50 to-white text-slate-900 relative overflow-hidden">
+      {/* Background Glows */}
+      <div className="absolute top-1/3 left-0 w-96 h-96 bg-blue-50/30 rounded-full blur-3xl -z-10" />
+      <div className="absolute bottom-1/3 right-0 w-96 h-96 bg-rose-50/30 rounded-full blur-3xl -z-10" />
 
-      <div className="container mx-auto px-4 sm:px-6 max-w-6xl relative z-10">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
         
-        {/* --- Centered Header --- */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-50 border border-slate-100 text-slate-500 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-6">
-            <Users className="w-3.5 h-3.5 text-[#01539D]" />
-            <span>The FutureMind Experience</span>
-          </div>
-          <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-6 leading-tight">
-            Loved by Parents, <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#01539D] to-[#46B94A]">
-              Empowering Students
-            </span>
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-24 space-y-4">
+          <span className="text-[#E11D48] text-xs font-black uppercase tracking-widest px-4 py-1.5 bg-rose-50 rounded-full border border-rose-100 inline-block">
+            Student & Parent Reviews
+          </span>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
+            Voices of Our <span className="bg-gradient-to-r from-[#0B4398] to-[#E11D48] bg-clip-text text-transparent italic font-serif">Chess Family</span>
           </h2>
-          <div className="h-1.5 w-20 bg-gradient-to-r from-[#01539D] to-[#46B94A] mx-auto rounded-full"></div>
+          <p className="text-slate-600 text-base md:text-lg font-light max-w-2xl mx-auto">
+            Real stories from real students and parents who are part of our journey of growth, learning and success.
+          </p>
         </div>
 
-        {/* --- Grid Layout --- */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-          {testimonials.map((item) => (
-            <div 
-              key={item.id} 
-              className="relative bg-white p-8 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/20 hover:shadow-2xl hover:shadow-[#01539D]/5 transition-all duration-500 group"
-            >
-              
-              {/* Decorative Quote Icon */}
-              <div className="absolute top-8 right-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                <Quote size={50} className="fill-[#01539D] text-[#01539D]" />
-              </div>
+        {/* Section Body Split */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-0 items-stretch">
+          
+          {/* Left Column - Quote / Slogan & Chess King Image */}
+          <div className="lg:col-span-3 flex flex-col justify-between space-y-8 text-center lg:text-left items-center lg:items-start border-r border-slate-100 pr-0 lg:pr-8">
+            <div className="space-y-4 flex flex-col items-center lg:items-start">
+              <span className="text-[#E11D48] text-7xl font-serif font-black leading-none select-none">“</span>
+              <h3 className="text-xl md:text-2xl font-black text-slate-900 leading-tight tracking-tight max-w-xs">
+                More than a game, it's a transformation <span className="text-[#0B4398]">we build together.</span>
+              </h3>
+              <div className="w-14 h-1.5 bg-[#E11D48] rounded-full mt-2" />
+            </div>
 
-              {/* Stars */}
-              <div className="flex gap-1 mb-6">
-                {[...Array(item.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-[#46B94A] fill-[#46B94A]" />
-                ))}
-              </div>
+            {/* Chess Review Side Graphic with mix-blend-multiply to blend background */}
+            <div className="relative max-w-[160px] sm:max-w-[200px] select-none hover:scale-105 transition-transform duration-300 mt-auto pt-6">
+              <img
+                src="/chess-review-side.png"
+                alt="Chess King Graphic"
+                className="w-full h-auto object-contain mix-blend-multiply"
+              />
+            </div>
+          </div>
 
-              {/* Review Text */}
-              <p className="text-slate-600 text-base md:text-lg leading-relaxed mb-8 font-medium italic">
-                "{item.text}"
-              </p>
+          {/* Right Column - Horizontal Row of Testimonial Cards */}
+          <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+            {testimonials.map((t, idx) => (
+              <div
+                key={idx}
+                className={`bg-white rounded-[2rem] p-8 shadow-[0_15px_35px_rgba(11,67,152,0.03)] hover:shadow-[0_25px_50px_rgba(11,67,152,0.08)] border border-slate-100/80 hover:border-slate-200 transition-all duration-300 flex flex-col justify-between relative ${t.borderColor} group h-full min-h-[400px] md:min-h-[440px]`}
+              >
+                {/* Arrowhead point shape at bottom center of the card */}
+                <div className={`absolute bottom-[-10px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] ${t.arrowColor} z-20`} />
 
-              {/* Author Section */}
-              <div className="flex items-center gap-4 pt-6 border-t border-slate-50">
-                {/* Initials Avatar */}
-                <div className={`w-12 h-12 rounded-2xl shrink-0 bg-gradient-to-br ${item.gradient} flex items-center justify-center text-[#01539D] font-black text-lg shadow-sm border border-white`}>
-                  {item.initials}
-                </div>
-                
-                <div className="min-w-0">
-                  <h4 className="text-slate-900 font-bold text-base">
-                    {item.name}
-                  </h4>
-                  <p className="text-slate-400 text-sm font-semibold">
-                    {item.role}
+                <div className="space-y-6">
+                  {/* Card Header (Quote symbol & Stars) */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-5xl font-serif font-black text-[#E11D48] leading-none select-none">“</span>
+                    
+                    {/* Stars Rating */}
+                    <div className="flex items-center gap-1 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100">
+                      <div className="flex items-center text-amber-500 text-[11px] gap-0.5">
+                        {"★".repeat(t.rating)}
+                      </div>
+                      <span className="text-[10px] font-black text-slate-500 ml-1">5.0</span>
+                    </div>
+                  </div>
+
+                  {/* Testimonial Quote - Larger, higher contrast text */}
+                  <p className="text-slate-800 text-base md:text-[16px] lg:text-[17px] font-semibold leading-relaxed">
+                    "{t.quote}"
                   </p>
                 </div>
+
+                {/* Card Footer (Student/Parent Profile details) */}
+                <div className="mt-8 pt-6 border-t border-slate-100 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-100 bg-slate-50 shadow-inner shrink-0">
+                    <img
+                      src={t.image}
+                      alt={t.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-extrabold text-slate-900 text-base leading-snug group-hover:text-[#0B4398] transition-colors truncate">
+                      {t.name}
+                    </span>
+                    <span className={`text-[10px] font-black uppercase tracking-wider mt-0.5 ${t.roleColor} truncate`}>
+                      {t.role}
+                    </span>
+                  </div>
+                </div>
+
               </div>
-
-            </div>
-          ))}
-        </div>
-
-        {/* --- Centered Footer Action --- */}
-        <div className="mt-20 text-center">
-          <Link 
-            href="/bookdemo"
-            className="group inline-flex items-center gap-4 bg-[#01539D] hover:bg-[#01427a] text-white px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 shadow-xl shadow-blue-200 active:scale-95"
-          >
-            Join the Academy
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-          </Link>
-          <div className="mt-8 flex items-center justify-center gap-2">
-            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.3em]">
-              Trusted by 500+ Families
-            </span>
+            ))}
           </div>
+
         </div>
 
       </div>
     </section>
   );
-}
+};
+
+export default TestimonialsSection;

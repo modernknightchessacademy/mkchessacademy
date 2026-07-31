@@ -25,8 +25,8 @@ export default function PrimaryCTA() {
           </h2>
           
           <p className="text-slate-500 font-bold text-base md:text-xl max-w-2xl mx-auto mb-10 md:mb-12">
-            Step inside Future Mind Skills and witness the joy of learning. Witness the premium 
-            infrastructure designed for your child's growth.
+            Step inside Modern Knight Chess Academy and witness the joy of grandmaster learning. Witness the premium 
+            infrastructure designed for your child's tactical growth.
           </p>
 
           {/* Video Container - Optimized for Silent Autoplay */}

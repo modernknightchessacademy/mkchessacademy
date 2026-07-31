@@ -1,215 +1,243 @@
 "use client";
-
 import React, { useState } from "react";
-import { 
-  CheckCircle2, 
-  ArrowRight, 
-  Sparkles,
-  Zap,
-  Target,
-  Brain,
-  MessageSquare,
-  Cpu,
-  Loader2,
-  Trophy
-} from "lucide-react";
+import Link from "next/link";
+import SubpageBanner from "@/components/ui/SubpageBanner";
 
 export default function BookDemoPage() {
-  const [formData, setFormData] = useState({
-    studentName: "",
-    parentName: "",
-    email: "",
-    phone: "",
-    age: "",
-    course: "Chess Coaching",
-    experience: "beginner",
-  });
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(null);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus(null);
-
-    try {
-      const response = await fetch("/api/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        setSubmitStatus("success");
-        setFormData({
-          studentName: "",
-          parentName: "",
-          email: "",
-          phone: "",
-          age: "",
-          course: "Chess Coaching",
-          experience: "beginner",
-        });
-        setTimeout(() => setSubmitStatus(null), 5000);
-      } else {
-        setSubmitStatus("error");
-      }
-    } catch (error) {
-      setSubmitStatus("error");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const [submitted, setSubmitted] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white font-sans selection:bg-blue-100">
-      
-      {/* --- HERO & FORM SECTION --- */}
-      <section className="relative pt-16 pb-24 lg:pt-0 lg:pb-40 overflow-hidden">
-        {/* Background Decor */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#46B94A]/5 rounded-full blur-[120px] -z-10 translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#01539D]/5 rounded-full blur-[120px] -z-10 -translate-x-1/2 translate-y-1/2" />
+    <div className="min-h-screen bg-[#F5F5FA]">
+      {/* Banner */}
+      <SubpageBanner
+        title="Free"
+        highlight="Trial Slot."
+        subtitle="Book your 45-minute 1-on-1 strategic assessment and trial class today."
+        breadcrumbLabel="Book Demo"
+        bgImage="/demo.png"
+        widgetLeft1Icon="UserCheck"
+        widgetLeft1Label="Class Format"
+        widgetLeft1Value="45-Min 1-on-1 Session"
+        widgetLeft2Icon="Target"
+        widgetLeft2Label="Assessment"
+        widgetLeft2Value="Chess Strength Score"
+        widgetRightIcon="Sparkles"
+        widgetRightLabel="Cost"
+        widgetRightValue="₹0 Registration Fee"
+      />
 
-        <div className="container mx-auto px-4 max-w-7xl relative z-10">
-          <div className="flex flex-col lg:flex-row gap-16 items-center">
-            
-            {/* LEFT: CONTENT SIDE */}
-            <div className="flex-1 space-y-10">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100">
-                <Sparkles className="w-4 h-4 text-[#46B94A]" />
-                <span className="text-[10px] md:text-xs font-black text-[#01539D] uppercase tracking-widest">
-                  Experience Global Standards
-                </span>
-              </div>
-              
-              <h1 className="text-4xl md:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight">
-                Unlock Your Child's <br />
-                <span className="text-[#01539D]">Cognitive</span> <span className="text-[#46B94A]">Potential</span>
-              </h1>
-              
-              <p className="text-lg md:text-xl text-slate-600 max-w-xl leading-relaxed font-medium">
-                Book a <strong className="text-slate-900 underline decoration-[#46B94A] decoration-4 underline-offset-4">free 30-minute demo</strong> session. 
-                Experience our professional trainers and specialized curriculum in Chess, Coding, and Logic.
-              </p>
-              
-              {/* Features Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
-                 {[
-                   { icon: <Target className="w-5 h-5 text-[#01539D]" />, title: "Skill Assessment", desc: "Detailed mapping of child's strengths." },
-                   { icon: <Zap className="w-5 h-5 text-[#46B94A]" />, title: "Live Interaction", desc: "Real-time learning with experts." },
-                   { icon: <Brain className="w-5 h-5 text-[#01539D]" />, title: "Logic Roadmap", desc: "Customized future learning plan." },
-                   { icon: <MessageSquare className="w-5 h-5 text-[#46B94A]" />, title: "Counseling", desc: "1-on-1 session with our team." },
-                 ].map((item, i) => (
-                   <div key={i} className="flex gap-4">
-                      <div className="shrink-0">{item.icon}</div>
-                      <div>
-                        <h4 className="font-black text-slate-900 text-sm mb-1">{item.title}</h4>
-                        <p className="text-xs text-slate-400 font-medium leading-relaxed">{item.desc}</p>
-                      </div>
-                   </div>
-                 ))}
-              </div>
+      {/* Main Split Container: Left Contact Details & Right Form */}
+      <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+          
+          {/* ── LEFT COLUMN: Contact Details & Academy Info ── */}
+          <div className="lg:col-span-5 bg-gradient-to-br from-[#041C32] via-[#0B4398] to-[#041C32] text-white p-8 md:p-12 flex flex-col justify-between relative overflow-hidden">
+            {/* Background Glows & Knight Watermark */}
+            <div className="absolute -left-16 -top-16 w-64 h-64 rounded-full bg-[#0B4398]/50 blur-3xl pointer-events-none" />
+            <div className="absolute -right-16 -bottom-16 w-64 h-64 rounded-full bg-[#E11D48]/30 blur-3xl pointer-events-none" />
+            <div className="absolute right-4 bottom-4 text-[180px] text-white/[0.04] font-black select-none pointer-events-none leading-none">
+              ♞
             </div>
 
-            {/* RIGHT: FORM SIDE */}
-            <div className="w-full lg:w-[480px]">
-              <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-[#01539D]/10 border border-slate-50 p-8 md:p-10 relative">
-                
-                {/* Header within form */}
-                <div className="text-center mb-8">
-                   <h3 className="text-2xl md:text-3xl font-black text-slate-900 mb-2">Request Demo</h3>
-                   <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Admissions Open 2024</p>
-                </div>
+            <div className="relative z-10 space-y-6">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-[10px] font-black uppercase tracking-widest">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                Free 45-Min Evaluation
+              </div>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="space-y-4">
-                    <input type="text" name="studentName" value={formData.studentName} onChange={handleChange} required placeholder="Child's Full Name" className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:bg-white focus:border-[#01539D] transition-all outline-none" />
-                    <input type="text" name="parentName" value={formData.parentName} onChange={handleChange} required placeholder="Parent/Guardian Name" className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:bg-white focus:border-[#01539D] transition-all outline-none" />
-                    <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="Email Address" className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:bg-white focus:border-[#01539D] transition-all outline-none" />
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder="Phone Number" className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:bg-white focus:border-[#01539D] transition-all outline-none" />
-                      <input type="number" name="age" value={formData.age} onChange={handleChange} required placeholder="Age" className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:bg-white focus:border-[#01539D] transition-all outline-none" />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="relative group">
-                        <select name="course" value={formData.course} onChange={handleChange} className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-black text-slate-700 appearance-none cursor-pointer focus:bg-white focus:border-[#01539D] transition-all outline-none">
-                          <option value="Chess Coaching">Chess Coaching</option>
-                          <option value="Coding & AI">Coding & AI</option>
-                          <option value="Logical Reasoning">Logical Reasoning</option>
-                          <option value="Memory Mastery">Memory Mastery</option>
-                          <option value="Communication">Communication</option>
-                        </select>
-                      </div>
-                      <select name="experience" value={formData.experience} onChange={handleChange} className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-black text-slate-700 appearance-none cursor-pointer focus:bg-white focus:border-[#01539D] transition-all outline-none">
-                        <option value="beginner">Beginner</option>
-                        <option value="intermediate">Intermediate</option>
-                        <option value="advanced">Advanced</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Submission Status Alerts */}
-                  {submitStatus === "success" && (
-                    <div className="p-4 bg-green-50 text-[#46B94A] text-xs font-black rounded-xl flex items-center gap-3 animate-bounce">
-                      <CheckCircle2 className="w-5 h-5" /> ENQUIRY SENT! WE WILL CALL YOU SOON.
-                    </div>
-                  )}
-                  {submitStatus === "error" && (
-                    <div className="p-4 bg-red-50 text-red-600 text-xs font-black rounded-xl flex items-center gap-3">
-                      FAILED TO SEND. PLEASE TRY WHATSAPP.
-                    </div>
-                  )}
-
-                  <button 
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-[#01539D] hover:bg-[#01427a] text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-100 transition-all flex items-center justify-center gap-3 disabled:opacity-70 uppercase tracking-widest text-sm"
-                  >
-                    {isSubmitting ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : (
-                      <>Confirm Free Demo <ArrowRight className="w-5 h-5" /></>
-                    )}
-                  </button>
-                </form>
-
-                <p className="text-center mt-6 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                  Secure Enrollment • Trusted by 500+ Parents
+              <div>
+                <h2 className="text-3xl md:text-4xl font-black text-white leading-tight">
+                  Book Your Free <br />
+                  <span className="italic text-[#E11D48]">Demo Class.</span>
+                </h2>
+                <p className="text-blue-100 text-xs md:text-sm mt-3 leading-relaxed">
+                  Evaluate your child's chess level with our FIDE-certified coach. No payment or credit card required.
                 </p>
               </div>
+
+              {/* Contact Details List */}
+              <div className="space-y-5 text-xs pt-4 border-t border-white/10">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-xl shrink-0">
+                    📍
+                  </div>
+                  <div>
+                    <p className="font-black text-white text-sm">Academy Center</p>
+                    <p className="text-slate-300 text-xs leading-relaxed mt-0.5">
+                      Manasa Hospital Rd, Danavai Peta, Rajamahendravaram, AP 533103
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-xl shrink-0">
+                    📞
+                  </div>
+                  <div>
+                    <p className="font-black text-white text-sm">Direct Helpline</p>
+                    <p className="text-slate-300 text-xs mt-0.5">
+                      +91 62812 50967 / +91 98853 02468
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-xl shrink-0">
+                    💬
+                  </div>
+                  <div>
+                    <p className="font-black text-white text-sm">WhatsApp Support</p>
+                    <a
+                      href="https://wa.me/916281250967"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-emerald-300 text-xs font-bold hover:underline"
+                    >
+                      +91 62812 50967 (Instant Chat)
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-xl shrink-0">
+                    ✉️
+                  </div>
+                  <div>
+                    <p className="font-black text-white text-sm">Email Address</p>
+                    <p className="text-slate-300 text-xs break-all mt-0.5">
+                      modernknightchessacademy@gmail.com
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
+            {/* FIDE Footer Badge */}
+            <div className="relative z-10 pt-6 mt-8 border-t border-white/10 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#E11D48]/20 text-[#E11D48] flex items-center justify-center font-bold text-base shrink-0 border border-[#E11D48]/30">
+                🛡️
+              </div>
+              <div>
+                <p className="text-xs font-black uppercase text-white tracking-wider">FIDE Certified Academy</p>
+                <p className="text-[10px] text-blue-200">FIDE ID: 5021626 · International Curriculum</p>
+              </div>
+            </div>
           </div>
+
+          {/* ── RIGHT COLUMN: Interactive Booking Form ── */}
+          <div className="lg:col-span-7 p-8 md:p-12 bg-white flex flex-col justify-center">
+            {submitted ? (
+              <div className="py-12 px-4 text-center space-y-4">
+                <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-4xl mx-auto">
+                  🎉
+                </div>
+                <h3 className="text-3xl font-black text-[#041C32]">Demo Slot Reserved!</h3>
+                <p className="text-xs md:text-sm text-slate-600 max-w-sm mx-auto leading-relaxed">
+                  Thank you! Our head coach will call or WhatsApp you within 2 hours to confirm your preferred batch timing.
+                </p>
+                <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 text-left text-xs space-y-2 max-w-sm mx-auto">
+                  <p className="font-bold text-[#041C32]">What Happens Next:</p>
+                  <p className="text-slate-600">1. Keep your phone handy for our coordinator's call.</p>
+                  <p className="text-slate-600">2. Prepare a laptop/tablet if taking an online trial.</p>
+                </div>
+                <div className="pt-2">
+                  <Link
+                    href="/"
+                    className="inline-block px-8 py-3.5 bg-[#041C32] hover:bg-[#0B4398] text-white font-black rounded-xl text-xs uppercase tracking-widest transition-colors shadow-md"
+                  >
+                    Return to Home →
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setSubmitted(true);
+                }}
+                className="space-y-4 text-xs"
+              >
+                <div className="space-y-1">
+                  <h3 className="text-2xl md:text-3xl font-black text-[#041C32]">Schedule Trial Class</h3>
+                  <p className="text-slate-500 text-xs">Fill in student details for customized batch placement.</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                  <div>
+                    <label className="font-bold text-[#041C32] block mb-1">Student Full Name *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Aarav Sharma"
+                      className="w-full p-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0B4398] focus:bg-white text-slate-900 transition-all font-medium text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-bold text-[#041C32] block mb-1">Student Age / Grade *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. 9 Years / Grade 4"
+                      className="w-full p-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0B4398] focus:bg-white text-slate-900 transition-all font-medium text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="font-bold text-[#041C32] block mb-1">Parent Phone / WhatsApp *</label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="+91 98765 43210"
+                      className="w-full p-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0B4398] focus:bg-white text-slate-900 transition-all font-medium text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-bold text-[#041C32] block mb-1">Email Address *</label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="name@example.com"
+                      className="w-full p-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0B4398] focus:bg-white text-slate-900 transition-all font-medium text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="font-bold text-[#041C32] block mb-1">Current Skill Level *</label>
+                    <select className="w-full p-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0B4398] focus:bg-white text-slate-900 font-medium text-xs">
+                      <option>Absolute Beginner (Zero/basic rules)</option>
+                      <option>Casual Player (Unrated, plays with family)</option>
+                      <option>Intermediate (Plays online, unrated or under 1200)</option>
+                      <option>Rated Competitor (Above 1200 FIDE)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="font-bold text-[#041C32] block mb-1">Preferred Mode *</label>
+                    <select className="w-full p-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0B4398] focus:bg-white text-slate-900 font-medium text-xs">
+                      <option>💻 Live Online Interactive Batch</option>
+                      <option>♟ Offline Physical Branch Center</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-4 mt-2 rounded-xl bg-[#E11D48] hover:bg-[#be1239] text-white font-black text-xs uppercase tracking-widest shadow-[0_6px_20px_rgba(225,29,72,0.35)] transition-all hover:-translate-y-0.5"
+                >
+                  Confirm Free Trial Booking →
+                </button>
+              </form>
+            )}
+          </div>
+
         </div>
       </section>
-
-      {/* --- TRUST BADGES --- */}
-      <section className="bg-slate-50 py-12 border-y border-slate-100">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <div className="flex flex-wrap justify-center md:justify-between items-center gap-8 opacity-60 grayscale hover:grayscale-0 transition-all">
-             <div className="flex items-center gap-3">
-                <Brain className="w-6 h-6 text-[#01539D]" />
-                <span className="font-black text-slate-800 uppercase tracking-tighter">Cognitive Growth</span>
-             </div>
-             <div className="flex items-center gap-3">
-                <Cpu className="w-6 h-6 text-[#46B94A]" />
-                <span className="font-black text-slate-800 uppercase tracking-tighter">Tech-Innovation</span>
-             </div>
-             <div className="flex items-center gap-3">
-                <Trophy className="w-6 h-6 text-[#01539D]" />
-                <span className="font-black text-slate-800 uppercase tracking-tighter">Certified Mastery</span>
-             </div>
-          </div>
-        </div>
-      </section>
-
     </div>
   );
 }

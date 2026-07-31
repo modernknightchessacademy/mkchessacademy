@@ -15,7 +15,7 @@ import {
 const achievers = [
   {
     id: 1,
-    name: "Future Mind Skills Chess Team",
+    name: "Modern Knight Chess Team",
     category: "Chess",
     award: "FIDE TOURNAMENTS",
     image: "/chess.jpeg",
@@ -42,16 +42,16 @@ const achievers = [
   },
   {
     id: 4,
-    name: "Future Mind Skills Abacus Prodigy",
-    category: "Abacus",
+    name: "Modern Knight Academy Prodigy",
+    category: "Chess",
     award: "Little Masters",
     image: "/abacus-sucess.jpeg",
-    desc: "Abacus: Little Champions, Quick Math Heroes, One of the fastest calculators.",
+    desc: "Little Champions, Quick Math & Tactical Heroes.",
     icon: <Medal className="w-4 h-4" />
   },
   {
     id: 5,
-    name: "Future Mind Skills Chess Champions",
+    name: "Modern Knight Chess Champions",
     category: "Chess",
     award: "Champions",
     image: "/chess-sucess.jpeg",
@@ -101,7 +101,7 @@ const AchievementsSection: React.FC = () => {
             </div>
             
             <h2 className="text-3xl md:text-5xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-none mb-4">
-              Future Mind Skills's <br />
+              Modern Knight's <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-yellow-500">
                 Achievements
               </span>

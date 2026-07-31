@@ -10,9 +10,9 @@ import Providers from "@/components/providers"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Future Mind Skills – Complete Learning Center for Children",
+  title: "Modern Knight Chess Academy – FIDE Certified Master Training & Student Portal",
   description:
-    "Future Mind Skills Learning Hub offers Pre Primary School, Chess Academy, Robotics Center, Abacus training and Tuition for children. One campus for complete child development.",
+    "Modern Knight Chess Academy offers FIDE certified chess coaching, grandmaster masterclasses, tournament preparation, interactive student PGN puzzle arena, and physical training centers.",
 }
 
 export default function RootLayout({
@@ -32,17 +32,16 @@ export default function RootLayout({
         {
           "@context": "https://schema.org",
           "@type": "Organization",
-          "name": "  Future Mind Skills Sensei  Academy",
-          "url": "https://telanganachessschool.com",
+          "name": "Modern Knight Chess Academy",
+          "url": "https://modernknightchess.com",
           "sameAs": [
-            "https://thegeniuschessacademy.com"
+            "https://modernknightchess.com"
           ]
         }
         `}
         </script>
-        <meta name="relatedAcademy" content="https://thegeniuschessacademy.com" />
       </head>
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
+      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased selection:bg-[#0B4398] selection:text-white`}>
         <Providers>
           <Header />
           <Suspense fallback={null}>{children}</Suspense>
@@ -53,4 +52,3 @@ export default function RootLayout({
     </html>
   )
 }
-

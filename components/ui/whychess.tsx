@@ -66,7 +66,7 @@ export default function WhyChooseUsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               className="px-4 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 font-black text-[10px] uppercase tracking-widest mb-4 inline-block"
             >
-               The Future Mind Skills Difference
+               The Modern Knight Chess Academy Difference
             </motion.span>
             <motion.h2 
               initial={{ opacity: 0, y: 10 }}

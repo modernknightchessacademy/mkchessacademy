@@ -4,23 +4,23 @@ import React from 'react';
 import { MapPin, Navigation, ExternalLink, Sparkles } from 'lucide-react';
 
 const MapSection = () => {
-  const businessName = "Future Mind Skills Academy";
-  const address = "Prestige High Fields, Flat No. 7028, ISB Road, Financial District, Nanakramguda, Hyderabad, Telangana, India";
-  const googleMapsLink = "https://maps.app.goo.gl/9R6q8XyT5Pz9Z5U29"; 
+  const businessName = "Modern Knight Chess Academy";
+  const address = "124 Master Mind Arcade, Main Road, Modern Knight Square, Hyderabad, Telangana, India";
+  const googleMapsLink = "https://maps.google.com"; 
 
   return (
     <section className="py-20 bg-white" id="location">
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#01539D] text-xs font-bold uppercase tracking-widest mb-6">
-            <Sparkles className="w-3.5 h-3.5 text-[#46B94A]" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#0B4398] text-xs font-bold uppercase tracking-widest mb-6">
+            <Sparkles className="w-3.5 h-3.5 text-[#E11D48]" />
             <span>Exact Location</span>
           </div>
           <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
-            Visit Our <span className="text-[#01539D]">Hyderabad Hub</span>
+            Visit Our <span className="text-[#0B4398]">Hyderabad Hub</span>
           </h2>
           <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto leading-relaxed">
-            Located in the heart of the Financial District, our premium academy hub is designed for excellence.
+            Located in the heart of the city, our premium academy hub is designed for grandmaster excellence.
           </p>
         </div>
 
@@ -33,7 +33,7 @@ const MapSection = () => {
             allowFullScreen={true} 
             loading="lazy" 
             referrerPolicy="no-referrer-when-downgrade"
-            title="Future Mind Skills Academy Hyderabad"
+            title="Modern Knight Chess Academy Hyderabad"
           ></iframe>
 
           <div className="absolute bottom-6 left-6 right-6 md:bottom-12 md:left-12 md:right-auto md:w-[400px] bg-white p-8 rounded-3xl shadow-2xl border border-slate-100 z-20">

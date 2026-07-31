@@ -123,3 +123,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+@utility max-w-8xl {
+  max-width: 96rem;
+}

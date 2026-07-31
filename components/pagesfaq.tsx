@@ -29,7 +29,7 @@ export default function ColorfulFAQSection() {
     },
     {
       question: "What curriculum do you follow ?",
-      answer: "Future Mind Skills curriculum is mapped with EYFS (UK), Waldorf (German), NEP (Indian), Montissori (Italian), Reggio Emilia (Italian) and Project Zero (Harvard-USA). Traditional in name but global in standards.",
+      answer: "Modern Knight Chess Academy curriculum is mapped with official FIDE international chess coaching standards, Grandmaster tactical modules, and candidate move calculation methodologies.",
       theme: "red",
     },
   ]

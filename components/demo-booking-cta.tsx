@@ -1,115 +1,60 @@
 "use client";
-
 import React from "react";
 import Link from "next/link";
-import { 
-  ArrowRight, 
-  Phone, 
-  CheckCircle2, 
-  Sparkles,
-  Zap
-} from "lucide-react";
 
-export default function CTASection() {
-  const benefits = [
-    "Free Skill Assessment",
-    "Personalized Growth Roadmap",
-    "Expert Trainer Interaction"
-  ];
-
+export const DemoBookingCTA: React.FC = () => {
   return (
-    <section className="py-12 md:py-16 bg-white px-4">
-      <div className="max-w-6xl mx-auto">
-        
-        {/* --- COMPACT BOX --- */}
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#01539D]/5 to-transparent border border-[#01539D]/10 p-8 md:p-12 lg:p-16">
+    <section className="py-16 bg-gradient-to-br from-[#0B4398] via-[#041C32] to-[#E11D48] text-white relative overflow-hidden">
+      {/* Background Glowing Blobs */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-blue-500/20 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-rose-500/20 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(#ffffff_2px,transparent_2px)] [background-size:16px_16px] pointer-events-none" />
+      
+      <div className="max-w-5xl mx-auto px-4 md:px-8 relative z-10 text-center space-y-8">
+        {/* Slogan & Subtext */}
+        <div className="space-y-4 max-w-3xl mx-auto">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-[10px] font-black uppercase tracking-widest text-white border border-white/20 shadow-sm select-none">
+            👑 Free 45-Minute Trial Class
+          </span>
+
+          <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
+            Unlock Your Child's <span className="bg-gradient-to-r from-amber-300 via-amber-200 to-yellow-400 bg-clip-text text-transparent italic font-serif">Strategic Potential</span> Today
+          </h2>
+
+          <p className="text-white/80 text-sm md:text-base font-light leading-relaxed max-w-2xl mx-auto">
+            Book a 1-on-1 trial class with our FIDE Certified Master Coach. Get a complete chess tactical assessment and personalized learning roadmap.
+          </p>
+        </div>
+
+        {/* Action Buttons Row */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto pt-2">
+          <Link
+            href="/bookdemo"
+            className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-[#0B4398] font-black text-base shadow-[0_10px_20px_rgba(255,255,255,0.05)] hover:bg-amber-400 hover:text-slate-900 hover:shadow-[0_15px_30px_rgba(245,158,11,0.3)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-center"
+          >
+            Claim Free Demo Slot →
+          </Link>
           
-          {/* Decorative Background Icons */}
-          <div className="absolute -top-10 -right-10 opacity-[0.03] text-[#01539D] rotate-12">
-            <Zap size={300} strokeWidth={1} />
-          </div>
-
-          <div className="relative z-10 flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
-            
-            {/* LEFT: CONTENT */}
-            <div className="flex-1 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#46B94A]/10 text-[#46B94A] font-bold text-[10px] uppercase tracking-widest mb-6">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Join 500+ Future-Ready Kids</span>
-              </div>
-
-              <h2 className="text-3xl md:text-5xl font-black text-slate-900 leading-[1.1] mb-6">
-                Ready to Sharpen Your <br className="hidden md:block" />
-                <span className="text-[#01539D]">Child's Cognitive Skills?</span>
-              </h2>
-
-              <p className="text-slate-600 text-lg font-medium mb-8 max-w-xl mx-auto lg:mx-0">
-                Experience our professional coaching in Chess, Coding, and Logic. 
-                Start their journey to excellence with a free session.
-              </p>
-
-              <div className="flex flex-wrap justify-center lg:justify-start gap-y-3 gap-x-6 mb-10">
-                {benefits.map((text, i) => (
-                  <div key={i} className="flex items-center gap-2 text-[#46B94A]">
-                    <CheckCircle2 size={18} strokeWidth={3} />
-                    <span className="text-slate-700 font-bold text-sm uppercase tracking-tight">{text}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <Link href="/bookdemo" className="w-full sm:w-auto">
-                  <button className="group w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-4 bg-[#01539D] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-[#01427a] transition-all shadow-xl shadow-blue-100 active:scale-95">
-                    Get Free Demo
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </button>
-                </Link>
-                
-                <Link href="tel:+91 9948198809" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-4 bg-white border-2 border-slate-100 text-slate-700 rounded-2xl font-black text-sm uppercase tracking-widest hover:border-[#46B94A] hover:text-[#46B94A] transition-all active:scale-95">
-                    <Phone className="w-4 h-4" />
-                    Talk to Expert
-                  </button>
-                </Link>
-              </div>
-            </div>
-
-            {/* RIGHT: COMPACT VISUAL */}
-            <div className="lg:w-1/3 flex items-center justify-center">
-              <div className="relative">
-                {/* Floating Card Design */}
-                <div className="bg-white p-8 rounded-[2rem] shadow-2xl border border-slate-50 flex flex-col items-center text-center max-w-[260px] animate-bounce-slow">
-                  <div className="w-16 h-16 rounded-2xl bg-[#46B94A] flex items-center justify-center text-white mb-4 shadow-lg shadow-green-100">
-                    <Zap size={32} fill="currentColor" />
-                  </div>
-                  <h4 className="font-black text-slate-800 text-xl leading-tight mb-2">Next Batch Starting Soon!</h4>
-                  <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Limited Seats</p>
-                  <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="w-3/4 h-full bg-[#01539D]" />
-                  </div>
-                  <p className="mt-3 text-[10px] text-slate-500 font-bold italic">75% slots filled this week</p>
-                </div>
-
-                {/* Decorative circles */}
-                <div className="absolute -top-4 -left-4 w-12 h-12 bg-[#01539D]/10 rounded-full blur-xl -z-10" />
-                <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-[#46B94A]/10 rounded-full blur-2xl -z-10" />
-              </div>
-            </div>
-
-          </div>
+          <a
+            href="https://wa.me/916281250967?text=Hi%20Modern%20Knight%20Chess%20Academy,%20I%20want%20to%20book%20a%20trial%20class"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto px-8 py-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-base shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2"
+          >
+            {/* Simple WhatsApp icon SVG */}
+            <svg
+              className="w-5 h-5 fill-current shrink-0"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.864-9.864.002-2.637-1.03-5.114-2.905-6.99C16.48 1.879 14.004 1.848 12.11 1.848c-5.442 0-9.869 4.42-9.873 9.864-.001 1.702.46 3.366 1.334 4.825L2.553 20.2l3.856-.77a9.79 9.79 0 0 0 4.849 1.455zM12.012 20.316z" />
+            </svg>
+            <span>Chat on WhatsApp</span>
+          </a>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes bounce-slow {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-15px); }
-        }
-        .animate-bounce-slow {
-          animation: bounce-slow 4s ease-in-out infinite;
-        }
-      `}</style>
     </section>
   );
-}
+};
+
+export default DemoBookingCTA;

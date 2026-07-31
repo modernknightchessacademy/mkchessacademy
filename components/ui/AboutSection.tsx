@@ -67,7 +67,7 @@ const AboutSection: React.FC = () => {
             {/* Experience Badge */}
             <div className="absolute -bottom-10 -right-6 md:right-0 z-20 bg-[#01539D] text-white p-8 rounded-[2.5rem] shadow-xl">
                 <p className="text-4xl font-black mb-1">10+</p>
-                <p className="text-[10px] font-bold uppercase tracking-widest opacity-80">Years of Shaping<br/>Future Minds</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest opacity-80">Years of Shaping<br/>Grandmaster Minds</p>
             </div>
             {/* Floating Element */}
             <div className="absolute -top-10 -left-6 z-20 bg-white p-5 rounded-3xl shadow-xl border border-slate-50 animate-bounce duration-[4000ms]">

@@ -1,120 +1,137 @@
 "use client";
+
 import React from "react";
+import { motion } from "framer-motion";
+import { ArrowRight, CheckCircle2, Trophy, Zap, Crown } from "lucide-react";
+import Link from "next/link";
 
-const Hero: React.FC = () => {
-  return (
-    <section className="relative w-full bg-white overflow-hidden pt-10 pb-20 lg:pt-5 lg:pb-32">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[500px] h-[500px] bg-[#46B94A]/5 rounded-full blur-3xl -z-10" />
-      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[500px] h-[500px] bg-[#01539D]/5 rounded-full blur-3xl -z-10" />
-
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-8">
-          
-          {/* LEFT CONTENT */}
-          <div className="flex-1 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 border border-green-100 mb-6">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#46B94A] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#46B94A]"></span>
-              </span>
-              <span className="text-[12px] font-bold text-[#46B94A] uppercase tracking-wider">
-                Admissions Open 2024-25
-              </span>
-            </div>
-
-            <h1 className="text-4xl md:text-5xl lg:text-5xl font-black text-slate-900 leading-[1.1] mb-6">
-              Empowering Kids with <br />
-              <span className="text-[#01539D]">Future-Ready</span>{" "}
-              <span className="text-[#46B94A]">Skills</span>
-            </h1>
-
-            <p className="text-lg text-slate-600 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              We go beyond traditional academics. Master 
-              <span className="font-bold text-slate-800"> Chess, Coding, Logic, and Communication</span> 
-              through our specialized curriculum designed to build the leaders of tomorrow.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-              <a
-                href="/bookdemo"
-                className="w-full sm:w-auto px-10 py-4 bg-[#01539D] text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:bg-[#01427a] hover:-translate-y-1 transition-all duration-300"
-              >
-                Book a Free Demo
-              </a>
-              <a
-                href="/programs"
-                className="w-full sm:w-auto px-10 py-4 bg-white text-slate-700 font-bold rounded-xl border-2 border-slate-100 hover:border-[#46B94A] hover:text-[#46B94A] transition-all duration-300"
-              >
-                Explore Programs
-              </a>
-            </div>
-
-            {/* Trust Badges */}
-            <div className="mt-12 flex items-center justify-center lg:justify-start gap-8 opacity-70">
-              <div className="flex flex-col">
-                <span className="text-2xl font-black text-slate-800">500+</span>
-                <span className="text-xs font-medium text-slate-500 uppercase tracking-tighter">Students Trained</span>
-              </div>
-              <div className="h-10 w-px bg-slate-200" />
-              <div className="flex flex-col">
-                <span className="text-2xl font-black text-slate-800">4.9/5</span>
-                <span className="text-xs font-medium text-slate-500 uppercase tracking-tighter">Parent Rating</span>
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT IMAGE SECTION */}
-          <div className="flex-1 relative w-full max-w-[500px] lg:max-w-none">
-            
-            {/* Main Image Container */}
-            <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-8 border-white">
-              <img
-                src="/hero.jpg" // Replace with a photo of a child learning/playing chess
-                alt="Child Learning Future Skills"
-                className="w-full h-auto object-cover aspect-[4/5] lg:aspect-square"
-              />
-            </div>
-
-            {/* Floating Skill Tags (Matches your image list) */}
-            <div className="absolute -top-6 -right-6 z-20 bg-white p-4 rounded-2xl shadow-xl animate-bounce duration-[3000ms]">
-               <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600 font-bold">♟</div>
-                  <div>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase">Mastery</p>
-                    <p className="text-sm font-black text-slate-800">Chess</p>
-                  </div>
-               </div>
-            </div>
-
-            <div className="absolute top-1/2 -left-10 z-20 bg-white p-4 rounded-2xl shadow-xl animate-pulse">
-               <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600 font-bold font-mono">{"</>"}</div>
-                  <div>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase">Advanced</p>
-                    <p className="text-sm font-black text-slate-800">Coding</p>
-                  </div>
-               </div>
-            </div>
-
-            <div className="absolute -bottom-6 right-10 z-20 bg-white p-4 rounded-2xl shadow-xl">
-               <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-green-600 font-bold">✓</div>
-                  <div>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase">Critical</p>
-                    <p className="text-sm font-black text-slate-800">Logic</p>
-                  </div>
-               </div>
-            </div>
-
-            {/* Background Accent Shape */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] border-2 border-[#46B94A]/20 rounded-[40px] rotate-6 -z-10" />
-          </div>
-
-        </div>
-      </div>
-    </section>
+export function HeroSection() {
+  const ScallopedWave = ({ flip }: { flip?: boolean }) => (
+    <div className={`absolute left-0 w-full leading-[0] z-20 ${flip ? "bottom-0" : "top-0 rotate-180"}`}>
+      <svg
+        viewBox="0 0 1440 48"
+        fill="none"
+        preserveAspectRatio="none"
+        className="w-full h-[40px] md:h-[60px] lg:h-[75px]"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M0 48H1440V48C1410 48 1395 36 1365 36C1335 36 1320 48 1290 48C1260 48 1245 36 1215 36C1185 36 1170 48 1140 48C1110 48 1095 36 1065 36C1035 36 1020 48 990 48C960 48 945 36 915 36C885 36 870 48 840 48C810 48 795 36 765 36C735 36 720 48 690 48C660 48 645 36 615 36C585 36 570 48 540 48C510 48 495 36 465 36C435 36 420 48 390 48C360 48 345 36 315 36C285 36 270 48 240 48C210 48 195 36 165 36C135 36 120 48 90 48C60 48 45 36 15 36C7.5 36 0 42 0 48Z"
+          fill="white"
+        />
+      </svg>
+    </div>
   );
-};
 
-export default Hero;
+  return (
+    <div className="relative flex flex-col w-full bg-[#0A1128]">
+      {/* --- HERO SECTION --- */}
+      <section
+        className="relative w-full flex items-center bg-[#0A1128] overflow-hidden transition-all duration-500 font-sans min-h-[85vh] py-20 lg:py-28 pt-20 lg:pt-18"
+      >
+        {/* --- SCALLOPED EDGES --- */}
+        <ScallopedWave />
+        <ScallopedWave flip />
+
+        {/* --- BACKGROUND AMBIENCE --- */}
+        <div className="absolute inset-0 z-0 opacity-40">
+          <div className="absolute top-1/4 right-0 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-[#E11D48]/10 rounded-full blur-[80px] md:blur-[120px]" />
+          <div className="absolute bottom-1/4 left-0 w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-blue-500/10 rounded-full blur-[60px] md:blur-[100px]" />
+        </div>
+
+        <div className="container relative z-30 mx-auto px-6 md:px-12 max-w-7xl">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+            {/* --- LEFT CONTENT (TEXT) --- */}
+            <div className="text-white text-center lg:text-left space-y-6 md:space-y-8 order-2 lg:order-1">
+              <div className="inline-block">
+                <div className="flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md">
+                  <Crown className="w-3.5 h-3.5 text-[#E11D48]" />
+                  <span className="text-white font-bold text-[10px] md:text-xs tracking-[0.2em] uppercase">
+                    FIDE Certified Master Coaching Academy
+                  </span>
+                </div>
+              </div>
+
+              <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-5xl font-[1000] leading-[1.1] tracking-tighter uppercase">
+                SHAPING FUTURE <br />
+                <span className="text-[#E11D48] italic">GRANDMASTERS</span> <br />
+                ONE MOVE AT A TIME.
+              </h1>
+
+              <p className="text-slate-350 text-base md:text-lg lg:text-xl leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
+                Develop strategic vision, spatial calculation, and tournament-winning discipline under FIDE-rated trainers. Launch your champion's chess career today.
+              </p>
+
+              {/* Checkmark Features */}
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-x-8 gap-y-3">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-[#E11D48]" />
+                  <span className="font-bold text-sm md:text-base text-white">FIDE Masters</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-[#E11D48]" />
+                  <span className="font-bold text-sm md:text-base text-white">Structured Batches</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-[#E11D48]" />
+                  <span className="font-bold text-sm md:text-base text-white">Medals & Milestones</span>
+                </div>
+              </div>
+
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                <Link href="/bookdemo">
+                  <button className="w-full sm:w-auto h-14 md:h-16 px-8 md:px-12 bg-[#E11D48] hover:bg-pink-700 text-white rounded-2xl md:rounded-[2rem] text-sm md:text-base font-black uppercase tracking-widest shadow-2xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                    Book A Demo
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                </Link>
+
+                <Link href="/courses">
+                  <button className="w-full sm:w-auto h-14 md:h-16 px-8 md:px-10 text-white hover:bg-white/10 rounded-2xl md:rounded-[2rem] text-sm md:text-base font-bold border-2 border-white/20 backdrop-blur-sm uppercase tracking-widest transition-all">
+                    Explore Courses
+                  </button>
+                </Link>
+              </div>
+            </div>
+
+            {/* --- RIGHT CONTENT (IMAGE VISUAL CARD) --- */}
+            <div className="relative order-1 lg:order-2 w-full max-w-[500px] lg:max-w-none mx-auto">
+              <div className="relative z-10 w-full aspect-square sm:aspect-video lg:aspect-[4/3] rounded-[2rem] md:rounded-[4rem] overflow-hidden border-[8px] md:border-[16px] border-white/10 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.5)] bg-[#0f172a]">
+                <img
+                  src="/hero-chess-unique.png"
+                  alt="Chess learning begins at Modern Knight Academy"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Floating Trophy Badge top-right */}
+              <motion.div
+                animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-6 -right-6 md:-top-10 md:-right-10 z-20 bg-[#E11D48] p-6 rounded-3xl shadow-2xl border-4 border-[#0A1128] hidden md:block"
+              >
+                <Trophy className="w-10 h-10 text-white fill-current" />
+              </motion.div>
+
+              {/* Floating Lightning Badge bottom-left */}
+              <motion.div
+                animate={{ y: [0, 15, 0], rotate: [0, -5, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute -bottom-6 -left-6 md:-bottom-10 md:-left-10 z-20 bg-white p-6 rounded-3xl shadow-2xl border-4 border-[#0A1128] hidden md:block"
+              >
+                <Zap className="w-10 h-10 text-[#0B4398] fill-current" />
+              </motion.div>
+
+              <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] border-2 border-white/5 rounded-full hidden md:block" />
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+export default HeroSection;

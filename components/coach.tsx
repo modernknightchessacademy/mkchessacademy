@@ -1,121 +1,151 @@
 "use client";
-
 import React from "react";
-import { Award, GraduationCap, Globe, ShieldCheck, Trophy } from "lucide-react";
+import Link from "next/link";
+import { Clock, ArrowRight } from "lucide-react";
 
-export default function CoachSection() {
-  const credentials = [
-    { icon: <Globe className="w-5 h-5" />, text: "International Coach" },
-    { icon: <GraduationCap className="w-5 h-5" />, text: "FIDE Instructor (FI)" },
-    { icon: <ShieldCheck className="w-5 h-5" />, text: "Professional Mentor" },
-  ];
-
-  const stats = [
-    { label: "Experience", value: "25+ Yrs" },
-    { label: "Students", value: "500+" },
-    { label: "Titles Produced", value: "50+" },
+export const CoachSection: React.FC = () => {
+  const coaches = [
+    {
+      name: "GM Ravindra Sharma",
+      role: "Founder & Head Coach",
+      fideRating: "Peak FIDE 2480",
+      experience: "18+ Years Experience",
+      specialization: "Endgame Mastery & Grandmaster Calculation",
+      achievements: "Trained 45+ FIDE Rated Medalists, Former State Champion",
+      image: "/ravin.png",
+      borderColor: "hover:border-[#0B4398]",
+      roleColor: "text-[#0B4398] bg-blue-50 border-blue-100",
+      hoverColor: "group-hover:text-[#0B4398]",
+    },
+    {
+      name: "FM Ananya Kulkarni",
+      role: "Senior FIDE Master Trainer",
+      fideRating: "FIDE 2290",
+      experience: "12+ Years Experience",
+      specialization: "Opening Repertoires & Positional Strategy",
+      achievements: "Asian Youth Championship Gold Medalist Coach",
+      image: "/avatar2.png",
+      borderColor: "hover:border-[#E11D48]",
+      roleColor: "text-[#E11D48] bg-rose-50 border-rose-100",
+      hoverColor: "group-hover:text-[#E11D48]",
+    },
+    {
+      name: "IM David Miller",
+      role: "International Master Coach",
+      fideRating: "FIDE 2395",
+      experience: "15+ Years Experience",
+      specialization: "Tactical Vision & Blitz Clock Strategy",
+      achievements: "FIDE Certified Senior Instructor",
+      image: "/avatar1.jpg",
+      borderColor: "hover:border-[#0B4398]",
+      roleColor: "text-[#0B4398] bg-blue-50 border-blue-100",
+      hoverColor: "group-hover:text-[#0B4398]",
+    },
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-slate-50 overflow-hidden">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <section className="py-24 bg-gradient-to-b from-white via-slate-50/50 to-white text-slate-900 relative overflow-hidden">
+      {/* Background Decorative Rings */}
+      <div className="absolute top-1/4 left-0 w-80 h-80 bg-blue-50/40 rounded-full blur-3xl -z-10" />
+      <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-rose-50/30 rounded-full blur-3xl -z-10" />
+
+      <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
         
-        {/* --- CENTERED HEADER --- */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#01539D]/10 text-[#01539D] text-xs font-bold uppercase tracking-widest mb-6">
-            <Trophy className="w-4 h-4" />
-            World-Class Mentorship
-          </div>
-          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 leading-tight">
-            Learn from the <span className="text-[#01539D]">Best in the</span> <span className="text-[#46B94A]">World</span>
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
+          <span className="text-[#E11D48] text-xs font-black uppercase tracking-widest px-4 py-1.5 bg-rose-50 rounded-full border border-rose-100 inline-block">
+            FIDE Certified Mentors
+          </span>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
+            Learn From <span className="bg-gradient-to-r from-[#0B4398] to-[#E11D48] bg-clip-text text-transparent italic font-serif">Grandmasters</span> & Masters
           </h2>
-          <p className="text-slate-500 text-lg font-medium leading-relaxed">
-            Our programs are led by world-renowned instructors who have trained national champions and professional athletes.
+          <p className="text-slate-600 text-base md:text-lg font-light max-w-2xl mx-auto">
+            Our coaching team consists of world-class title holders who possess passion, proven methodology, and years of competitive experience.
           </p>
         </div>
 
-        {/* --- COACH PROFILE CARD --- */}
-        <div className="relative bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/60 overflow-hidden border border-slate-100">
-          
-          {/* Subtle Chess Pattern Background */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none grayscale">
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-              <pattern id="chess" width="40" height="40" patternUnits="userSpaceOnUse">
-                <rect width="20" height="20" fill="currentColor" />
-                <rect x="20" y="20" width="20" height="20" fill="currentColor" />
-              </pattern>
-              <rect width="100%" height="100%" fill="url(#chess)" />
-            </svg>
-          </div>
-
-          <div className="relative z-10 flex flex-col lg:flex-row items-center">
-            
-            {/* IMAGE SIDE */}
-            <div className="w-full lg:w-2/5 p-8 lg:p-12">
-              <div className="relative group">
-                {/* Background Decor */}
-                <div className="absolute -inset-4 bg-gradient-to-tr from-[#01539D] to-[#46B94A] rounded-[2rem] opacity-20 blur-2xl group-hover:opacity-30 transition-opacity" />
+        {/* Coach Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {coaches.map((coach, idx) => (
+            <div
+              key={idx}
+              className={`bg-white rounded-[2rem] border-2 border-slate-100/90 overflow-hidden ${coach.borderColor} shadow-[0_10px_35px_rgba(11,67,152,0.02)] hover:shadow-[0_20px_50px_rgba(11,67,152,0.07)] hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between`}
+            >
+              {/* Profile Image & Rating Banner */}
+              <div className="relative h-64 w-full overflow-hidden bg-slate-50">
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 via-transparent to-transparent z-10" />
+                <img
+                  src={coach.image}
+                  alt={coach.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
                 
-                {/* Actual Image Container */}
-                <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border-4 border-white shadow-2xl">
-                  <img 
-                    src="/profile2.jpg" // Replace with actual image path
-                    alt="Ravindra Raju - International Coach"
-                    className="w-full h-full object-cover"
-                  />
-                  {/* Badge on Image */}
-                  <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md p-4 rounded-2xl flex items-center justify-center gap-3 border border-white">
-                    <Award className="text-[#01539D] w-6 h-6" />
-                    <span className="font-black text-slate-800 text-sm uppercase tracking-tighter">Certified FIDE Instructor</span>
+                {/* Floating Rating Tag */}
+                <div className="absolute top-4 right-4 z-20">
+                  <span className="px-3.5 py-1.5 bg-amber-400 text-amber-950 font-black text-[10px] tracking-widest rounded-lg shadow-sm uppercase">
+                    {coach.fideRating}
+                  </span>
+                </div>
+              </div>
+
+              {/* Coach details content */}
+              <div className="p-8 flex-1 flex flex-col justify-between">
+                <div className="space-y-4">
+                  {/* Role Tag */}
+                  <span className={`inline-block px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border ${coach.roleColor}`}>
+                    {coach.role}
+                  </span>
+                  
+                  {/* Coach Name */}
+                  <h3 className={`text-2xl font-black text-slate-900 mt-2 ${coach.hoverColor} transition-colors`}>
+                    {coach.name}
+                  </h3>
+                  
+                  {/* Experience */}
+                  <div className="flex items-center gap-2 text-xs text-slate-500 font-semibold">
+                    <Clock className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>{coach.experience}</span>
+                  </div>
+
+                  {/* Specializations & Key Achievements */}
+                  <div className="pt-6 border-t border-slate-100 space-y-4">
+                    <div>
+                      <h4 className="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">
+                        Specialization
+                      </h4>
+                      <p className="text-sm font-semibold text-slate-700 leading-relaxed">
+                        {coach.specialization}
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">
+                        Key Achievements
+                      </h4>
+                      <p className="text-xs text-slate-500 leading-relaxed font-light">
+                        {coach.achievements}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* CONTENT SIDE */}
-            <div className="w-full lg:w-3/5 p-8 lg:p-16 lg:pl-0">
-              <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
-                <h3 className="text-4xl md:text-5xl font-black text-slate-900 mb-2">
-                  Ravindra <span className="text-[#01539D]">Raju</span>
-                </h3>
-                <p className="text-[#46B94A] font-black text-lg uppercase tracking-[0.15em] mb-8">
-                  International Coach & FIDE Instructor
-                </p>
-
-                <p className="text-slate-600 text-lg leading-relaxed mb-10 font-medium italic">
-                  "Chess is not just a game; it is a tool to sharpen the human mind. My goal is to build strategic thinkers who can excel both on the board and in life."
-                </p>
-
-                {/* Credentials Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mb-12">
-                  {credentials.map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                      <div className="text-[#01539D]">{item.icon}</div>
-                      <span className="text-slate-800 font-bold text-xs uppercase tracking-tight">{item.text}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Stats Row */}
-                <div className="flex flex-wrap justify-center lg:justify-start gap-8 md:gap-12 py-8 border-t border-slate-100 w-full">
-                  {stats.map((stat, i) => (
-                    <div key={i} className="text-center lg:text-left">
-                      <p className="text-3xl font-black text-[#01539D] leading-none mb-1">{stat.value}</p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{stat.label}</p>
-                    </div>
-                  ))}
-                </div>
-                
-                <button className="mt-4 px-10 py-4 bg-[#01539D] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-[#01427a] transition-all shadow-xl shadow-blue-100">
-                  Register for Masterclass
-                </button>
-              </div>
-            </div>
-
-          </div>
+          ))}
         </div>
 
+        {/* Meet All Coaches Button */}
+        <div className="text-center mt-16">
+          <Link
+            href="/coaches"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#0B4398] to-[#E11D48] hover:opacity-95 text-white font-extrabold text-sm rounded-xl shadow-[0_10px_20px_rgba(11,67,152,0.15)] hover:shadow-[0_15px_25px_rgba(225,29,72,0.2)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+          >
+            <span>Meet All FIDE Coaches</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     </section>
   );
-}
+};
+
+export default CoachSection;

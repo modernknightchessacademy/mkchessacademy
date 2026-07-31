@@ -29,7 +29,7 @@ const CurriculumSun = () => {
           <div className="relative w-full max-w-[500px] md:max-w-[600px] aspect-square">
             <Image
               src="/sun2.png" // Put your image in the public folder
-              alt="Future Mind Skills International Curriculum Chart"
+              alt="Modern Knight Chess Academy Curriculum Chart"
               fill
               className="object-contain drop-shadow-2xl"
               priority
@@ -48,7 +48,7 @@ const CurriculumSun = () => {
              className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/20 border border-white/40 text-slate-900 font-black text-xs md:text-sm uppercase tracking-widest shadow-sm"
           >
             <Sparkles size={16} className="text-amber-700 animate-pulse" />
-            Global Academic Standards
+            FIDE Certified Standards
           </motion.div>
           
           <motion.h2 
@@ -56,14 +56,14 @@ const CurriculumSun = () => {
           >
             A World of <br />
             <span className="text-white drop-shadow-md">Excellence.</span><br />
-            <span className="text-amber-900/30">One School.</span>
+            <span className="text-amber-900/30">Chess Mastery.</span>
           </motion.h2>
 
           <motion.p 
             className="text-slate-900 text-lg md:text-2xl font-bold leading-tight max-w-xl mx-auto lg:mx-0"
           >
-            At Future Mind Skills, we integrate the best of global 
-            pedagogies to create a customized foundation for every child.
+            At Modern Knight Chess Academy, we integrate the best of global 
+            tactical methodologies to create a customized foundation for every student.
           </motion.p>
 
 

@@ -39,3 +39,48 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json();
+    const { id, title, category, description, imageUrl, year, studentName } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: "Achievement ID required" }, { status: 400 });
+    }
+
+    const achievement = await prisma.achievement.update({
+      where: { id },
+      data: {
+        title,
+        category: category || "Tournament",
+        description: description || "",
+        imageUrl,
+        year: year || new Date().getFullYear().toString(),
+        studentName: studentName || null,
+      },
+    });
+
+    return NextResponse.json(achievement);
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    if (!id) {
+      return NextResponse.json({ error: "Achievement ID required" }, { status: 400 });
+    }
+
+    await prisma.achievement.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ success: true, id });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

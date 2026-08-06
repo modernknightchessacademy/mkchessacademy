@@ -28,6 +28,8 @@ export default function AdminAchievementsPage() {
     studentName: "",
   });
 
+  const [editingAchievement, setEditingAchievement] = useState<Achievement | null>(null);
+
   useEffect(() => {
     fetchAchievements();
   }, []);
@@ -68,6 +70,41 @@ export default function AdminAchievementsPage() {
       }
     } catch (e) {
       alert("Failed to save achievement");
+    }
+  };
+  const handleEditAchievement = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingAchievement) return;
+    if (!editingAchievement.imageUrl) return alert("Please upload an achievement image first");
+    try {
+      const res = await fetch("/api/achievements", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editingAchievement),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setAchievements(achievements.map((ach) => (ach.id === updated.id ? updated : ach)));
+        setEditingAchievement(null);
+      }
+    } catch (e) {
+      alert("Failed to save achievement changes");
+    }
+  };
+
+  const handleDeleteAchievement = async (id: string) => {
+    if (!confirm("Are you sure you want to permanently delete this achievement?")) return;
+    try {
+      const res = await fetch(`/api/achievements?id=${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setAchievements(achievements.filter((ach) => ach.id !== id));
+      } else {
+        alert("Failed to delete achievement");
+      }
+    } catch (e) {
+      alert("Error deleting achievement");
     }
   };
 
@@ -112,7 +149,21 @@ export default function AdminAchievementsPage() {
                 {ach.studentName && (
                   <p className="text-xs text-amber-400 font-medium">👤 Winner: {ach.studentName}</p>
                 )}
-                <p className="text-xs text-slate-400 leading-relaxed">{ach.description}</p>
+                <p className="text-xs text-slate-400 leading-relaxed mb-4">{ach.description}</p>
+                <div className="flex gap-2 pt-2 border-t border-slate-800">
+                  <button
+                    onClick={() => setEditingAchievement(ach)}
+                    className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-bold transition-all text-xs"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteAchievement(ach.id)}
+                    className="flex-1 py-2 bg-rose-950/30 hover:bg-rose-900/30 text-rose-400 border border-rose-900/30 rounded-xl font-bold transition-all text-xs"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           ))
@@ -189,6 +240,82 @@ export default function AdminAchievementsPage() {
               </div>
               <button type="submit" className="w-full py-3 bg-[#E11D48] text-white font-extrabold rounded-xl">
                 Save Achievement
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: EDIT ACHIEVEMENT */}
+      {editingAchievement && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full space-y-4 relative shadow-2xl">
+            <button onClick={() => setEditingAchievement(null)} className="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
+            <h3 className="text-lg font-bold text-white">Edit Hall of Fame Achievement</h3>
+            <form onSubmit={handleEditAchievement} className="space-y-3 text-xs">
+              <div>
+                <label className="text-slate-400 block mb-1">Achievement Title *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. State Junior Champion 2026"
+                  value={editingAchievement.title}
+                  onChange={(e) => setEditingAchievement({ ...editingAchievement, title: e.target.value })}
+                  className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-slate-400 block mb-1">Category</label>
+                  <input
+                    type="text"
+                    value={editingAchievement.category}
+                    onChange={(e) => setEditingAchievement({ ...editingAchievement, category: e.target.value })}
+                    className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-400 block mb-1">Year</label>
+                  <input
+                    type="text"
+                    value={editingAchievement.year}
+                    onChange={(e) => setEditingAchievement({ ...editingAchievement, year: e.target.value })}
+                    className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-slate-400 block mb-1">Student Name (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Ananya Rao"
+                  value={editingAchievement.studentName || ""}
+                  onChange={(e) => setEditingAchievement({ ...editingAchievement, studentName: e.target.value })}
+                  className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="text-slate-400 block mb-1">Description</label>
+                <textarea
+                  rows={3}
+                  placeholder="Details about tournament victory..."
+                  value={editingAchievement.description}
+                  onChange={(e) => setEditingAchievement({ ...editingAchievement, description: e.target.value })}
+                  className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="text-slate-400 block mb-1">Achievement Image *</label>
+                <CloudinaryUpload
+                  value={editingAchievement.imageUrl}
+                  onChange={(url: string) => setEditingAchievement({ ...editingAchievement, imageUrl: url })}
+                />
+                {editingAchievement.imageUrl && (
+                  <p className="text-[11px] text-emerald-400 mt-1">✓ Image uploaded successfully</p>
+                )}
+              </div>
+              <button type="submit" className="w-full py-3 bg-[#E11D48] text-white font-extrabold rounded-xl">
+                Update Achievement
               </button>
             </form>
           </div>

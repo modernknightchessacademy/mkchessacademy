@@ -10,7 +10,7 @@ export async function GET(req: Request) {
 
     const puzzles = await prisma.puzzle.findMany({
       where: folderId ? { folderId } : {},
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: "asc" },
     });
     return NextResponse.json(puzzles);
   } catch (error: any) {

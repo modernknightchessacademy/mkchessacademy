@@ -205,6 +205,22 @@ export default function StudentPortalPage() {
 
   const currentPuzzle = accessiblePuzzles[currentPuzzleIdx] || accessiblePuzzles[0] || defaultPuzzles[0];
 
+  const startingFen = useMemo(() => {
+    let f = currentPuzzle?.fen;
+    if (currentPuzzle?.pgn) {
+      const fenMatch = currentPuzzle.pgn.match(/\[FEN\s+"([^"]+)"\]/i);
+      if (fenMatch && fenMatch[1]) {
+        f = fenMatch[1];
+      }
+    }
+    return f || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+  }, [currentPuzzle]);
+
+  const puzzleTurn = useMemo(() => {
+    const parts = startingFen.trim().split(/\s+/);
+    return parts[1] === "b" ? "black" : "white";
+  }, [startingFen]);
+
   const game = useRef(new Chess());
   const [fen, setFen] = useState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
@@ -685,7 +701,7 @@ export default function StudentPortalPage() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 font-extrabold text-[10px] uppercase tracking-wider rounded border border-emerald-500/40">
-                      YOUR TURN • White to Move
+                      YOUR TURN • {puzzleTurn === "black" ? "Black" : "White"} to Move
                     </span>
                     <span className="text-xs text-slate-400 font-mono">Puzzle #{currentPuzzleIdx + 1}</span>
                   </div>
@@ -703,6 +719,7 @@ export default function StudentPortalPage() {
                     position={fen}
                     onPieceDrop={onPieceDrop}
                     boardWidth={440}
+                    boardOrientation={puzzleTurn}
                     customDarkSquareStyle={{ backgroundColor: getCustomBoardColors().dark }}
                     customLightSquareStyle={{ backgroundColor: getCustomBoardColors().light }}
                   />
@@ -843,7 +860,7 @@ export default function StudentPortalPage() {
                   </select>
                 </div>
 
-                <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
+                <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1 custom-scrollbar">
                   {accessiblePuzzles.map((p, idx) => (
                     <button
                       key={p.id || idx}

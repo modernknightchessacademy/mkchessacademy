@@ -8,6 +8,8 @@ const DEFAULT_BATCHES = [
   { id: "b4", name: "Grandmaster Advanced Arena", timing: "07:00 PM - 09:00 PM", days: "Sat, Sun", level: "ADVANCED" },
 ];
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const batches = await (prisma as any).batch.findMany({

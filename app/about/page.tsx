@@ -256,7 +256,7 @@ export default function AboutPage() {
               <div className="relative w-full max-w-[340px] md:max-w-[400px] aspect-[3/4] bg-white border-[12px] border-white shadow-2xl rounded-[2.5rem] rounded-tr-[8rem] overflow-hidden">
                 <img
                   src="/founder.jpg"
-                  alt="Shubham Trikha - Founder"
+                  alt="G Hema Chandra Mouli - Founder"
                   className="w-full h-full object-cover rounded-[1.5rem] rounded-tr-[7rem]"
                 />
               </div>
@@ -285,13 +285,13 @@ export default function AboutPage() {
 
               {/* Title Name */}
               <h3 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-none">
-                Shubham <span className="text-[#E11D48]">Trikha.</span>
+                G Hema Chandra <span className="text-[#E11D48]">Mouli.</span>
               </h3>
 
               {/* Bio Description Paragraphs */}
               <div className="space-y-4 text-slate-600 text-sm md:text-base font-light leading-relaxed">
                 <p>
-                  As the Founder of <strong className="text-slate-950 font-bold">Modern Knight Chess Academy</strong>, Shubham Trikha is dedicated to raising the standard of chess coaching. He blends deep positional knowledge with modern software analysis to train the next generation of chess masters.
+                  As the Founder of <strong className="text-slate-950 font-bold">Modern Knight Chess Academy</strong>, G Hema Chandra Mouli is dedicated to raising the standard of chess coaching. He blends deep positional knowledge with modern software analysis to train the next generation of chess masters.
                 </p>
                 <p>
                   His coaching philosophy focuses on building strong fundamentals, improving calculation skills, and developing strategic thinking, while ensuring chess remains an engaging tool for academic and personal growth.

@@ -24,113 +24,113 @@ export function HeroSection() {
   );
 
   return (
-    <div className="relative flex flex-col w-full bg-[#0A1128]">
+    <div className="relative flex flex-col w-full bg-[#0A1128] overflow-hidden max-w-full">
       {/* --- HERO SECTION --- */}
       <section
-        className="relative w-full flex items-center bg-[#0A1128] overflow-hidden transition-all duration-500 font-sans min-h-[85vh] py-20 lg:py-28 pt-20 lg:pt-18"
+        className="relative w-full flex items-center bg-[#0A1128] overflow-hidden max-w-full transition-all duration-500 font-sans min-h-[85vh] py-20 lg:py-28 pt-20 lg:pt-18"
       >
         {/* --- SCALLOPED EDGES --- */}
         <ScallopedWave />
         <ScallopedWave flip />
 
         {/* --- BACKGROUND AMBIENCE --- */}
-        <div className="absolute inset-0 z-0 opacity-40">
+        <div className="absolute inset-0 z-0 opacity-40 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 right-0 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-[#E11D48]/10 rounded-full blur-[80px] md:blur-[120px]" />
           <div className="absolute bottom-1/4 left-0 w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-blue-500/10 rounded-full blur-[60px] md:blur-[100px]" />
         </div>
 
-        <div className="container relative z-30 mx-auto px-6 md:px-12 max-w-7xl">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="container relative z-30 mx-auto px-4 md:px-12 max-w-7xl">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
 
             {/* --- LEFT CONTENT (TEXT) --- */}
-            <div className="text-white text-center lg:text-left space-y-6 md:space-y-8 order-2 lg:order-1">
+            <div className="text-white text-center lg:text-left space-y-6 md:space-y-8 order-2 lg:order-1 px-2">
               <div className="inline-block">
-                <div className="flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md">
-                  <Crown className="w-3.5 h-3.5 text-[#E11D48]" />
-                  <span className="text-white font-bold text-[10px] md:text-xs tracking-[0.2em] uppercase">
-                    FIDE Certified Master Coaching Academy
-                  </span>
+                <div className="flex items-center justify-center lg:justify-start gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md">
+                   <Crown className="w-3.5 h-3.5 text-[#E11D48]" />
+                   <span className="text-white font-bold text-[9px] md:text-xs tracking-[0.2em] uppercase">
+                     FIDE Certified Master Coaching Academy
+                   </span>
                 </div>
               </div>
 
-              <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-5xl font-[1000] leading-[1.1] tracking-tighter uppercase">
-                SHAPING FUTURE <br />
-                <span className="text-[#E11D48] italic">GRANDMASTERS</span> <br />
-                ONE MOVE AT A TIME.
-              </h1>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-[1000] leading-[1.1] tracking-tighter uppercase">
+                 SHAPING FUTURE <br />
+                 <span className="text-[#E11D48] italic">GRANDMASTERS</span> <br />
+                 ONE MOVE AT A TIME.
+               </h1>
 
-              <p className="text-slate-350 text-base md:text-lg lg:text-xl leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
-                Develop strategic vision, spatial calculation, and tournament-winning discipline under FIDE-rated trainers. Launch your champion's chess career today.
-              </p>
+              <p className="text-slate-300 text-sm md:text-lg lg:text-xl leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
+                 Develop strategic vision, spatial calculation, and tournament-winning discipline under FIDE-rated trainers. Launch your champion's chess career today.
+               </p>
 
-              {/* Checkmark Features */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-x-8 gap-y-3">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-[#E11D48]" />
-                  <span className="font-bold text-sm md:text-base text-white">FIDE Masters</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-[#E11D48]" />
-                  <span className="font-bold text-sm md:text-base text-white">Structured Batches</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-[#E11D48]" />
-                  <span className="font-bold text-sm md:text-base text-white">Medals & Milestones</span>
-                </div>
-              </div>
+               {/* Checkmark Features */}
+               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-x-6 gap-y-3">
+                 <div className="flex items-center gap-2">
+                   <CheckCircle2 className="w-4 h-4 text-[#E11D48] shrink-0" />
+                   <span className="font-bold text-xs md:text-base text-white">FIDE Masters</span>
+                 </div>
+                 <div className="flex items-center gap-2">
+                   <CheckCircle2 className="w-4 h-4 text-[#E11D48] shrink-0" />
+                   <span className="font-bold text-xs md:text-base text-white">Structured Batches</span>
+                 </div>
+                 <div className="flex items-center gap-2">
+                   <CheckCircle2 className="w-4 h-4 text-[#E11D48] shrink-0" />
+                   <span className="font-bold text-xs md:text-base text-white">Medals & Milestones</span>
+                 </div>
+               </div>
 
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
-                <Link href="/bookdemo">
-                  <button className="w-full sm:w-auto h-14 md:h-16 px-8 md:px-12 bg-[#E11D48] hover:bg-pink-700 text-white rounded-2xl md:rounded-[2rem] text-sm md:text-base font-black uppercase tracking-widest shadow-2xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-                    Book A Demo
-                    <ArrowRight className="w-5 h-5" />
-                  </button>
-                </Link>
+               {/* CTAs */}
+               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-2">
+                 <Link href="/bookdemo" className="w-full sm:w-auto">
+                   <button className="w-full h-12 md:h-16 px-6 md:px-12 bg-[#E11D48] hover:bg-pink-700 text-white rounded-xl md:rounded-[2rem] text-xs md:text-base font-black uppercase tracking-widest shadow-2xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                     Book A Demo
+                     <ArrowRight className="w-4 h-4" />
+                   </button>
+                 </Link>
 
-                <Link href="/courses">
-                  <button className="w-full sm:w-auto h-14 md:h-16 px-8 md:px-10 text-white hover:bg-white/10 rounded-2xl md:rounded-[2rem] text-sm md:text-base font-bold border-2 border-white/20 backdrop-blur-sm uppercase tracking-widest transition-all">
-                    Explore Courses
-                  </button>
-                </Link>
-              </div>
-            </div>
+                 <Link href="/courses" className="w-full sm:w-auto">
+                   <button className="w-full h-12 md:h-16 px-6 md:px-10 text-white hover:bg-white/10 rounded-xl md:rounded-[2rem] text-xs md:text-base font-bold border-2 border-white/20 backdrop-blur-sm uppercase tracking-widest transition-all">
+                     Explore Courses
+                   </button>
+                 </Link>
+               </div>
+             </div>
 
-            {/* --- RIGHT CONTENT (IMAGE VISUAL CARD) --- */}
-            <div className="relative order-1 lg:order-2 w-full max-w-[500px] lg:max-w-none mx-auto">
-              <div className="relative z-10 w-full aspect-square sm:aspect-video lg:aspect-[4/3] rounded-[2rem] md:rounded-[4rem] overflow-hidden border-[8px] md:border-[16px] border-white/10 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.5)] bg-[#0f172a]">
-                <img
-                  src="/hero-chess-unique.png"
-                  alt="Chess learning begins at Modern Knight Academy"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+             {/* --- RIGHT CONTENT (IMAGE VISUAL CARD) --- */}
+             <div className="relative order-1 lg:order-2 w-full max-w-[400px] sm:max-w-[450px] lg:max-w-none mx-auto px-4 lg:px-0">
+               <div className="relative z-10 w-full aspect-square sm:aspect-video lg:aspect-[4/3] rounded-[1.5rem] md:rounded-[4rem] overflow-hidden border-[4px] md:border-[16px] border-white/10 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.5)] bg-[#0f172a]">
+                 <img
+                   src="/hero-chess-unique.png"
+                   alt="Chess learning begins at Modern Knight Academy"
+                   className="w-full h-full object-cover"
+                 />
+               </div>
 
-              {/* Floating Trophy Badge top-right */}
-              <motion.div
-                animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -top-6 -right-6 md:-top-10 md:-right-10 z-20 bg-[#E11D48] p-6 rounded-3xl shadow-2xl border-4 border-[#0A1128] hidden md:block"
-              >
-                <Trophy className="w-10 h-10 text-white fill-current" />
-              </motion.div>
+               {/* Floating Trophy Badge top-right */}
+               <motion.div
+                 animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
+                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                 className="absolute -top-4 -right-4 md:-top-10 md:-right-10 z-20 bg-[#E11D48] p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-2xl border-2 md:border-4 border-[#0A1128] hidden sm:block"
+               >
+                 <Trophy className="w-6 h-6 md:w-10 md:h-10 text-white fill-current" />
+               </motion.div>
 
-              {/* Floating Lightning Badge bottom-left */}
-              <motion.div
-                animate={{ y: [0, 15, 0], rotate: [0, -5, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute -bottom-6 -left-6 md:-bottom-10 md:-left-10 z-20 bg-white p-6 rounded-3xl shadow-2xl border-4 border-[#0A1128] hidden md:block"
-              >
-                <Zap className="w-10 h-10 text-[#0B4398] fill-current" />
-              </motion.div>
+               {/* Floating Lightning Badge bottom-left */}
+               <motion.div
+                 animate={{ y: [0, 15, 0], rotate: [0, -5, 0] }}
+                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                 className="absolute -bottom-4 -left-4 md:-bottom-10 md:-left-10 z-20 bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-2xl border-2 md:border-4 border-[#0A1128] hidden sm:block"
+               >
+                 <Zap className="w-6 h-6 md:w-10 md:h-10 text-[#0B4398] fill-current" />
+               </motion.div>
 
-              <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] border-2 border-white/5 rounded-full hidden md:block" />
-            </div>
+               <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] border-2 border-white/5 rounded-full hidden md:block" />
+             </div>
 
-          </div>
-        </div>
-      </section>
-    </div>
+           </div>
+         </div>
+       </section>
+     </div>
   );
 }
 

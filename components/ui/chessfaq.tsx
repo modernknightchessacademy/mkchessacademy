@@ -45,7 +45,7 @@ export default function ChessFAQSection() {
   };
 
   return (
-    <section className="py-24 bg-white relative">
+    <section className="py-24 bg-white relative overflow-hidden max-w-full">
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
         
         {/* Centered Heading Layout */}
@@ -125,8 +125,8 @@ export default function ChessFAQSection() {
           </div>
 
           {/* RIGHT COLUMN: FAQ IMAGE & DECORATIONS */}
-          <div className="lg:col-span-5 relative mt-8 lg:mt-0">
-            <div className="relative group">
+          <div className="lg:col-span-5 relative mt-8 lg:mt-0 px-2">
+            <div className="relative group max-w-[400px] lg:max-w-none mx-auto">
 
               {/* Main Image Container */}
               <div className="relative rounded-[2.5rem] overflow-hidden border-4 md:border-8 border-white shadow-2xl rotate-1 group-hover:rotate-0 transition-transform duration-700">
@@ -138,18 +138,18 @@ export default function ChessFAQSection() {
               </div>
 
               {/* Floating Card 1: Call Us */}
-              <div className="absolute -bottom-6 -left-4 bg-white p-4 rounded-2xl shadow-[0_15px_30px_rgba(0,0,0,0.08)] border border-slate-100 flex items-center gap-3.5 animate-float z-20">
+              <div className="absolute -bottom-6 left-2 sm:-left-4 bg-white p-4 rounded-2xl shadow-[0_15px_30px_rgba(0,0,0,0.08)] border border-slate-100 flex items-center gap-3.5 animate-float z-20">
                 <div className="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center text-green-600 shadow-sm shrink-0">
                   <Phone size={20} />
                 </div>
                 <div>
                   <p className="text-[9px] text-slate-400 font-black uppercase tracking-wider">Talk to Coach</p>
-                  <p className="text-base font-black text-slate-800 tracking-tight">+91 99481 98809</p>
+                  <p className="text-sm sm:text-base font-black text-slate-800 tracking-tight">+91 99481 98809</p>
                 </div>
               </div>
 
               {/* Floating Card 2: Next Tournament */}
-              <div className="absolute top-12 -right-6 bg-slate-950 p-4 pr-6 rounded-2xl rounded-tr-none shadow-[0_15px_30px_rgba(0,0,0,0.15)] border border-slate-800 animate-bounce-slow z-20">
+              <div className="absolute top-12 -right-2 sm:-right-6 bg-slate-950 p-4 pr-6 rounded-2xl rounded-tr-none shadow-[0_15px_30px_rgba(0,0,0,0.15)] border border-slate-800 animate-bounce-slow z-20">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 bg-amber-500 rounded-lg flex items-center justify-center text-slate-950 shadow-md">
                     <Trophy size={18} />

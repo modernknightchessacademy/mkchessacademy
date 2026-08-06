@@ -56,24 +56,30 @@ const Header: React.FC = () => {
   return (
     <>
       {/* Top Spacer */}
-      <div className="h-24 lg:h-21 invisible" />
+      <div className="h-20 lg:h-21 invisible" />
 
       {/* Main Header Container */}
       <header
         className={`w-full fixed top-0 left-0 z-[100] transition-all duration-300 ease-in-out ${
-          scrolled ? "pt-3 px-4 md:px-8" : "bg-white border-b border-slate-100 py-3"
+          scrolled ? "pt-2 px-2 md:px-8" : "bg-white border-b border-slate-100 py-2"
         }`}
       >
         <div
           className={`mx-auto transition-all duration-300 flex items-center justify-between ${
             scrolled
-              ? "max-w-8xl bg-slate-200/90 backdrop-blur-xl border border-white/60 shadow-2xl rounded-full px-6 py-2.5"
-              : "max-w-8xl px-6 md:px-8"
+              ? "max-w-8xl bg-slate-200/90 backdrop-blur-xl border border-white/60 shadow-2xl rounded-full px-4 py-2"
+              : "max-w-8xl px-4 md:px-8"
           }`}
         >
           {/* Logo Section */}
-          <Link href="/" className="flex items-center gap-2 group shrink-0">
-            <ModernKnightLogo size={scrolled ? "sm" : "md"} />
+          <Link href="/" className="flex items-center gap-1.5 group shrink-0">
+            {/* Show smaller logo on mobile, normal on desktop */}
+            <div className="block md:hidden">
+              <ModernKnightLogo size="xs" />
+            </div>
+            <div className="hidden md:block">
+              <ModernKnightLogo size={scrolled ? "md" : "md"} />
+            </div>
           </Link>
 
           {/* Desktop Navigation - Balanced Perfectly Proportionate Text (14px) */}
@@ -131,58 +137,66 @@ const Header: React.FC = () => {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <div className="xl:hidden flex items-center gap-2">
+          <div className="xl:hidden flex items-center gap-1.5">
             <Link
               href="/bookdemo"
-              className="text-xs font-bold px-3.5 py-1.5 rounded-full bg-[#0B4398] text-white"
+              className="text-[10px] font-bold px-3 py-1.5 rounded-full bg-[#0B4398] text-white shrink-0 hover:bg-blue-900 transition-colors"
             >
-              Book Demo
+              Book Trial
             </Link>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-full text-slate-700 hover:bg-slate-200/60"
+              className="p-1.5 rounded-full text-slate-700 hover:bg-slate-200/60 shrink-0"
               aria-label="Toggle menu"
             >
-              {isMobileMenuOpen ? <XIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
+              {isMobileMenuOpen ? <XIcon className="w-5.5 h-5.5" /> : <MenuIcon className="w-5.5 h-5.5" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
-          <div className="xl:hidden mt-2 bg-white/95 backdrop-blur-xl border border-slate-200 rounded-3xl px-6 py-6 space-y-3 shadow-2xl max-w-lg mx-auto max-h-[80vh] overflow-y-auto">
-            <div className="flex flex-col space-y-2">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-sm font-bold text-slate-800 hover:text-[#0B4398] py-2 border-b border-slate-100"
-                >
-                  {item.name}
-                </Link>
-              ))}
+          <div className="xl:hidden fixed inset-x-4 top-24 z-[110] bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-2xl max-h-[75vh] overflow-y-auto">
+            <div className="flex flex-col space-y-1">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`text-sm font-extrabold py-2.5 px-4 rounded-xl transition-all ${
+                      isActive ? "bg-slate-100 text-[#0B4398]" : "text-slate-800 hover:bg-slate-50"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
+              <div className="h-px bg-slate-100 my-2" />
               <Link
                 href="/bookdemo"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-sm font-bold text-[#E11D48] py-2 border-b border-slate-100 flex items-center gap-2"
+                className="text-sm font-extrabold text-white bg-[#0B4398] hover:bg-blue-900 py-3 px-4 rounded-xl text-center flex items-center justify-center gap-2 shadow-md"
               >
                 👑 Book Trial Class
               </Link>
-              <Link
-                href="/student"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-sm font-bold text-[#0B4398] py-2 border-b border-slate-100 flex items-center gap-2"
-              >
-                ♟ Student Portal
-              </Link>
-              <Link
-                href="/admin"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-sm font-bold text-slate-700 py-2 flex items-center gap-2"
-              >
-                ⚙️ Admin Panel
-              </Link>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <Link
+                  href="/student"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-xs font-bold text-slate-800 bg-white border border-slate-200 py-2.5 px-3 rounded-xl text-center hover:bg-slate-50 flex items-center justify-center gap-1"
+                >
+                  ♟ Portal
+                </Link>
+                <Link
+                  href="/admin"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-xs font-bold text-slate-850 bg-white border border-slate-200 py-2.5 px-3 rounded-xl text-center hover:bg-slate-50 flex items-center justify-center gap-1"
+                >
+                  ⚙️ Admin
+                </Link>
+              </div>
             </div>
           </div>
         )}

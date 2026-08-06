@@ -86,8 +86,9 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
 
           // Clean up bracket headers to extract only the move text
           const movesText = gameText
-            .replace(/\[[^\]]+\]/g, "")
-            .replace(/\{[^}]+\}/g, "")
+            .replace(/\{[^}]*\}/g, "")
+            .replace(/\([^)]*\)/g, "")
+            .replace(/\[[^\]]*\]/g, "")
             .replace(/\d+\.+\s*/g, "")
             .trim();
 
@@ -177,8 +178,9 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
       tempGame.load(startingFen);
 
       const movesText = singleGameText
-        .replace(/\[[^\]]+\]/g, "")
-        .replace(/\{[^}]+\}/g, "")
+        .replace(/\{[^}]*\}/g, "")
+        .replace(/\([^)]*\)/g, "")
+        .replace(/\[[^\]]*\]/g, "")
         .replace(/\d+\.+\s*/g, "")
         .trim();
 

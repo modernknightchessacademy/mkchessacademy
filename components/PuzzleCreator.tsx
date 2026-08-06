@@ -50,46 +50,142 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
   // PGN Import State & Logic
   const [importPgnText, setImportPgnText] = useState("");
 
-  const handleImportPgn = () => {
+  const handleImportPgn = async () => {
     if (!importPgnText.trim()) {
       alert("Please enter some PGN notation first.");
       return;
     }
     try {
-      const tempGame = new Chess();
-      
-      // Handle multi-puzzle PGN: Split the PGN blocks by looking for [Event tags
-      let pgnBlock = importPgnText.trim();
+      // Split the PGN blocks by looking for [Event tags
+      const pgnBlock = importPgnText.trim();
       const pgnGames = pgnBlock.split(/(?=\[Event\s+)/gi).filter(Boolean);
       
       if (pgnGames.length > 1) {
-        pgnBlock = pgnGames[0].trim();
-        alert(`Detected ${pgnGames.length} puzzles in the PGN block. Loading the first puzzle: "${pgnBlock.substring(0, 100)}..."`);
+        if (!confirm(`Detected ${pgnGames.length} puzzles. Do you want to batch import all of them directly?`)) {
+          return;
+        }
+
+        const puzzlesToSave = [];
+        for (let i = 0; i < pgnGames.length; i++) {
+          const gameText = pgnGames[i].trim();
+          const tempGame = new Chess();
+
+          // Parse FEN header manually
+          const fenRegex = /\[FEN\s+"([^"]+)"\]/i;
+          const fenMatch = gameText.match(fenRegex);
+          const startingFen = fenMatch && fenMatch[1] 
+            ? fenMatch[1] 
+            : "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+          try {
+            tempGame.load(startingFen);
+          } catch (e) {
+            console.warn(`Skip puzzle ${i+1}: Invalid FEN layout`);
+            continue;
+          }
+
+          // Clean up bracket headers to extract only the move text
+          const movesText = gameText
+            .replace(/\[[^\]]+\]/g, "")
+            .replace(/\{[^}]+\}/g, "")
+            .replace(/\d+\.+\s*/g, "")
+            .trim();
+
+          const rawMoves = movesText
+            .split(/\s+/)
+            .filter((m) => m && !["1-0", "0-1", "1/2-1/2", "*"].includes(m));
+
+          const loadedMoves: string[] = [];
+          let isGameValid = true;
+          for (const move of rawMoves) {
+            try {
+              const result = tempGame.move(move);
+              if (result) {
+                loadedMoves.push(result.san);
+              } else {
+                isGameValid = false;
+                break;
+              }
+            } catch (err) {
+              isGameValid = false;
+              break;
+            }
+          }
+
+          if (!isGameValid) {
+            console.warn(`Skip puzzle ${i+1}: Invalid moves`);
+            continue;
+          }
+
+          // Parse Title
+          let gameTitle = `Tactical Puzzle #${i + 1}`;
+          const eventRegex = /\[Event\s+"([^"]+)"\]/i;
+          const eventMatch = gameText.match(eventRegex);
+          if (eventMatch && eventMatch[1] && eventMatch[1] !== "?") {
+            gameTitle = eventMatch[1];
+          } else {
+            const whiteRegex = /\[White\s+"([^"]+)"\]/i;
+            const whiteMatch = gameText.match(whiteRegex);
+            if (whiteMatch && whiteMatch[1] && whiteMatch[1] !== "?") {
+              gameTitle = whiteMatch[1];
+            }
+          }
+
+          puzzlesToSave.push({
+            title: gameTitle,
+            description: description || `Imported Tactical Puzzle (${level})`,
+            level,
+            assignedBatch,
+            solutionHint,
+            fen: startingFen,
+            pgn: loadedMoves.join(" "),
+            folderId: folderId && folderId !== "root" ? folderId : null,
+            data: { subtype: puzzleSubtype }
+          });
+        }
+
+        if (puzzlesToSave.length === 0) {
+          alert("No valid puzzles could be parsed.");
+          return;
+        }
+
+        // POST batch payload directly
+        const res = await fetch("/api/puzzles", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(puzzlesToSave),
+        });
+
+        if (res.ok) {
+          alert(`Successfully batch imported ${puzzlesToSave.length} puzzles!`);
+          onBack();
+        } else {
+          alert("Failed to batch import puzzles.");
+        }
+        return;
       }
 
-      // Parse FEN header manually from raw PGN string if present
+      // Single puzzle flow
+      const tempGame = new Chess();
+      const singleGameText = pgnGames[0].trim();
       const fenRegex = /\[FEN\s+"([^"]+)"\]/i;
-      const fenMatch = pgnBlock.match(fenRegex);
+      const fenMatch = singleGameText.match(fenRegex);
       const startingFen = fenMatch && fenMatch[1] 
         ? fenMatch[1] 
         : "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-      // Initialize the engine with the starting position
       tempGame.load(startingFen);
 
-      // Clean up bracket headers to extract only the move text
-      const movesText = pgnBlock
-        .replace(/\[[^\]]+\]/g, "") // Remove all headers in brackets [Header "Value"]
-        .replace(/\{[^}]+\}/g, "")   // Remove comments like { [%eval 0.0] }
-        .replace(/\d+\.+\s*/g, "")   // Remove move numbers like 1. or 1...
+      const movesText = singleGameText
+        .replace(/\[[^\]]+\]/g, "")
+        .replace(/\{[^}]+\}/g, "")
+        .replace(/\d+\.+\s*/g, "")
         .trim();
 
-      // Split by whitespace and remove result tags
       const rawMoves = movesText
         .split(/\s+/)
         .filter((m) => m && !["1-0", "0-1", "1/2-1/2", "*"].includes(m));
 
-      // Play moves sequentially on the initialized board to validate them
       const loadedMoves: string[] = [];
       for (const move of rawMoves) {
         try {
@@ -105,14 +201,13 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
         }
       }
 
-      // Parse headers for Title
       const eventRegex = /\[Event\s+"([^"]+)"\]/i;
-      const eventMatch = pgnBlock.match(eventRegex);
+      const eventMatch = singleGameText.match(eventRegex);
       if (eventMatch && eventMatch[1] && eventMatch[1] !== "?") {
         setTitle(eventMatch[1]);
       } else {
         const whiteRegex = /\[White\s+"([^"]+)"\]/i;
-        const whiteMatch = pgnBlock.match(whiteRegex);
+        const whiteMatch = singleGameText.match(whiteRegex);
         if (whiteMatch && whiteMatch[1] && whiteMatch[1] !== "?") {
           setTitle(whiteMatch[1]);
         }

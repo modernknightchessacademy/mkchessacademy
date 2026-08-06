@@ -21,6 +21,31 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+
+    if (Array.isArray(body)) {
+      // Handle batch import of multiple puzzles
+      const createdPuzzles = [];
+      for (const item of body) {
+        const { title, pgn, fen, targetFen, level, assignedBatch, solutionHint, description, data, folderId } = item;
+        const puzzle = await prisma.puzzle.create({
+          data: {
+            title: title || `Tactical Puzzle (${level || "BEGINNER"})`,
+            pgn: pgn || "",
+            fen: fen || null,
+            targetFen: targetFen || null,
+            level: level || "BEGINNER",
+            assignedBatch: assignedBatch || "All Batches",
+            solutionHint: solutionHint || null,
+            description: description || null,
+            data: data || null,
+            folderId: folderId || null,
+          },
+        });
+        createdPuzzles.push(puzzle);
+      }
+      return NextResponse.json(createdPuzzles, { status: 201 });
+    }
+
     const { title, pgn, fen, targetFen, level, assignedBatch, solutionHint, description, data, folderId } = body;
 
     if (!pgn && !title) {

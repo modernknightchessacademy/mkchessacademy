@@ -57,7 +57,18 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
     }
     try {
       const tempGame = new Chess();
-      // Try to load PGN
+      
+      // Parse FEN header manually from raw PGN string if present, as loadPgn needs FEN loaded beforehand to validate moves
+      const fenRegex = /\[FEN\s+"([^"]+)"\]/i;
+      const fenMatch = importPgnText.match(fenRegex);
+      const startingFen = fenMatch && fenMatch[1] 
+        ? fenMatch[1] 
+        : "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+      // Initialize the engine with the starting position
+      tempGame.load(startingFen);
+
+      // Now load the PGN history to parse the moves on top of this FEN
       const success = tempGame.loadPgn(importPgnText);
       if (!success) {
         alert("Failed to load PGN. Please check the notation format.");
@@ -66,7 +77,6 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
       
       const loadedMoves = tempGame.history();
       const headers = tempGame.header();
-      const startingFen = headers.FEN || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
       
       if (headers.Event && headers.Event !== "?") {
         setTitle(headers.Event);

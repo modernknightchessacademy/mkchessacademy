@@ -58,9 +58,18 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
     try {
       const tempGame = new Chess();
       
+      // Handle multi-puzzle PGN: Split the PGN blocks by looking for [Event tags
+      let pgnBlock = importPgnText.trim();
+      const pgnGames = pgnBlock.split(/(?=\[Event\s+)/gi).filter(Boolean);
+      
+      if (pgnGames.length > 1) {
+        pgnBlock = pgnGames[0].trim();
+        alert(`Detected ${pgnGames.length} puzzles in the PGN block. Loading the first puzzle: "${pgnBlock.substring(0, 100)}..."`);
+      }
+
       // Parse FEN header manually from raw PGN string if present
       const fenRegex = /\[FEN\s+"([^"]+)"\]/i;
-      const fenMatch = importPgnText.match(fenRegex);
+      const fenMatch = pgnBlock.match(fenRegex);
       const startingFen = fenMatch && fenMatch[1] 
         ? fenMatch[1] 
         : "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -69,7 +78,7 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
       tempGame.load(startingFen);
 
       // Clean up bracket headers to extract only the move text
-      const movesText = importPgnText
+      const movesText = pgnBlock
         .replace(/\[[^\]]+\]/g, "") // Remove all headers in brackets [Header "Value"]
         .replace(/\{[^}]+\}/g, "")   // Remove comments like { [%eval 0.0] }
         .replace(/\d+\.+\s*/g, "")   // Remove move numbers like 1. or 1...
@@ -98,12 +107,12 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
 
       // Parse headers for Title
       const eventRegex = /\[Event\s+"([^"]+)"\]/i;
-      const eventMatch = importPgnText.match(eventRegex);
+      const eventMatch = pgnBlock.match(eventRegex);
       if (eventMatch && eventMatch[1] && eventMatch[1] !== "?") {
         setTitle(eventMatch[1]);
       } else {
         const whiteRegex = /\[White\s+"([^"]+)"\]/i;
-        const whiteMatch = importPgnText.match(whiteRegex);
+        const whiteMatch = pgnBlock.match(whiteRegex);
         if (whiteMatch && whiteMatch[1] && whiteMatch[1] !== "?") {
           setTitle(whiteMatch[1]);
         }
@@ -113,7 +122,6 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
       setCapturedSetupFen(startingFen);
       setMoves(loadedMoves);
       setMode("RECORD");
-      alert("PGN imported successfully! Moves loaded into the solution recorder.");
     } catch (e: any) {
       alert("Error parsing PGN: " + e.message);
     }

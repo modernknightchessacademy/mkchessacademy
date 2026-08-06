@@ -49,6 +49,10 @@ const Header: React.FC = () => {
     { name: "Contact Us", href: "/contact" },
   ];
 
+  if (pathname.startsWith("/admin") || pathname.startsWith("/student")) {
+    return null;
+  }
+
   return (
     <>
       {/* Top Spacer */}

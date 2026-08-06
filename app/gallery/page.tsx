@@ -1,11 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SubpageBanner from "@/components/ui/SubpageBanner";
 import Link from "next/link";
 
 type Category = "all" | "events" | "training" | "wins" | "family";
 
-const galleryItems: { src: string; category: Category }[] = [
+const fallbackGalleryItems: { src: string; category: Category }[] = [
   { src: "/hero.jpg",              category: "family" },
   { src: "/hero1.png",             category: "training" },
   { src: "/hero2.png",             category: "training" },
@@ -43,6 +43,28 @@ const tabs: { id: Category; label: string }[] = [
 export default function GalleryPage() {
   const [activeTab, setActiveTab] = useState<Category>("all");
   const [lightbox, setLightbox] = useState<string | null>(null);
+  const [dynamicItems, setDynamicItems] = useState<{ src: string; category: Category }[]>([]);
+
+  useEffect(() => {
+    fetch("/api/gallery")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const mapped = data.map((item: any) => {
+            const cat = (item.category || "events").toLowerCase();
+            const validCategory: Category = ["events", "training", "wins", "family"].includes(cat)
+              ? (cat as Category)
+              : "events";
+            return { src: item.imageUrl, category: validCategory };
+          });
+          setDynamicItems(mapped);
+        }
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
+  const galleryItems = [...dynamicItems, ...fallbackGalleryItems];
+
 
   const filtered = activeTab === "all"
     ? galleryItems

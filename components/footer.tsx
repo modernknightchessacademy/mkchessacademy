@@ -1,10 +1,17 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ModernKnightLogo } from "@/components/logo";
 import { Mail, Facebook, Instagram, ChevronUp, MessageSquare } from "lucide-react";
 
 const Footer: React.FC = () => {
+  const pathname = usePathname();
+
+  if (pathname.startsWith("/admin") || pathname.startsWith("/student")) {
+    return null;
+  }
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };

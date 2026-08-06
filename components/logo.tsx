@@ -22,7 +22,8 @@ export const ModernKnightLogo: React.FC<LogoProps> = ({
     xl: { logoSize: "w-28 h-28", textSize: "text-3xl", subSize: "text-base" },
   }[size];
 
-  const modernColor = variant === "light" ? "text-white" : "text-slate-900";
+  const modernColor = variant === "light" ? "text-white" : "text-slate-900 dark:text-white";
+  const knightColor = variant === "light" ? "text-sky-400" : "text-[#0B4398] dark:text-sky-400";
 
   return (
     <div className={`flex items-center gap-3 font-sans ${className}`}>
@@ -38,7 +39,7 @@ export const ModernKnightLogo: React.FC<LogoProps> = ({
       {showText && (
         <div className="flex flex-col justify-center leading-tight">
           <span className={`font-black tracking-tight ${modernColor} ${dimensions.textSize}`}>
-            MODERN <span className="text-[#0B4398]">KNIGHT</span>
+            MODERN <span className={knightColor}>KNIGHT</span>
           </span>
           <span className={`font-bold tracking-widest text-[#E11D48] ${dimensions.subSize}`}>
             CHESS ACADEMY

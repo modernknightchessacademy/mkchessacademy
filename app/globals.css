@@ -4,8 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated to chess-themed color palette: deep green, beige, and gold */
-  --background: #eeeed2; /* Beige background */
+  --background: #ffffff; /* Clean white background */
   --foreground: #2d3748; /* Dark gray for text */
   --card: #ffffff; /* White cards for contrast */
   --card-foreground: #2d3748;

@@ -1,183 +1,211 @@
 "use client";
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState } from "react";
 import Link from "next/link";
-import { Lock, Mail, User, GraduationCap, ShieldCheck } from "lucide-react";
+import { ModernKnightLogo } from "@/components/logo";
+import { ShieldCheck, UserCheck, ArrowRight, AlertCircle, CheckCircle2 } from "lucide-react";
 
-type UserRole = "STUDENT" | "TEACHER" | "ADMIN";
-
-export default function LoginPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl");
-
-  const [email, setEmail] = useState("");
+export default function SimpleLoginPage() {
+  const [activeRole, setActiveRole] = useState<"admin" | "student">("admin");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [selectedRole, setSelectedRole] = useState<UserRole>("STUDENT");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
-  const getCallbackUrl = (role: UserRole) => {
-    if (callbackUrl) return callbackUrl;
-    switch (role) {
-      case "ADMIN": return "/admin";
-      case "TEACHER": return "/teacher";
-      case "STUDENT": return "/student";
-      default: return "/";
+  const processSubmission = async () => {
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    const u = username.trim().toLowerCase();
+    const p = password.trim();
+
+    if (!u || !p) {
+      setErrorMsg("Please enter username/email and password.");
+      return;
     }
-  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const res = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
-      });
-
-      if (res?.error) {
-        setError("Invalid email or password");
+    if (activeRole === "admin") {
+      if ((u === "admin@modernknight.com" || u === "admin") && p === "admin123") {
+        setSuccessMsg("Valid Admin! Directing to Admin Hub...");
+        window.location.href = "/admin";
       } else {
-        router.push(getCallbackUrl(selectedRole));
+        setErrorMsg("Invalid Admin Credentials. Use: admin / admin123");
       }
-    } catch (err) {
-      setError("Something went wrong");
-    } finally {
-      setLoading(false);
+    } else {
+      if ((u === "student@modernknight.com" || u === "student") && p === "student123") {
+        setSuccessMsg("Valid Student! Directing to Student Arena...");
+        window.location.href = "/student";
+        return;
+      }
+
+      // Check registered students database
+      try {
+        const res = await fetch("/api/students");
+        if (res.ok) {
+          const students = await res.json();
+          const found = students.find(
+            (s: any) =>
+              (s.email?.toLowerCase() === u || s.name?.toLowerCase() === u) &&
+              (s.password ? s.password === p : true)
+          );
+          if (found) {
+            setSuccessMsg(`Welcome, ${found.name}! Directing to Student Arena...`);
+            localStorage.setItem("currentStudent", JSON.stringify(found));
+            window.location.href = "/student";
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("Student login error:", err);
+      }
+
+      setErrorMsg("Invalid Student Credentials. Check your registered email and password.");
     }
   };
-
-  const roles = [
-    {
-      id: "STUDENT" as UserRole,
-      label: "Student",
-      icon: GraduationCap,
-      color: "from-blue-500 to-blue-600",
-      description: "Find tutors near you"
-    },
-    {
-      id: "TEACHER" as UserRole,
-      label: "Teacher",
-      icon: User,
-      color: "from-amber-500 to-amber-600",
-      description: "Manage your students"
-    },
-    {
-      id: "ADMIN" as UserRole,
-      label: "Admin",
-      icon: ShieldCheck,
-      color: "from-slate-700 to-slate-800",
-      description: "Platform management"
-    },
-  ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 via-slate-50 to-amber-50 p-4">
-      <div className="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md border border-slate-200/50">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 font-sans text-slate-100">
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full space-y-6 shadow-2xl">
+        
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-amber-500/30 transform rotate-3">
-            <Lock className="text-white w-8 h-8" />
+        <div className="text-center space-y-3">
+          <div className="flex justify-center">
+            <ModernKnightLogo size="md" variant="light" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900">Welcome Back</h1>
-          <p className="text-slate-500 text-sm mt-2">Sign in to your account</p>
+          <h1 className="text-2xl font-black text-white">Academy Login Portal</h1>
+          <p className="text-xs text-slate-400">Select your portal tab below to log in</p>
         </div>
 
-        {/* Role Selection */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-slate-700 mb-3">Login as</label>
-          <div className="grid grid-cols-3 gap-2">
-            {roles.map((role) => {
-              const Icon = role.icon;
-              const isSelected = selectedRole === role.id;
-              return (
-                <button
-                  key={role.id}
-                  type="button"
-                  onClick={() => setSelectedRole(role.id)}
-                  className={`relative p-3 rounded-xl border-2 transition-all duration-300 ${isSelected
-                      ? `border-transparent bg-gradient-to-br ${role.color} text-white shadow-lg scale-105`
-                      : "border-slate-200 hover:border-slate-300 bg-white text-slate-600 hover:bg-slate-50"
-                    }`}
-                >
-                  <Icon className={`w-5 h-5 mx-auto mb-1 ${isSelected ? "text-white" : "text-slate-400"}`} />
-                  <span className="text-xs font-medium block">{role.label}</span>
-                </button>
-              );
-            })}
-          </div>
+        {/* Role Selector Tabs */}
+        <div className="grid grid-cols-2 gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
+          <button
+            type="button"
+            onClick={() => {
+              setActiveRole("admin");
+              setErrorMsg("");
+              setSuccessMsg("");
+            }}
+            className={`py-2.5 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+              activeRole === "admin"
+                ? "bg-blue-600 text-white shadow"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4" /> Admin Login
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setActiveRole("student");
+              setErrorMsg("");
+              setSuccessMsg("");
+            }}
+            className={`py-2.5 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+              activeRole === "student"
+                ? "bg-[#E11D48] text-white shadow"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <UserCheck className="w-4 h-4" /> Student Login
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-xl text-center border border-red-100">
-              {error}
-            </div>
-          )}
+        {/* Error / Success Messages */}
+        {errorMsg && (
+          <div className="p-3.5 bg-red-950/90 border border-red-500/60 rounded-xl text-red-200 text-xs font-bold flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+            <span>{errorMsg}</span>
+          </div>
+        )}
 
+        {successMsg && (
+          <div className="p-3.5 bg-emerald-950/90 border border-emerald-500/60 rounded-xl text-emerald-200 text-xs font-bold flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>{successMsg}</span>
+          </div>
+        )}
+
+        {/* Pure React Container (No <form> element anywhere) */}
+        <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none bg-slate-50/50 transition-all"
-                placeholder="your@email.com"
-                required
-              />
-            </div>
+            <label className="block text-xs font-bold text-slate-300 mb-1">
+              {activeRole === "admin" ? "Admin Email / Username" : "Student Email / Username"}
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  processSubmission();
+                }
+              }}
+              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-blue-500"
+              placeholder={activeRole === "admin" ? "admin@modernknight.com" : "student@modernknight.com"}
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none bg-slate-50/50 transition-all"
-                placeholder="••••••••"
-                required
-              />
-            </div>
+            <label className="block text-xs font-bold text-slate-300 mb-1">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  processSubmission();
+                }
+              }}
+              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-blue-500"
+              placeholder="••••••••"
+            />
           </div>
 
           <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold py-3 rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 transform hover:-translate-y-0.5"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              processSubmission();
+            }}
+            className={`w-full py-3.5 text-white font-extrabold text-sm rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 ${
+              activeRole === "admin"
+                ? "bg-blue-600 hover:bg-blue-700"
+                : "bg-[#E11D48] hover:bg-rose-700"
+            }`}
           >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                Signing In...
-              </span>
-            ) : (
-              "Sign In"
-            )}
+            <span>Sign In to {activeRole === "admin" ? "Admin Control Hub" : "Student Arena"}</span>
+            <ArrowRight className="w-4 h-4" />
           </button>
-        </form>
+        </div>
 
-        {/* Signup Link */}
-        <div className="mt-6 text-center">
-          <p className="text-slate-500 text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-amber-600 font-semibold hover:text-amber-700 transition-colors">
-              Sign up
-            </Link>
-          </p>
+        {/* Credentials Helper */}
+        <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1.5">
+          <p className="font-bold text-white text-xs">Credentials for {activeRole === "admin" ? "Admin Hub" : "Student Arena"}:</p>
+          {activeRole === "admin" ? (
+            <>
+              <p>Username: <code className="text-amber-400 font-bold">admin</code> or <code className="text-amber-400 font-bold">admin@modernknight.com</code></p>
+              <p>Password: <code className="text-amber-400 font-bold">admin123</code></p>
+            </>
+          ) : (
+            <>
+              <p>Username: <code className="text-amber-400 font-bold">student</code> or <code className="text-amber-400 font-bold">student@modernknight.com</code></p>
+              <p>Password: <code className="text-amber-400 font-bold">student123</code></p>
+            </>
+          )}
+        </div>
+
+        {/* Navigation footer */}
+        <div className="pt-2 text-center border-t border-slate-800 flex justify-between items-center text-xs">
+          <Link href="/" className="text-slate-400 hover:text-white font-semibold">
+            ← Home Page
+          </Link>
+
+          <Link href={activeRole === "admin" ? "/admin" : "/student"} className="text-blue-400 font-bold hover:underline">
+            Direct Link →
+          </Link>
         </div>
       </div>
     </div>

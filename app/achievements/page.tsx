@@ -1,9 +1,97 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import SubpageBanner from "@/components/ui/SubpageBanner";
 
+interface DynamicAchievement {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  imageUrl: string;
+  year: string;
+  studentName?: string;
+}
+
 export default function AchievementsPage() {
+  const [dynamicAchievements, setDynamicAchievements] = useState<DynamicAchievement[]>([]);
+
+  useEffect(() => {
+    fetch("/api/achievements")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) setDynamicAchievements(data);
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
+  const fallbackAchievements = [
+    {
+      name: "Viha Jain",
+      level: "Elite",
+      subtitle: "Outstanding Performance In",
+      heading: "Inter-School Chess",
+      desc: "Secured 2nd Place in Team Competition and 3rd Place Individually on the First Board.",
+      image: "/avatar1.jpg",
+      flagCode: "in",
+      country: "India",
+      gradient: "from-[#0B4398] via-[#0052CC] to-[#0B4398]",
+      pillText: "text-[#0B4398]",
+    },
+    {
+      name: "Aamir Yassar",
+      level: "Rated",
+      subtitle: "Officially Achieved",
+      heading: "FIDE Rating",
+      desc: "Earned official international recognition and a global chess ranking from FIDE.",
+      image: "/avatar2.png",
+      flagCode: "in",
+      country: "India",
+      gradient: "from-[#E11D48] via-[#c2143b] to-[#E11D48]",
+      pillText: "text-[#E11D48]",
+    },
+    {
+      name: "Aaryash",
+      level: "Rising Star",
+      subtitle: "Podium Finish At",
+      heading: "Seigle Cup 2026",
+      desc: "Demonstrated exceptional strategy to be crowned Runner-Up in this prestigious tournament.",
+      image: "/avatar3.jpeg",
+      flagCode: "us",
+      country: "USA",
+      gradient: "from-[#0B4398] via-[#0052CC] to-[#0B4398]",
+      pillText: "text-[#0B4398]",
+    },
+    {
+      name: "Sanya Reddy",
+      level: "Champion",
+      subtitle: "Champion",
+      heading: "USA Open Chess",
+      desc: "Won first prize in the USA Open Chess Tournament in the under-14 category.",
+      image: "/avatar1.jpg",
+      flagCode: "us",
+      country: "USA",
+      gradient: "from-[#E11D48] via-[#c2143b] to-[#E11D48]",
+      pillText: "text-[#E11D48]",
+    },
+  ];
+
+  const displayAchievements = [
+    ...dynamicAchievements.map((item, idx) => ({
+      name: item.studentName || item.title,
+      level: item.category || "Trophy",
+      subtitle: `${item.year} Milestone`,
+      heading: item.title,
+      desc: item.description,
+      image: item.imageUrl,
+      flagCode: "in",
+      country: "India",
+      gradient: idx % 2 === 0 ? "from-[#0B4398] via-[#0052CC] to-[#0B4398]" : "from-[#E11D48] via-[#c2143b] to-[#E11D48]",
+      pillText: idx % 2 === 0 ? "text-[#0B4398]" : "text-[#E11D48]",
+    })),
+    ...fallbackAchievements,
+  ];
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Redesigned Banner */}
@@ -46,56 +134,7 @@ export default function AchievementsPage() {
 
           {/* Achievements Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-10">
-            {[
-              { 
-                name: "Viha Jain", 
-                level: "Elite", 
-                subtitle: "Outstanding Performance In",
-                heading: "Inter-School Chess",
-                desc: "Secured 2nd Place in Team Competition and 3rd Place Individually on the First Board.",
-                image: "/avatar1.jpg",
-                flagCode: "in",
-                country: "India",
-                gradient: "from-[#0B4398] via-[#0052CC] to-[#0B4398]",
-                pillText: "text-[#0B4398]"
-              },
-              { 
-                name: "Aamir Yassar", 
-                level: "Rated", 
-                subtitle: "Officially Achieved",
-                heading: "FIDE Rating",
-                desc: "Earned official international recognition and a global chess ranking from FIDE.",
-                image: "/avatar2.png",
-                flagCode: "in",
-                country: "India",
-                gradient: "from-[#E11D48] via-[#c2143b] to-[#E11D48]",
-                pillText: "text-[#E11D48]"
-              },
-              { 
-                name: "Aaryash", 
-                level: "Rising Star", 
-                subtitle: "Podium Finish At",
-                heading: "Seigle Cup 2026",
-                desc: "Demonstrated exceptional strategy to be crowned Runner-Up in this prestigious tournament.",
-                image: "/avatar3.jpeg",
-                flagCode: "us",
-                country: "USA",
-                gradient: "from-[#0B4398] via-[#0052CC] to-[#0B4398]",
-                pillText: "text-[#0B4398]"
-              },
-              { 
-                name: "Sanya Reddy", 
-                level: "Champion", 
-                subtitle: "Champion",
-                heading: "USA Open Chess",
-                desc: "Won first prize in the USA Open Chess Tournament in the under-14 category.",
-                image: "/avatar1.jpg",
-                flagCode: "us",
-                country: "USA",
-                gradient: "from-[#E11D48] via-[#c2143b] to-[#E11D48]",
-                pillText: "text-[#E11D48]"
-              },
-            ].map((item, idx) => (
+            {displayAchievements.map((item, idx) => (
               <div 
                 key={idx} 
                 className={`relative bg-gradient-to-br ${item.gradient} rounded-[2rem] p-6 pt-20 pb-8 border border-white/10 shadow-lg hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group`}

@@ -1,107 +1,106 @@
 "use client";
 
 import Link from "next/link";
-import { GraduationCap, User, ArrowRight, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import { ModernKnightLogo } from "@/components/logo";
+import { Trophy, Crown, ArrowRight, Sparkles, UserCheck } from "lucide-react";
 
 export default function SignupPage() {
-    const roles = [
-        {
-            id: "student",
-            label: "Student",
-            icon: GraduationCap,
-            href: "/signup/student",
-            color: "from-blue-500 to-blue-600",
-            bgColor: "bg-blue-50",
-            borderColor: "border-blue-200",
-            description: "Find qualified teachers near you",
-            features: ["Browse tutors by subject", "Filter by location & distance", "Connect with teachers directly"],
-        },
-        {
-            id: "teacher",
-            label: "Teacher",
-            icon: User,
-            href: "/signup/teacher",
-            color: "from-amber-500 to-amber-600",
-            bgColor: "bg-amber-50",
-            borderColor: "border-amber-200",
-            description: "Grow your teaching practice",
-            features: ["Showcase your expertise", "Receive student inquiries", "Manage your profile"],
-        },
-    ];
+  const roles = [
+    {
+      id: "student",
+      label: "Student / Player",
+      icon: Crown,
+      href: "/signup/student",
+      color: "from-blue-600 to-blue-800",
+      description: "Join Modern Knight Chess Academy as a student",
+      features: [
+        "FIDE Certified Master Coaching",
+        "3-Tier Tactical PGN Puzzles",
+        "Personalized Rating & Streak Tracking"
+      ],
+    },
+    {
+      id: "teacher",
+      label: "Chess Coach",
+      icon: Trophy,
+      href: "/signup/teacher",
+      color: "from-rose-600 to-rose-800",
+      description: "Apply as a certified FIDE coach or trainer",
+      features: [
+        "Conduct Interactive PGN Masterclasses",
+        "Manage Student Batches & Attendance",
+        "Track FIDE Rating Gains & Analytics"
+      ],
+    },
+  ];
 
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 via-slate-50 to-amber-50 p-4">
-            <div className="w-full max-w-4xl">
-                {/* Header */}
-                <div className="text-center mb-10">
-                    <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
-                        <Sparkles className="w-4 h-4" />
-                        Join Our Community
-                    </div>
-                    <h1 className="text-4xl font-bold text-slate-900 mb-3">Create Your Account</h1>
-                    <p className="text-slate-500 text-lg">Choose how you want to use our platform</p>
-                </div>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4 relative overflow-hidden font-sans">
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#0B4398]/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#E11D48]/20 rounded-full blur-3xl pointer-events-none" />
 
-                {/* Role Cards */}
-                <div className="grid md:grid-cols-2 gap-6">
-                    {roles.map((role, index) => {
-                        const Icon = role.icon;
-                        return (
-                            <Link
-                                key={role.id}
-                                href={role.href}
-                                className={`group relative ${role.bgColor} ${role.borderColor} border-2 rounded-3xl p-8 transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] hover:border-transparent overflow-hidden`}
-                            >
-                                {/* Background Gradient on Hover */}
-                                <div className={`absolute inset-0 bg-gradient-to-br ${role.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-
-                                {/* Content */}
-                                <div className="relative z-10">
-                                    {/* Icon */}
-                                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${role.color} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                                        <Icon className="w-8 h-8 text-white" />
-                                    </div>
-
-                                    {/* Title & Description */}
-                                    <h2 className="text-2xl font-bold text-slate-900 group-hover:text-white transition-colors mb-2">
-                                        I&apos;m a {role.label}
-                                    </h2>
-                                    <p className="text-slate-600 group-hover:text-white/80 transition-colors mb-6">
-                                        {role.description}
-                                    </p>
-
-                                    {/* Features */}
-                                    <ul className="space-y-2 mb-6">
-                                        {role.features.map((feature, i) => (
-                                            <li key={i} className="flex items-center gap-2 text-slate-600 group-hover:text-white/90 transition-colors text-sm">
-                                                <div className={`w-1.5 h-1.5 rounded-full bg-gradient-to-br ${role.color} group-hover:bg-white`} />
-                                                {feature}
-                                            </li>
-                                        ))}
-                                    </ul>
-
-                                    {/* CTA */}
-                                    <div className="flex items-center gap-2 text-slate-900 group-hover:text-white font-semibold">
-                                        <span>Get Started</span>
-                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-                                    </div>
-                                </div>
-                            </Link>
-                        );
-                    })}
-                </div>
-
-                {/* Login Link */}
-                <div className="mt-8 text-center">
-                    <p className="text-slate-500">
-                        Already have an account?{" "}
-                        <Link href="/login" className="text-amber-600 font-semibold hover:text-amber-700 transition-colors">
-                            Sign in
-                        </Link>
-                    </p>
-                </div>
-            </div>
+      <div className="w-full max-w-4xl space-y-8 relative z-10">
+        <div className="text-center space-y-3">
+          <div className="flex justify-center mb-2">
+            <ModernKnightLogo size="md" variant="light" />
+          </div>
+          <span className="px-4 py-1.5 bg-rose-500/10 text-[#E11D48] text-xs font-black uppercase tracking-widest rounded-full border border-rose-500/20 inline-flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            Academy Registration
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white">Join Modern Knight Chess Academy</h1>
+          <p className="text-slate-400 text-sm max-w-md mx-auto">Select your registration profile to get started with grandmaster chess training.</p>
         </div>
-    );
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {roles.map((role) => {
+            const Icon = role.icon;
+            return (
+              <Link
+                key={role.id}
+                href={role.href}
+                className="group relative bg-slate-900 border border-slate-800 hover:border-[#E11D48] rounded-3xl p-8 transition-all duration-300 hover:shadow-2xl space-y-6"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0B4398] to-[#E11D48] flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                  <Icon className="w-7 h-7 text-white" />
+                </div>
+
+                <div>
+                  <h2 className="text-2xl font-black text-white group-hover:text-amber-300 transition mb-2">
+                    {role.label}
+                  </h2>
+                  <p className="text-slate-400 text-xs leading-relaxed">
+                    {role.description}
+                  </p>
+                </div>
+
+                <ul className="space-y-2 pt-2 border-t border-slate-800">
+                  {role.features.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-2 text-slate-300 text-xs">
+                      <UserCheck className="w-4 h-4 text-amber-400 shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="flex items-center gap-2 text-[#E11D48] font-bold text-xs pt-2">
+                  <span>Proceed to Portal Enrollment</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="text-center pt-4">
+          <p className="text-slate-400 text-xs">
+            Already enrolled?{" "}
+            <Link href="/login" className="text-amber-400 font-bold hover:underline">
+              Sign In to Portal
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -94,7 +94,7 @@ const CoachCtaSection: React.FC = () => {
                <div className="flex items-center gap-1 mb-1">
                  {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 text-amber-400 fill-amber-400" />)}
                </div>
-               <p className="text-xs font-bold text-slate-800 uppercase tracking-wide text-center">Top Rated Tutors</p>
+               <p className="text-xs font-bold text-slate-800 uppercase tracking-wide text-center">Top Rated Coaches</p>
             </div>
 
             {/* Floating 'Result' Badge */}

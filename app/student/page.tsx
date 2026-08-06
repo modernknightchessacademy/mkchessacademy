@@ -566,7 +566,14 @@ export default function StudentPortalPage() {
                         </span>
                       </div>
 
-                      <h4 className="font-extrabold text-white text-base">{p.title}</h4>
+                      <div className="flex justify-between items-start gap-4">
+                        <h4 className="font-extrabold text-white text-base flex-1">{p.title}</h4>
+                        {solvedPuzzleIds.includes(p.id) && (
+                          <span className="text-[10px] font-black text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30 shrink-0">
+                            Solved ✓
+                          </span>
+                        )}
+                      </div>
 
                       <button
                         onClick={() => {

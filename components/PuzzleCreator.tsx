@@ -58,7 +58,7 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
     try {
       const tempGame = new Chess();
       
-      // Parse FEN header manually from raw PGN string if present, as loadPgn needs FEN loaded beforehand to validate moves
+      // Parse FEN header manually from raw PGN string if present
       const fenRegex = /\[FEN\s+"([^"]+)"\]/i;
       const fenMatch = importPgnText.match(fenRegex);
       const startingFen = fenMatch && fenMatch[1] 
@@ -68,22 +68,47 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
       // Initialize the engine with the starting position
       tempGame.load(startingFen);
 
-      // Now load the PGN history to parse the moves on top of this FEN
-      const success = tempGame.loadPgn(importPgnText);
-      if (!success) {
-        alert("Failed to load PGN. Please check the notation format.");
-        return;
+      // Clean up bracket headers to extract only the move text
+      const movesText = importPgnText
+        .replace(/\[[^\]]+\]/g, "") // Remove all headers in brackets [Header "Value"]
+        .replace(/\{[^}]+\}/g, "")   // Remove comments like { [%eval 0.0] }
+        .replace(/\d+\.+\s*/g, "")   // Remove move numbers like 1. or 1...
+        .trim();
+
+      // Split by whitespace and remove result tags
+      const rawMoves = movesText
+        .split(/\s+/)
+        .filter((m) => m && !["1-0", "0-1", "1/2-1/2", "*"].includes(m));
+
+      // Play moves sequentially on the initialized board to validate them
+      const loadedMoves: string[] = [];
+      for (const move of rawMoves) {
+        try {
+          const result = tempGame.move(move);
+          if (result) {
+            loadedMoves.push(result.san);
+          } else {
+            throw new Error(`Illegal move: ${move}`);
+          }
+        } catch (moveErr: any) {
+          alert(`Move validation failed at "${move}": ${moveErr.message}`);
+          return;
+        }
       }
-      
-      const loadedMoves = tempGame.history();
-      const headers = tempGame.header();
-      
-      if (headers.Event && headers.Event !== "?") {
-        setTitle(headers.Event);
-      } else if (headers.White && headers.White !== "?") {
-        setTitle(headers.White);
+
+      // Parse headers for Title
+      const eventRegex = /\[Event\s+"([^"]+)"\]/i;
+      const eventMatch = importPgnText.match(eventRegex);
+      if (eventMatch && eventMatch[1] && eventMatch[1] !== "?") {
+        setTitle(eventMatch[1]);
+      } else {
+        const whiteRegex = /\[White\s+"([^"]+)"\]/i;
+        const whiteMatch = importPgnText.match(whiteRegex);
+        if (whiteMatch && whiteMatch[1] && whiteMatch[1] !== "?") {
+          setTitle(whiteMatch[1]);
+        }
       }
-      
+
       safeLoadFen(startingFen);
       setCapturedSetupFen(startingFen);
       setMoves(loadedMoves);

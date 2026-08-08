@@ -17,26 +17,48 @@ export async function GET(req: Request) {
             orderBy: { date: "desc" },
           },
           solvedPuzzles: {
-            select: { id: true },
+            select: { id: true, points: true },
           },
         },
       });
+      if (student) {
+        const totalPoints = student.solvedPuzzles.reduce((sum, sp) => sum + Math.min(sp.points || 0, 4), 0);
+        return NextResponse.json({
+          ...student,
+          rating: totalPoints,
+        });
+      }
       return NextResponse.json(student);
     }
 
     const students = await prisma.student.findMany({
-      orderBy: isLeaderboard ? { rating: "desc" } : { createdAt: "desc" },
       include: {
         attendances: {
           orderBy: { date: "desc" },
           take: 5,
         },
         solvedPuzzles: {
-          select: { id: true },
+          select: { id: true, points: true },
         },
       },
     });
-    return NextResponse.json(students);
+
+    const studentsWithPoints = students.map((s) => {
+      const totalPoints = s.solvedPuzzles.reduce((sum, sp) => sum + Math.min(sp.points || 0, 4), 0);
+      return {
+        ...s,
+        rating: totalPoints,
+      };
+    });
+
+    if (isLeaderboard) {
+      studentsWithPoints.sort((a, b) => b.rating - a.rating);
+    } else {
+      // Sort by createdAt desc if not leaderboard
+      studentsWithPoints.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+
+    return NextResponse.json(studentsWithPoints);
   } catch (error: any) {
     console.error("GET /api/students error:", error);
     return NextResponse.json([], { status: 200 });

@@ -32,7 +32,7 @@ export default function StudentPortalPage() {
   const [studentProfile, setStudentProfile] = useState({
     id: "demo_student_id",
     name: "Aarav Sharma",
-    fideRating: 1640,
+    fideRating: 0,
     academyXp: 3420,
     dailyStreak: 14,
     badge: "Master Tactician 🏆",
@@ -46,6 +46,15 @@ export default function StudentPortalPage() {
   const [leaderboardEntries, setLeaderboardEntries] = useState<any[]>([]);
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [attendanceLogs, setAttendanceLogs] = useState<any[]>([]);
+  const [attempts, setAttempts] = useState(1);
+
+  const getPointsForAttempts = (att: number) => {
+    if (att === 1) return 4;
+    if (att === 2) return 3;
+    if (att === 3) return 2;
+    if (att === 4) return 1;
+    return 0;
+  };
 
   const fetchSolvedPuzzles = (studentId: string) => {
     fetch(`/api/students/solve?studentId=${studentId}`)
@@ -81,6 +90,11 @@ export default function StudentPortalPage() {
   useEffect(() => {
     // Load student profile from localStorage if present
     const stored = localStorage.getItem("currentStudent");
+    if (!stored) {
+      window.location.href = "/login?role=student";
+      return;
+    }
+
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
@@ -97,8 +111,14 @@ export default function StudentPortalPage() {
           fetch(`/api/students?id=${parsed.id}`)
             .then((res) => res.json())
             .then((studentData) => {
-              if (studentData && Array.isArray(studentData.attendances)) {
-                setAttendanceLogs(studentData.attendances);
+              if (studentData) {
+                if (Array.isArray(studentData.attendances)) {
+                  setAttendanceLogs(studentData.attendances);
+                }
+                setStudentProfile((prev) => ({
+                  ...prev,
+                  fideRating: studentData.rating !== undefined ? studentData.rating : prev.fideRating,
+                }));
               }
             })
             .catch((err) => console.error("Error fetching student details:", err));
@@ -271,12 +291,13 @@ export default function StudentPortalPage() {
       setMoveFeedback(null);
       setShowHint(false);
       setPlayedMoves([]);
+      setAttempts(1);
     } catch (e) {
       console.error("Error loading puzzle FEN:", e);
     }
   }, [currentPuzzleIdx, currentPuzzle]);
 
-  const recordSolve = async (puzzleId: string) => {
+  const recordSolve = async (puzzleId: string, earnedPoints: number = 4) => {
     if (!studentProfile.id || !puzzleId) return;
 
     // Handle mock/demo student session updates entirely in local state (no DB write)
@@ -285,7 +306,7 @@ export default function StudentPortalPage() {
         setSolvedPuzzleIds((prev) => [...prev, puzzleId]);
         setStudentProfile((prev) => ({
           ...prev,
-          fideRating: prev.fideRating + 10,
+          fideRating: prev.fideRating + earnedPoints,
         }));
       }
       return;
@@ -298,7 +319,7 @@ export default function StudentPortalPage() {
         body: JSON.stringify({
           studentId: studentProfile.id,
           puzzleId: puzzleId,
-          points: 10,
+          points: earnedPoints,
         }),
       });
       if (res.ok) {
@@ -332,7 +353,7 @@ export default function StudentPortalPage() {
           game.current.put(p, tgt as any);
           setFen(game.current.fen());
           // Record placement task solves too!
-          recordSolve(currentPuzzle.id);
+          recordSolve(currentPuzzle.id, 4);
           return true;
         }
       } catch (e) {}
@@ -371,8 +392,9 @@ export default function StudentPortalPage() {
         setPlayedMoves(newPlayedMoves);
 
         if (newPlayedMoves.length === solutionMoves.length) {
-          setMoveFeedback("🎉 EXCELLENT MOVE! Tactical Checkmate Solution Verified!");
-          recordSolve(currentPuzzle.id);
+          const pts = getPointsForAttempts(attempts);
+          setMoveFeedback(`🎉 EXCELLENT MOVE! Tactical Checkmate Solution Verified! (+${pts} points)`);
+          recordSolve(currentPuzzle.id, pts);
         } else {
           setMoveFeedback("🎉 Correct move! Keep going.");
 
@@ -394,11 +416,15 @@ export default function StudentPortalPage() {
         }
         return true;
       } else {
-        setMoveFeedback("❌ Incorrect move. Try another continuation!");
+        setAttempts((prev) => prev + 1);
+        const nextPts = getPointsForAttempts(attempts + 1);
+        setMoveFeedback(`❌ Incorrect move. Try another continuation! (Attempt #${attempts + 1}, next worth ${nextPts} pts)`);
         return false;
       }
     } catch (e) {
-      setMoveFeedback("❌ Incorrect move. Try another continuation!");
+      setAttempts((prev) => prev + 1);
+      const nextPts = getPointsForAttempts(attempts + 1);
+      setMoveFeedback(`❌ Incorrect move. Try another continuation! (Attempt #${attempts + 1}, next worth ${nextPts} pts)`);
       return false;
     }
   };
@@ -450,9 +476,7 @@ export default function StudentPortalPage() {
 
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3 text-xs font-bold bg-slate-950 px-4 py-2 rounded-xl border border-slate-800">
-            <span className="text-amber-400">🔥 {studentProfile.dailyStreak} Day Streak</span>
-            <span className="text-[#E11D48]">⭐ {studentProfile.fideRating} FIDE</span>
-            <span className="text-blue-400">⚡ {studentProfile.academyXp} XP</span>
+            <span className="text-[#E11D48] flex items-center gap-1">🏆 {studentProfile.fideRating} Points</span>
           </div>
 
           <Link
@@ -461,6 +485,16 @@ export default function StudentPortalPage() {
           >
             Website Home
           </Link>
+
+          <button
+            onClick={() => {
+              localStorage.removeItem("currentStudent");
+              window.location.href = "/login?role=student";
+            }}
+            className="px-4 py-2 bg-red-950/80 hover:bg-red-900 text-xs font-bold rounded-xl border border-red-500/30 text-red-200 transition-colors cursor-pointer"
+          >
+            Logout
+          </button>
         </div>
       </header>
 
@@ -903,7 +937,7 @@ export default function StudentPortalPage() {
               <h2 className="text-2xl font-black text-white flex items-center gap-2">
                 <Trophy className="w-6 h-6 text-amber-400 animate-bounce" /> Grandmaster Student Leaderboard
               </h2>
-              <p className="text-xs text-slate-400">Rankings based on student FIDE rating and solved academy puzzles.</p>
+              <p className="text-xs text-slate-400">Rankings based on points earned from solving academy puzzles.</p>
             </div>
 
             {leaderboardLoading ? (
@@ -911,15 +945,15 @@ export default function StudentPortalPage() {
             ) : leaderboardEntries.length === 0 ? (
               <div className="text-slate-500 text-center py-8">No students found.</div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
+              <div className="overflow-x-auto w-full">
+                <table className="w-full min-w-[700px] text-left text-xs border-collapse">
                   <thead>
                     <tr className="border-b border-slate-800 text-slate-400 uppercase font-black tracking-wider">
-                      <th className="py-3 px-4">Rank</th>
-                      <th className="py-3 px-4">Student Name</th>
-                      <th className="py-3 px-4">Training Batch</th>
-                      <th className="py-3 px-4 text-right">Solved Puzzles</th>
-                      <th className="py-3 px-4 text-right">FIDE Rating</th>
+                      <th className="py-3 px-4 w-[10%]">Rank</th>
+                      <th className="py-3 px-4 w-[35%]">Student Name</th>
+                      <th className="py-3 px-4 w-[25%]">Training Batch</th>
+                      <th className="py-3 px-4 w-[15%] text-right">Solved Puzzles</th>
+                      <th className="py-3 px-4 w-[15%] text-right">Points</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800">
@@ -932,31 +966,35 @@ export default function StudentPortalPage() {
                             isSelf ? "bg-blue-950/40 font-bold border-l-4 border-blue-500" : ""
                           }`}
                         >
-                          <td className="py-4 px-4 flex items-center gap-2">
-                            {idx === 0 ? (
-                              <span className="text-xl">🥇</span>
-                            ) : idx === 1 ? (
-                              <span className="text-xl">🥈</span>
-                            ) : idx === 2 ? (
-                              <span className="text-xl">🥉</span>
-                            ) : (
-                              <span className="w-5 text-center text-slate-400">{idx + 1}</span>
-                            )}
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-2">
+                              {idx === 0 ? (
+                                <span className="text-xl">🥇</span>
+                              ) : idx === 1 ? (
+                                <span className="text-xl">🥈</span>
+                              ) : idx === 2 ? (
+                                <span className="text-xl">🥉</span>
+                              ) : (
+                                <span className="w-5 text-center text-slate-400">{idx + 1}</span>
+                              )}
+                            </div>
                           </td>
-                          <td className="py-4 px-4 font-extrabold text-white flex items-center gap-2">
-                            {student.name}
-                            {isSelf && (
-                              <span className="px-2 py-0.5 bg-blue-500 text-white text-[9px] font-black uppercase rounded">
-                                You
-                              </span>
-                            )}
+                          <td className="py-4 px-4 font-extrabold text-white">
+                            <div className="flex items-center gap-2">
+                              <span>{student.name}</span>
+                              {isSelf && (
+                                <span className="px-2 py-0.5 bg-blue-500 text-white text-[9px] font-black uppercase rounded">
+                                  You
+                                </span>
+                              )}
+                            </div>
                           </td>
                           <td className="py-4 px-4 text-slate-300">{student.batch}</td>
                           <td className="py-4 px-4 text-right text-emerald-400 font-extrabold">
                             {student.solvedPuzzles?.length || 0}
                           </td>
                           <td className="py-4 px-4 text-right text-amber-400 font-black">
-                            ⭐ {student.rating}
+                            🏆 {student.rating}
                           </td>
                         </tr>
                       );

@@ -12,6 +12,18 @@ export default function SimpleLoginPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const role = params.get("role");
+      if (role === "student") {
+        setActiveRole("student");
+      } else if (role === "admin") {
+        setActiveRole("admin");
+      }
+    }
+  }, []);
+
   const processSubmission = async () => {
     setErrorMsg("");
     setSuccessMsg("");
@@ -32,12 +44,6 @@ export default function SimpleLoginPage() {
         setErrorMsg("Invalid Admin Credentials. Use: admin / admin123");
       }
     } else {
-      if ((u === "student@modernknight.com" || u === "student") && p === "student123") {
-        setSuccessMsg("Valid Student! Directing to Student Arena...");
-        window.location.href = "/student";
-        return;
-      }
-
       // Check registered students database
       try {
         const res = await fetch("/api/students");
@@ -182,29 +188,18 @@ export default function SimpleLoginPage() {
         </div>
 
         {/* Credentials Helper */}
-        <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1.5">
-          <p className="font-bold text-white text-xs">Credentials for {activeRole === "admin" ? "Admin Hub" : "Student Arena"}:</p>
-          {activeRole === "admin" ? (
-            <>
-              <p>Username: <code className="text-amber-400 font-bold">admin</code> or <code className="text-amber-400 font-bold">admin@modernknight.com</code></p>
-              <p>Password: <code className="text-amber-400 font-bold">admin123</code></p>
-            </>
-          ) : (
-            <>
-              <p>Username: <code className="text-amber-400 font-bold">student</code> or <code className="text-amber-400 font-bold">student@modernknight.com</code></p>
-              <p>Password: <code className="text-amber-400 font-bold">student123</code></p>
-            </>
-          )}
-        </div>
+        {activeRole === "admin" && (
+          <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1.5">
+            <p className="font-bold text-white text-xs">Credentials for Admin Hub:</p>
+            <p>Username: <code className="text-amber-400 font-bold">admin</code> or <code className="text-amber-400 font-bold">admin@modernknight.com</code></p>
+            <p>Password: <code className="text-amber-400 font-bold">admin123</code></p>
+          </div>
+        )}
 
         {/* Navigation footer */}
-        <div className="pt-2 text-center border-t border-slate-800 flex justify-between items-center text-xs">
+        <div className="pt-2 text-center border-t border-slate-800 flex justify-center items-center text-xs">
           <Link href="/" className="text-slate-400 hover:text-white font-semibold">
             ← Home Page
-          </Link>
-
-          <Link href={activeRole === "admin" ? "/admin" : "/student"} className="text-blue-400 font-bold hover:underline">
-            Direct Link →
           </Link>
         </div>
       </div>

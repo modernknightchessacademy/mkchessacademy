@@ -47,6 +47,28 @@ export default function StudentPortalPage() {
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [attendanceLogs, setAttendanceLogs] = useState<any[]>([]);
   const [attempts, setAttempts] = useState(1);
+  const [puzzleAttempts, setPuzzleAttempts] = useState<Record<string, number>>({});
+  const puzzleAttemptsRef = useRef<Record<string, number>>({});
+  useEffect(() => {
+    puzzleAttemptsRef.current = puzzleAttempts;
+  }, [puzzleAttempts]);
+
+  const updateAttempts = (puzzleId: string, newAttempts: number) => {
+    setAttempts(newAttempts);
+    setPuzzleAttempts((prev) => ({ ...prev, [puzzleId]: newAttempts }));
+
+    if (studentProfile.id && studentProfile.id !== "demo_student_id") {
+      fetch("/api/students/attempts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          studentId: studentProfile.id,
+          puzzleId,
+          attempts: newAttempts,
+        }),
+      }).catch((err) => console.error("Error saving attempts to DB:", err));
+    }
+  };
 
   const getPointsForAttempts = (att: number) => {
     if (att === 1) return 4;
@@ -65,6 +87,17 @@ export default function StudentPortalPage() {
         }
       })
       .catch((err) => console.error("Error fetching solved puzzle IDs:", err));
+  };
+
+  const fetchPuzzleAttempts = (studentId: string) => {
+    fetch(`/api/students/attempts?studentId=${studentId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && typeof data === "object") {
+          setPuzzleAttempts(data);
+        }
+      })
+      .catch((err) => console.error("Error fetching puzzle attempts:", err));
   };
 
   const fetchLeaderboard = () => {
@@ -107,6 +140,7 @@ export default function StudentPortalPage() {
         }));
         if (parsed.id) {
           fetchSolvedPuzzles(parsed.id);
+          fetchPuzzleAttempts(parsed.id);
           // Fetch student details containing their attendance records
           fetch(`/api/students?id=${parsed.id}`)
             .then((res) => res.json())
@@ -223,6 +257,66 @@ export default function StudentPortalPage() {
   const [playedMoves, setPlayedMoves] = useState<string[]>([]);
   const [solutionMoves, setSolutionMoves] = useState<string[]>([]);
 
+  const lastFolderIdRef = useRef<string | null>(null);
+  const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Helper to find the next unsolved puzzle index in the current folder
+  const findNextUnsolvedIndex = (currIdx: number, puzzles: any[], solvedIds: string[]) => {
+    for (let i = currIdx + 1; i < puzzles.length; i++) {
+      if (!solvedIds.includes(puzzles[i].id)) {
+        return i;
+      }
+    }
+    for (let i = 0; i < currIdx; i++) {
+      if (!solvedIds.includes(puzzles[i].id)) {
+        return i;
+      }
+    }
+    return -1;
+  };
+
+  // Automatically place the user at the first unsolved puzzle when the folder changes
+  useEffect(() => {
+    const activeFolder = selectedFolder || accessibleFolders[0];
+    const activeFolderId = activeFolder?.id || null;
+    if (activeFolderId !== lastFolderIdRef.current) {
+      lastFolderIdRef.current = activeFolderId;
+      if (accessiblePuzzles.length > 0) {
+        const firstUnsolvedIdx = accessiblePuzzles.findIndex((p) => !solvedPuzzleIds.includes(p.id));
+        if (firstUnsolvedIdx !== -1) {
+          setCurrentPuzzleIdx(firstUnsolvedIdx);
+        } else {
+          setCurrentPuzzleIdx(0);
+        }
+      }
+    }
+  }, [selectedFolder, accessibleFolders, accessiblePuzzles, solvedPuzzleIds]);
+
+  // Clean up redirect timeout on puzzle change or unmount
+  useEffect(() => {
+    return () => {
+      if (redirectTimeoutRef.current) {
+        clearTimeout(redirectTimeoutRef.current);
+      }
+    };
+  }, [currentPuzzleIdx]);
+
+  // Trigger 3-second auto-redirect to next unsolved puzzle when one is solved
+  const triggerAutoRedirect = (solvedId: string) => {
+    if (redirectTimeoutRef.current) {
+      clearTimeout(redirectTimeoutRef.current);
+    }
+    redirectTimeoutRef.current = setTimeout(() => {
+      const updatedSolvedIds = solvedPuzzleIds.includes(solvedId)
+        ? solvedPuzzleIds
+        : [...solvedPuzzleIds, solvedId];
+      const nextUnsolved = findNextUnsolvedIndex(currentPuzzleIdx, accessiblePuzzles, updatedSolvedIds);
+      if (nextUnsolved !== -1) {
+        setCurrentPuzzleIdx(nextUnsolved);
+      }
+    }, 3000);
+  };
+
   const currentPuzzle = accessiblePuzzles[currentPuzzleIdx] || accessiblePuzzles[0] || defaultPuzzles[0];
 
   const startingFen = useMemo(() => {
@@ -277,7 +371,7 @@ export default function StudentPortalPage() {
             .trim();
           cleanMoves = cleanText
             .split(/\s+/)
-            .filter((m) => m && !["1-0", "0-1", "1/2-1/2", "*"].includes(m));
+            .filter((m: string) => m && !["1-0", "0-1", "1/2-1/2", "*"].includes(m));
         }
       }
 
@@ -291,7 +385,8 @@ export default function StudentPortalPage() {
       setMoveFeedback(null);
       setShowHint(false);
       setPlayedMoves([]);
-      setAttempts(1);
+      const savedAttempts = currentPuzzle?.id ? (puzzleAttemptsRef.current[currentPuzzle.id] || 1) : 1;
+      setAttempts(savedAttempts);
     } catch (e) {
       console.error("Error loading puzzle FEN:", e);
     }
@@ -354,6 +449,7 @@ export default function StudentPortalPage() {
           setFen(game.current.fen());
           // Record placement task solves too!
           recordSolve(currentPuzzle.id, 4);
+          triggerAutoRedirect(currentPuzzle.id);
           return true;
         }
       } catch (e) {}
@@ -395,6 +491,7 @@ export default function StudentPortalPage() {
           const pts = getPointsForAttempts(attempts);
           setMoveFeedback(`🎉 EXCELLENT MOVE! Tactical Checkmate Solution Verified! (+${pts} points)`);
           recordSolve(currentPuzzle.id, pts);
+          triggerAutoRedirect(currentPuzzle.id);
         } else {
           setMoveFeedback("🎉 Correct move! Keep going.");
 
@@ -416,15 +513,17 @@ export default function StudentPortalPage() {
         }
         return true;
       } else {
-        setAttempts((prev) => prev + 1);
-        const nextPts = getPointsForAttempts(attempts + 1);
-        setMoveFeedback(`❌ Incorrect move. Try another continuation! (Attempt #${attempts + 1}, next worth ${nextPts} pts)`);
+        const nextAttempts = attempts + 1;
+        updateAttempts(currentPuzzle.id, nextAttempts);
+        const nextPts = getPointsForAttempts(nextAttempts);
+        setMoveFeedback(`❌ Incorrect move. Try another continuation! (Attempt #${nextAttempts}, next worth ${nextPts} pts)`);
         return false;
       }
     } catch (e) {
-      setAttempts((prev) => prev + 1);
-      const nextPts = getPointsForAttempts(attempts + 1);
-      setMoveFeedback(`❌ Incorrect move. Try another continuation! (Attempt #${attempts + 1}, next worth ${nextPts} pts)`);
+      const nextAttempts = attempts + 1;
+      updateAttempts(currentPuzzle.id, nextAttempts);
+      const nextPts = getPointsForAttempts(nextAttempts);
+      setMoveFeedback(`❌ Incorrect move. Try another continuation! (Attempt #${nextAttempts}, next worth ${nextPts} pts)`);
       return false;
     }
   };
@@ -797,7 +896,12 @@ export default function StudentPortalPage() {
                   </button>
                   <button
                     onClick={() => {
-                      setCurrentPuzzleIdx((prev) => (prev + 1) % accessiblePuzzles.length);
+                      const nextUnsolved = findNextUnsolvedIndex(currentPuzzleIdx, accessiblePuzzles, solvedPuzzleIds);
+                      if (nextUnsolved !== -1) {
+                        setCurrentPuzzleIdx(nextUnsolved);
+                      } else {
+                        setCurrentPuzzleIdx((prev) => (prev + 1) % accessiblePuzzles.length);
+                      }
                     }}
                     className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-extrabold text-xs rounded-xl shadow-lg hover:brightness-110 transition-all flex items-center gap-1.5"
                   >
@@ -881,7 +985,6 @@ export default function StudentPortalPage() {
                       const f = accessibleFolders.find(x => x.id === e.target.value);
                       if (f) {
                         setSelectedFolder(f);
-                        setCurrentPuzzleIdx(0);
                       }
                     }}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white font-bold focus:outline-none focus:border-blue-500 cursor-pointer"
@@ -894,7 +997,7 @@ export default function StudentPortalPage() {
                   </select>
                 </div>
 
-                <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1 custom-scrollbar">
+                <div className="space-y-3 max-h-[480px] overflow-y-auto pr-2 custom-scrollbar">
                   {accessiblePuzzles.map((p, idx) => (
                     <button
                       key={p.id || idx}

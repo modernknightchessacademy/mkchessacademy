@@ -235,20 +235,45 @@ html, body {
   overflow-x: hidden;
   max-width: 100vw;
   scroll-behavior: smooth;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
 }
 
-/* Hide scrollbars for Chrome, Safari, Opera, Edge */
-::-webkit-scrollbar {
+/* Hide scrollbars only for html and body */
+html::-webkit-scrollbar, body::-webkit-scrollbar {
   display: none;
   width: 0px;
   height: 0px;
 }
-::-webkit-scrollbar-track {
-  display: none;
+html {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
-::-webkit-scrollbar-thumb {
-  display: none;
+body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom Scrollbar Styles for scrollable panels */
+.custom-scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(59, 130, 246, 0.6) rgba(15, 23, 42, 0.5) !important;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  display: block !important;
+  background: rgba(15, 23, 42, 0.6) !important;
+  border-radius: 9999px !important;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  display: block !important;
+  background: rgba(59, 130, 246, 0.6) !important;
+  border-radius: 9999px !important;
+  border: 1px solid rgba(15, 23, 42, 0.6) !important;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.9) !important;
 }
 

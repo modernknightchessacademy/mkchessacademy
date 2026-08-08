@@ -314,7 +314,7 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
             .trim();
           cleanMoves = cleanText
             .split(/\s+/)
-            .filter((m) => m && !["1-0", "0-1", "1/2-1/2", "*"].includes(m));
+            .filter((m: string) => m && !["1-0", "0-1", "1/2-1/2", "*"].includes(m));
         }
       }
 

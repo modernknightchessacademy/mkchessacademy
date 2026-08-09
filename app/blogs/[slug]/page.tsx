@@ -1,14 +1,30 @@
 import React from "react";
 import Link from "next/link";
-import { blogs } from "@/lib/blogs-data";
+import { blogs as staticBlogs } from "@/lib/blogs-data";
 import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 
-export function generateStaticParams() {
-  return blogs.map((b) => ({ slug: b.slug }));
+export const revalidate = 0;
+
+export async function generateStaticParams() {
+  try {
+    const dbBlogs = await prisma.blog.findMany({ select: { slug: true } });
+    const dbSlugs = dbBlogs.map((b) => ({ slug: b.slug }));
+    const staticSlugs = staticBlogs.map((b) => ({ slug: b.slug }));
+    return [...dbSlugs, ...staticSlugs];
+  } catch (e) {
+    return staticBlogs.map((b) => ({ slug: b.slug }));
+  }
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const blog = blogs.find((b) => b.slug === params.slug);
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  let blog = null;
+  try {
+    blog = await prisma.blog.findUnique({ where: { slug: params.slug } });
+  } catch (e) {}
+  if (!blog) {
+    blog = staticBlogs.find((b) => b.slug === params.slug);
+  }
   if (!blog) return {};
   return {
     title: `${blog.title} | Modern Knight Chess Academy`,
@@ -55,11 +71,25 @@ function renderContent(text: string) {
   });
 }
 
-export default function BlogSlugPage({ params }: { params: { slug: string } }) {
-  const blog = blogs.find((b) => b.slug === params.slug);
+export default async function BlogSlugPage({ params }: { params: { slug: string } }) {
+  let blog = null;
+  try {
+    blog = await prisma.blog.findUnique({ where: { slug: params.slug } });
+  } catch (e) {}
+  if (!blog) {
+    blog = staticBlogs.find((b) => b.slug === params.slug) || null;
+  }
   if (!blog) notFound();
 
-  const related = blogs.filter(
+  let allBlogs = staticBlogs;
+  try {
+    const dbBlogs = await prisma.blog.findMany();
+    if (dbBlogs.length > 0) {
+      allBlogs = dbBlogs;
+    }
+  } catch (e) {}
+
+  const related = allBlogs.filter(
     (b) => b.slug !== blog.slug && b.category === blog.category
   ).slice(0, 3);
 
@@ -162,7 +192,7 @@ export default function BlogSlugPage({ params }: { params: { slug: string } }) {
               Book Free Trial
             </Link>
             <a
-              href="https://wa.me/916281250967"
+              href="https://wa.me/919885302468"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all hover:-translate-y-0.5"

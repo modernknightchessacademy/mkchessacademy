@@ -126,3 +126,19 @@ model PuzzleAttempt {
 
   @@unique([studentId, puzzleId])
 }
+
+model Blog {
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  title      String
+  category   String
+  author     String
+  authorRole String
+  date       String
+  readTime   String
+  image      String
+  summary    String   @db.Text
+  content    String   @db.Text
+  createdAt  DateTime @default(now())
+}
+

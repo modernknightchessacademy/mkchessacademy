@@ -135,7 +135,7 @@ export default function ColorfulFAQSection() {
                 </div>
                 <div>
                   <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Call Us</p>
-                  <p className="text-sm md:text-lg font-black text-slate-800 tracking-tight">+91 99481 98809</p>
+                  <p className="text-sm md:text-lg font-black text-slate-800 tracking-tight">+91 98853 02468</p>
                 </div>
               </div>
 

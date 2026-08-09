@@ -108,7 +108,7 @@ export default function FaqSection() {
             <p className="text-slate-500 font-medium">Chat with our counselor for clarity.</p>
           </div>
           <a 
-            href="https://wa.me/9199481 98809" 
+            href="https://wa.me/919885302468" 
             className="flex items-center gap-2 px-8 py-4 bg-[#46B94A] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-[#3da341] transition-all shadow-lg shadow-green-100 active:scale-95"
           >
             <MessageCircle className="w-5 h-5" />

@@ -10,7 +10,8 @@ import {
   CalendarCheck, 
   ArrowRight,
   TrendingUp,
-  Layers
+  Layers,
+  BookOpen
 } from "lucide-react";
 
 interface Student {
@@ -43,6 +44,7 @@ export default function AdminOverviewDashboard() {
   const [puzzles, setPuzzles] = useState<Puzzle[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
+  const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -52,17 +54,19 @@ export default function AdminOverviewDashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [resStu, resPuz, resAch, resGal] = await Promise.all([
+      const [resStu, resPuz, resAch, resGal, resBlog] = await Promise.all([
         fetch("/api/students"),
         fetch("/api/puzzles"),
         fetch("/api/achievements"),
         fetch("/api/gallery"),
+        fetch("/api/blogs"),
       ]);
 
       if (resStu.ok) setStudents(await resStu.json());
       if (resPuz.ok) setPuzzles(await resPuz.json());
       if (resAch.ok) setAchievements(await resAch.json());
       if (resGal.ok) setGallery(await resGal.json());
+      if (resBlog.ok) setBlogs(await resBlog.json());
     } catch (e) {
       console.error("Error fetching overview data:", e);
     } finally {
@@ -73,7 +77,7 @@ export default function AdminOverviewDashboard() {
   return (
     <div className="space-y-8">
       {/* Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-2">
           <span className="text-xs text-slate-400 font-semibold uppercase">Total Students</span>
           <p className="text-3xl font-black text-white">{students.length}</p>
@@ -95,6 +99,11 @@ export default function AdminOverviewDashboard() {
           <span className="text-xs text-slate-400 font-semibold uppercase">Gallery Photos</span>
           <p className="text-3xl font-black text-white">{gallery.length}</p>
           <p className="text-[11px] text-purple-400 font-medium">Events & Media</p>
+        </div>
+        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-2">
+          <span className="text-xs text-slate-400 font-semibold uppercase">Blogs & News</span>
+          <p className="text-3xl font-black text-white">{blogs.length}</p>
+          <p className="text-[11px] text-rose-400 font-medium">Published Articles</p>
         </div>
       </div>
 
@@ -206,6 +215,24 @@ export default function AdminOverviewDashboard() {
               <h4 className="font-extrabold text-white text-base">Academy Photo Gallery</h4>
               <p className="text-xs text-slate-400 mt-1 leading-relaxed">
                 Upload and manage high-resolution photos of classes, events, and facilities.
+              </p>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/blogs"
+            className="group bg-slate-900 p-6 rounded-2xl border border-slate-800 hover:border-rose-500/50 transition-all space-y-4 hover:shadow-xl"
+          >
+            <div className="flex items-center justify-between">
+              <div className="p-3 bg-rose-500/10 rounded-xl text-rose-400">
+                <BookOpen className="w-6 h-6" />
+              </div>
+              <ArrowRight className="w-5 h-5 text-slate-500 group-hover:text-rose-400 group-hover:translate-x-1 transition-all" />
+            </div>
+            <div>
+              <h4 className="font-extrabold text-white text-base">Blogs & News</h4>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Publish chess tactical guides, tournament results, and academy news updates.
               </p>
             </div>
           </Link>

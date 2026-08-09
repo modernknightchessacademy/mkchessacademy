@@ -188,7 +188,7 @@ export default function GalleryPage() {
                   Book Free Trial
                 </Link>
                 <a
-                  href="https://wa.me/916281250967"
+                  href="https://wa.me/919885302468"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-7 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all duration-200 hover:-translate-y-0.5"

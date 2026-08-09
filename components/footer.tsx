@@ -117,30 +117,15 @@ const Footer: React.FC = () => {
               <div className="w-8 h-[2px] bg-gradient-to-r from-orange-500 to-yellow-400 mt-2 rounded-full" />
             </div>
             <div className="space-y-4">
-              {/* Branch 1 */}
+              {/* Danavaipeta Branch */}
               <div className="space-y-1">
                 <span className="text-[10px] font-black uppercase tracking-widest text-[#E11D48] flex items-center gap-1.5 opacity-90">
                   📍 Danavaipeta Branch
                 </span>
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                    <MessageSquare className="w-4 h-4 text-emerald-400" />
-                  </div>
-                  <div>
-                    <a href="https://wa.me/916281250967" target="_blank" rel="noopener noreferrer" className="text-slate-200 text-xs md:text-sm font-extrabold hover:text-[#E11D48] transition-colors">
-                      +91 62812 50967
-                    </a>
-                    <p className="text-[10px] text-slate-400 font-light">Click for WhatsApp Form</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Branch 2 */}
-              <div className="space-y-1">
-                <span className="text-[10px] font-black uppercase tracking-widest text-[#E11D48] flex items-center gap-1.5 opacity-90">
-                  📍 Manasa Hospital Road Branch
-                </span>
-                <div className="flex items-center gap-2">
+                <p className="text-xs text-slate-300 font-bold ml-1">
+                  Manasa Hospital Road, Rajahmundry, Andhra Pradesh, India.
+                </p>
+                <div className="flex items-center gap-2 pt-2">
                   <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
                     <MessageSquare className="w-4 h-4 text-emerald-400" />
                   </div>
@@ -162,7 +147,7 @@ const Footer: React.FC = () => {
           
           {/* Left: WhatsApp CTA Pill */}
           <a
-            href="https://wa.me/916281250967"
+            href="https://wa.me/919885302468"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-emerald-400 to-green-500 hover:from-emerald-500 hover:to-green-600 text-white font-black text-xs uppercase tracking-widest rounded-xl shadow-[0_5px_15px_rgba(16,185,129,0.15)] hover:shadow-[0_8px_20px_rgba(16,185,129,0.3)] transition-all duration-300 hover:-translate-y-0.5"

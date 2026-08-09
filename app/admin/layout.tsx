@@ -12,7 +12,8 @@ import {
   CalendarCheck, 
   Sparkles,
   LayoutDashboard,
-  Layers
+  Layers,
+  BookOpen
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -30,6 +31,7 @@ export default function AdminLayout({
     { href: "/admin/attendance", label: "📅 Attendance", icon: CalendarCheck },
     { href: "/admin/achievements", label: "🏆 Achievements", icon: Trophy },
     { href: "/admin/gallery", label: "🖼️ Gallery", icon: ImageIcon },
+    { href: "/admin/blogs", label: "📝 Blogs", icon: BookOpen },
   ];
 
   return (

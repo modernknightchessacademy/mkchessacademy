@@ -527,7 +527,7 @@ export default function CoursesPage() {
                   <Link href="/bookdemo" className="inline-flex items-center px-5 py-2.5 bg-[#E11D48] hover:bg-[#be1239] text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all hover:-translate-y-0.5 shadow-[0_4px_14px_rgba(225,29,72,0.4)]">
                     Book Free Evaluation
                   </Link>
-                  <a href="https://wa.me/916281250967" target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/25 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all hover:-translate-y-0.5">
+                  <a href="https://wa.me/919885302468" target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/25 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all hover:-translate-y-0.5">
                     WhatsApp Us
                   </a>
                 </div>

@@ -96,7 +96,7 @@ const ContactSection: React.FC = () => {
                         </div>
                         <div>
                            <p className="text-[10px] font-black text-blue-200 uppercase tracking-widest mb-1">Direct Call</p>
-                           <p className="text-xl font-bold text-white tracking-tight">+91 99481 98809</p>
+                           <p className="text-xl font-bold text-white tracking-tight">+91 98853 02468</p>
                         </div>
                      </div>
 
@@ -169,7 +169,7 @@ const ContactSection: React.FC = () => {
                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
                         <div className="relative group">
                            <Smartphone className="absolute left-4 top-3.5 w-5 h-5 text-slate-300 group-focus-within:text-[#01539D] transition-colors" />
-                           <input required name="phone" value={formData.phone} onChange={handleChange} type="tel" placeholder="+91 99481 98809" className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-[#01539D] focus:bg-white transition-all font-bold text-slate-900 placeholder:text-slate-300" />
+                           <input required name="phone" value={formData.phone} onChange={handleChange} type="tel" placeholder="+91 98853 02468" className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-[#01539D] focus:bg-white transition-all font-bold text-slate-900 placeholder:text-slate-300" />
                         </div>
                      </div>
 

@@ -76,7 +76,7 @@ export default function BookDemoPage() {
                   <div>
                     <p className="font-black text-white text-sm">Direct Helpline</p>
                     <p className="text-slate-300 text-xs mt-0.5">
-                      +91 62812 50967 / +91 98853 02468
+                      +91 98853 02468 / +91 62812 50967
                     </p>
                   </div>
                 </div>
@@ -88,12 +88,12 @@ export default function BookDemoPage() {
                   <div>
                     <p className="font-black text-white text-sm">WhatsApp Support</p>
                     <a
-                      href="https://wa.me/916281250967"
+                      href="https://wa.me/919885302468"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-emerald-300 text-xs font-bold hover:underline"
                     >
-                      +91 62812 50967 (Instant Chat)
+                      +91 98853 02468 (Instant Chat)
                     </a>
                   </div>
                 </div>

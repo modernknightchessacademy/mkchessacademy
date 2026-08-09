@@ -89,7 +89,6 @@ export default function AchievementsPage() {
       gradient: idx % 2 === 0 ? "from-[#0B4398] via-[#0052CC] to-[#0B4398]" : "from-[#E11D48] via-[#c2143b] to-[#E11D48]",
       pillText: idx % 2 === 0 ? "text-[#0B4398]" : "text-[#E11D48]",
     })),
-    ...fallbackAchievements,
   ];
 
   return (
@@ -133,82 +132,88 @@ export default function AchievementsPage() {
           </div>
 
           {/* Achievements Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-10">
-            {displayAchievements.map((item, idx) => (
-              <div 
-                key={idx} 
-                className={`relative bg-gradient-to-br ${item.gradient} rounded-[2rem] p-6 pt-20 pb-8 border border-white/10 shadow-lg hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group`}
-              >
-                {/* Overlapping student photo at the top-left */}
-                <div className="absolute -top-10 left-6 z-20">
-                  <div className="relative w-24 h-24 rounded-[1.25rem] border-[4px] border-white bg-slate-100 shadow-md overflow-hidden rotate-2 group-hover:rotate-6 transition-transform duration-300">
-                    {/* Floating Crown Badge */}
-                    <div className="absolute -top-1 -left-1 w-6 h-6 rounded-full bg-amber-500 border-2 border-white flex items-center justify-center text-[10px] text-white shadow-sm z-30 select-none">
-                      👑
-                    </div>
-                    <img 
-                      src={item.image} 
-                      alt={item.name} 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-
-                {/* Name & Level in top-right corner */}
-                <div className="absolute top-5 right-6 text-right z-20">
-                  <h3 className="text-white font-black uppercase text-sm sm:text-base tracking-tight leading-none">
-                    {item.name}
-                  </h3>
-                  <span className="text-white/80 font-black uppercase text-[9px] tracking-widest mt-1 inline-block">
-                    {item.level}
-                  </span>
-                </div>
-
-                {/* Card Content Details */}
-                <div className="mt-4 flex-1 flex flex-col justify-between">
-                  <div>
-                    {/* Highlight Stripe */}
-                    <div className="w-10 h-1 bg-amber-500 mb-4 rounded-full" />
-                    
-                    {/* Subtitle */}
-                    <span className="text-white/80 font-bold uppercase text-[9px] tracking-widest block mb-1">
-                      {item.subtitle}
-                    </span>
-                    
-                    {/* Main Achievement Header */}
-                    <h4 className="text-xl font-black text-amber-300 tracking-tight leading-snug mb-3 uppercase">
-                      {item.heading}
-                    </h4>
-                    
-                    {/* Description */}
-                    <p className="text-white/90 text-xs sm:text-sm font-light leading-relaxed">
-                      {item.desc}
-                    </p>
-                  </div>
-
-                  {/* Bottom Pill Badge & Flag Row */}
-                  <div className="flex items-center justify-between mt-8 pt-5 border-t border-white/15">
-                    {/* Verified Pill */}
-                    <div className="bg-white px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
-                      <span className="w-2.5 h-2.5 rounded-full bg-amber-500 flex items-center justify-center text-[7px] text-white">★</span>
-                      <span className={`font-black text-[9px] uppercase tracking-wider ${item.pillText}`}>
-                        MODERN KNIGHT VERIFIED
-                      </span>
-                    </div>
-
-                    {/* Flag Pill */}
-                    <div className="bg-white px-2 py-1 h-7 rounded-lg shadow-sm flex items-center justify-center select-none overflow-hidden border border-slate-100">
+          {displayAchievements.length === 0 ? (
+            <div className="text-center py-20 text-slate-500 font-semibold bg-slate-50 border border-slate-150 rounded-3xl mt-10 w-full">
+              ♟ No achievements uploaded yet. Check back later!
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-10">
+              {displayAchievements.map((item, idx) => (
+                <div 
+                  key={idx} 
+                  className={`relative bg-gradient-to-br ${item.gradient} rounded-[2rem] p-6 pt-20 pb-8 border border-white/10 shadow-lg hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group`}
+                >
+                  {/* Overlapping student photo at the top-left */}
+                  <div className="absolute -top-10 left-6 z-20">
+                    <div className="relative w-24 h-24 rounded-[1.25rem] border-[4px] border-white bg-slate-100 shadow-md overflow-hidden rotate-2 group-hover:rotate-6 transition-transform duration-300">
+                      {/* Floating Crown Badge */}
+                      <div className="absolute -top-1 -left-1 w-6 h-6 rounded-full bg-amber-500 border-2 border-white flex items-center justify-center text-[10px] text-white shadow-sm z-30 select-none">
+                        👑
+                      </div>
                       <img 
-                        src={`https://flagcdn.com/w40/${item.flagCode}.png`}
-                        alt={item.country}
-                        className="w-5.5 h-3.5 object-cover rounded-xs"
+                        src={item.image} 
+                        alt={item.name} 
+                        className="w-full h-full object-cover"
                       />
                     </div>
                   </div>
+
+                  {/* Name & Level in top-right corner */}
+                  <div className="absolute top-5 right-6 text-right z-20">
+                    <h3 className="text-white font-black uppercase text-sm sm:text-base tracking-tight leading-none">
+                      {item.name}
+                    </h3>
+                    <span className="text-white/80 font-black uppercase text-[9px] tracking-widest mt-1 inline-block">
+                      {item.level}
+                    </span>
+                  </div>
+
+                  {/* Card Content Details */}
+                  <div className="mt-4 flex-1 flex flex-col justify-between">
+                    <div>
+                      {/* Highlight Stripe */}
+                      <div className="w-10 h-1 bg-amber-500 mb-4 rounded-full" />
+                      
+                      {/* Subtitle */}
+                      <span className="text-white/80 font-bold uppercase text-[9px] tracking-widest block mb-1">
+                        {item.subtitle}
+                      </span>
+                      
+                      {/* Main Achievement Header */}
+                      <h4 className="text-xl font-black text-amber-300 tracking-tight leading-snug mb-3 uppercase">
+                        {item.heading}
+                      </h4>
+                      
+                      {/* Description */}
+                      <p className="text-white/90 text-xs sm:text-sm font-light leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
+
+                    {/* Bottom Pill Badge & Flag Row */}
+                    <div className="flex items-center justify-between mt-8 pt-5 border-t border-white/15">
+                      {/* Verified Pill */}
+                      <div className="bg-white px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                        <span className="w-2.5 h-2.5 rounded-full bg-amber-500 flex items-center justify-center text-[7px] text-white">★</span>
+                        <span className={`font-black text-[9px] uppercase tracking-wider ${item.pillText}`}>
+                          MODERN KNIGHT VERIFIED
+                        </span>
+                      </div>
+
+                      {/* Flag Pill */}
+                      <div className="bg-white px-2 py-1 h-7 rounded-lg shadow-sm flex items-center justify-center select-none overflow-hidden border border-slate-100">
+                        <img 
+                          src={`https://flagcdn.com/w40/${item.flagCode}.png`}
+                          alt={item.country}
+                          className="w-5.5 h-3.5 object-cover rounded-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -373,7 +378,7 @@ export default function AchievementsPage() {
                   </Link>
 
                   <a
-                    href="https://wa.me/916281250967"
+                    href="https://wa.me/919885302468"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-6 py-3.5 bg-white/10 hover:bg-white/20 border border-white/25 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all duration-200 hover:-translate-y-0.5"

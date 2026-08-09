@@ -135,7 +135,7 @@ export default function CoursesSection() {
               </div>
 
               {/* Action Button */}
-              <Link href="https://wa.me/+919948198809" target="_blank" className="mt-auto">
+              <Link href="https://wa.me/+919885302468" target="_blank" className="mt-auto">
                 <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-900 text-white font-semibold hover:bg-amber-500 hover:text-white transition-all duration-300 group-hover:shadow-lg">
                   Enquire Now
                   <ArrowRight className="w-4 h-4" />

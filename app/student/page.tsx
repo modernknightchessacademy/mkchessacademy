@@ -213,7 +213,8 @@ export default function StudentPortalPage() {
 
   // Filter folders: only show folders containing puzzles assigned to the student's batch
   const accessibleFolders = useMemo(() => {
-    return folders
+    // 1. First map and extract puzzles and course numbers
+    const mapped = folders
       .map((f) => {
         const folderPuzzles = dbPuzzles.filter(
           (p) =>
@@ -222,13 +223,40 @@ export default function StudentPortalPage() {
               p.assignedBatch.toLowerCase() === "all batches" ||
               p.assignedBatch.toLowerCase() === (studentProfile.batch || "").toLowerCase())
         );
+        
+        // Find course number if named like Course 1, Course-2, etc.
+        const courseMatch = f.name.match(/course[- ]?(\d+)/i);
+        const courseNum = courseMatch ? parseInt(courseMatch[1], 10) : null;
+
         return {
           ...f,
           puzzlesCount: folderPuzzles.length,
+          puzzles: folderPuzzles,
+          courseNum,
         };
       })
       .filter((f) => f.puzzlesCount > 0);
-  }, [folders, dbPuzzles, studentProfile.batch]);
+
+    // 2. Determine which folders are unlocked based on previous course completion (>= 80% solved)
+    return mapped.filter((folder) => {
+      if (folder.courseNum === null || folder.courseNum <= 1) {
+        return true; // Non-sequenced or Course 1 is always unlocked
+      }
+
+      // Check if previous course exists and has >= 80% solve rate
+      const prevCourse = mapped.find((x) => x.courseNum === folder.courseNum - 1);
+      if (!prevCourse) {
+        return false; // If previous course is not found or not accessible, lock it
+      }
+
+      const totalPuzzles = prevCourse.puzzles.length;
+      if (totalPuzzles === 0) return true;
+
+      const solvedCount = prevCourse.puzzles.filter((p: any) => solvedPuzzleIds.includes(p.id)).length;
+      const score = (solvedCount / totalPuzzles) * 100;
+      return score >= 80;
+    });
+  }, [folders, dbPuzzles, studentProfile.batch, solvedPuzzleIds]);
 
   // Batch-based Puzzle Filtering (scoped to active folder if selected, or defaulting to first folder)
   const accessiblePuzzles = useMemo(() => {
@@ -700,7 +728,7 @@ export default function StudentPortalPage() {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
                   {accessiblePuzzles.map((p, idx) => (
                     <div
                       key={p.id || idx}
@@ -851,7 +879,6 @@ export default function StudentPortalPage() {
                   <Chessboard
                     position={fen}
                     onPieceDrop={onPieceDrop}
-                    boardWidth={440}
                     boardOrientation={puzzleTurn}
                     customDarkSquareStyle={{ backgroundColor: getCustomBoardColors().dark }}
                     customLightSquareStyle={{ backgroundColor: getCustomBoardColors().light }}

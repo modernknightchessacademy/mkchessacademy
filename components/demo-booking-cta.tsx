@@ -36,7 +36,7 @@ export const DemoBookingCTA: React.FC = () => {
           </Link>
           
           <a
-            href="https://wa.me/916281250967?text=Hi%20Modern%20Knight%20Chess%20Academy,%20I%20want%20to%20book%20a%20trial%20class"
+            href="https://wa.me/919885302468?text=Hi%20Modern%20Knight%20Chess%20Academy,%20I%20want%20to%20book%20a%20trial%20class"
             target="_blank"
             rel="noopener noreferrer"
             className="w-full sm:w-auto px-8 py-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-base shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2"

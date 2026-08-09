@@ -18,7 +18,7 @@ export default function ContactPage() {
         bgImage="/comm.jpg"
         widgetLeft1Icon="Phone"
         widgetLeft1Label="Helpline"
-        widgetLeft1Value="+91 62812 50967"
+        widgetLeft1Value="+91 98853 02468"
         widgetLeft2Icon="Mail"
         widgetLeft2Label="Email Inquiry"
         widgetLeft2Value="modernknightchessacademy@gmail.com"
@@ -77,18 +77,18 @@ export default function ContactPage() {
                   <p className="text-[10px] font-black uppercase tracking-widest text-emerald-200">Instant Support</p>
                   <h3 className="font-black text-lg text-white">Phone & WhatsApp</h3>
                   <div className="text-xs text-emerald-100 space-y-1 font-semibold">
-                    <p>📱 Mobile: +91 62812 50967</p>
-                    <p>☎️ Alt: +91 98853 02468</p>
+                    <p>📱 Mobile: +91 98853 02468</p>
+                    <p>☎️ Alt: +91 62812 50967</p>
                   </div>
                   <div className="pt-2 flex gap-2">
                     <a
-                      href="tel:+916281250967"
+                      href="tel:+919885302468"
                       className="px-4 py-2 bg-white text-emerald-900 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-emerald-50 transition-colors"
                     >
                       Call Now
                     </a>
                     <a
-                      href="https://wa.me/916281250967?text=Hi%20Modern%20Knight%20Chess%20Academy,%20I%20have%20an%20enquiry"
+                      href="https://wa.me/919885302468?text=Hi%20Modern%20Knight%20Chess%20Academy,%20I%20have%20an%20enquiry"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-4 py-2 bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors"
@@ -323,10 +323,10 @@ export default function ContactPage() {
 
                 <div className="flex flex-wrap gap-3 pt-2">
                   <a
-                    href="tel:+916281250967"
+                    href="tel:+919885302468"
                     className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#E11D48] hover:bg-[#be1239] text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all duration-200 hover:-translate-y-0.5 shadow-[0_6px_20px_rgba(225,29,72,0.4)]"
                   >
-                    <span>📞 Call Hotline: +91 62812 50967</span>
+                    <span>📞 Call Hotline: +91 98853 02468</span>
                   </a>
 
                   <Link

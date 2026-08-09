@@ -122,7 +122,7 @@ export function BookDemoProvider({ children }: { children: React.ReactNode }) {
                     <div>
                       <p className="font-black text-white">Direct Helpline</p>
                       <p className="text-slate-300 text-[11px]">
-                        +91 62812 50967 / +91 98853 02468
+                        +91 98853 02468 / +91 62812 50967
                       </p>
                     </div>
                   </div>
@@ -132,12 +132,12 @@ export function BookDemoProvider({ children }: { children: React.ReactNode }) {
                     <div>
                       <p className="font-black text-white">WhatsApp Support</p>
                       <a
-                        href="https://wa.me/916281250967"
+                        href="https://wa.me/919885302468"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-emerald-300 text-[11px] font-bold hover:underline"
                       >
-                        +91 62812 50967 (Instant Reply)
+                        +91 98853 02468 (Instant Reply)
                       </a>
                     </div>
                   </div>

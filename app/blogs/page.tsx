@@ -1,8 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import SubpageBanner from "@/components/ui/SubpageBanner";
-import { blogs } from "@/lib/blogs-data";
 
 const categories = ["All", "Chess Tips", "Tournament Tips", "Educational", "Mindset", "Academy News"];
 
@@ -31,7 +30,30 @@ function CategoryBadge({ cat, overlay = false }: { cat: string; overlay?: boolea
 }
 
 export default function BlogsPage() {
+  const [blogs, setBlogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
+
+  useEffect(() => {
+    fetch("/api/blogs")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) setBlogs(data);
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center space-y-2">
+          <div className="w-8 h-8 border-4 border-[#0B4398] border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Loading Insights...</p>
+        </div>
+      </div>
+    );
+  }
 
   const filtered =
     activeCategory === "All"

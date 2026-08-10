@@ -20,6 +20,7 @@ import {
   Palette,
   Info,
   Folder as FolderIcon,
+  Lock,
 } from "lucide-react";
 
 type BoardTheme = "emerald" | "wood" | "midnight";
@@ -211,9 +212,9 @@ export default function StudentPortalPage() {
     },
   ];
 
-  // Filter folders: only show folders containing puzzles assigned to the student's batch
-  const accessibleFolders = useMemo(() => {
-    // 1. First map and extract puzzles and course numbers
+  // All folders for student dashboard with lock status
+  const allMappedFolders = useMemo(() => {
+    // 1. First map and extract puzzles
     const mapped = folders
       .map((f) => {
         const folderPuzzles = dbPuzzles.filter(
@@ -223,40 +224,40 @@ export default function StudentPortalPage() {
               p.assignedBatch.toLowerCase() === "all batches" ||
               p.assignedBatch.toLowerCase() === (studentProfile.batch || "").toLowerCase())
         );
-        
-        // Find course number if named like Course 1, Course-2, etc.
-        const courseMatch = f.name.match(/course[- ]?(\d+)/i);
-        const courseNum = courseMatch ? parseInt(courseMatch[1], 10) : null;
 
         return {
           ...f,
           puzzlesCount: folderPuzzles.length,
           puzzles: folderPuzzles,
-          courseNum,
         };
       })
-      .filter((f) => f.puzzlesCount > 0);
+      .filter((f) => f.puzzlesCount > 0)
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-    // 2. Determine which folders are unlocked based on previous course completion (>= 80% solved)
-    return mapped.filter((folder) => {
-      if (folder.courseNum === null || folder.courseNum <= 1) {
-        return true; // Non-sequenced or Course 1 is always unlocked
+    // 2. Determine which folders are unlocked based on previous completion (>= 80% solved)
+    return mapped.map((folder, index) => {
+      if (index === 0) {
+        return { ...folder, isUnlocked: true };
       }
 
-      // Check if previous course exists and has >= 80% solve rate
-      const prevCourse = mapped.find((x) => x.courseNum === folder.courseNum - 1);
-      if (!prevCourse) {
-        return false; // If previous course is not found or not accessible, lock it
+      const prevFolder = mapped[index - 1];
+      const totalPuzzles = prevFolder.puzzles.length;
+      if (totalPuzzles === 0) {
+        return { ...folder, isUnlocked: true };
       }
 
-      const totalPuzzles = prevCourse.puzzles.length;
-      if (totalPuzzles === 0) return true;
-
-      const solvedCount = prevCourse.puzzles.filter((p: any) => solvedPuzzleIds.includes(p.id)).length;
+      const solvedCount = prevFolder.puzzles.filter((p: any) => solvedPuzzleIds.includes(p.id)).length;
       const score = (solvedCount / totalPuzzles) * 100;
-      return score >= 80;
+      const isUnlocked = score >= 80;
+
+      return { ...folder, isUnlocked };
     });
   }, [folders, dbPuzzles, studentProfile.batch, solvedPuzzleIds]);
+
+  // accessibleFolders is just the unlocked folders
+  const accessibleFolders = useMemo(() => {
+    return allMappedFolders.filter((f) => f.isUnlocked);
+  }, [allMappedFolders]);
 
   // Batch-based Puzzle Filtering (scoped to active folder if selected, or defaulting to first folder)
   const accessiblePuzzles = useMemo(() => {
@@ -684,26 +685,62 @@ export default function StudentPortalPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {accessibleFolders.map((f) => (
-                    <div
-                      key={f.id}
-                      onClick={() => setSelectedFolder(f)}
-                      className="bg-slate-900 p-6 rounded-2xl border border-slate-800 hover:border-slate-700 hover:bg-slate-900/60 cursor-pointer transition-all flex items-center justify-between gap-4 group shadow-md"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center border border-amber-500/20 group-hover:scale-105 transition-transform">
-                          <FolderIcon className="w-6 h-6 text-amber-500" />
+                  {allMappedFolders.map((f) => {
+                    const isUnlocked = f.isUnlocked;
+                    return (
+                      <div
+                        key={f.id}
+                        onClick={() => {
+                          if (isUnlocked) {
+                            setSelectedFolder(f);
+                          }
+                        }}
+                        className={`p-6 rounded-2xl border transition-all flex items-center justify-between gap-4 group shadow-md ${
+                          isUnlocked
+                            ? "bg-slate-900 border-slate-800 hover:border-slate-700 hover:bg-slate-900/60 cursor-pointer"
+                            : "bg-slate-950/40 border-slate-900 opacity-60 cursor-not-allowed"
+                        }`}
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center border group-hover:scale-105 transition-transform ${
+                            isUnlocked
+                              ? "bg-amber-500/10 border-amber-500/20"
+                              : "bg-slate-800/10 border-slate-800"
+                          }`}>
+                            {isUnlocked ? (
+                              <FolderIcon className="w-6 h-6 text-amber-500" />
+                            ) : (
+                              <Lock className="w-6 h-6 text-slate-500" />
+                            )}
+                          </div>
+                          <div>
+                            <h4 className={`font-black text-sm tracking-wide ${isUnlocked ? "text-white" : "text-slate-500"}`}>
+                              {f.name}
+                            </h4>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded border inline-block ${
+                                isUnlocked
+                                  ? "text-emerald-400 bg-emerald-950/60 border-emerald-500/30"
+                                  : "text-slate-600 bg-slate-900/40 border-slate-800"
+                              }`}>
+                                {f.puzzlesCount} Puzzles
+                              </span>
+                              {!isUnlocked && (
+                                <span className="text-[10px] text-rose-400 font-extrabold bg-rose-950/40 px-2 py-0.5 rounded border border-rose-500/30">
+                                  Locked 🔒 (Complete 80% of previous folder)
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="font-black text-white text-sm tracking-wide">{f.name}</h4>
-                          <span className="text-[10px] text-emerald-400 font-extrabold bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30 inline-block mt-1">
-                            {f.puzzlesCount} Puzzles
-                          </span>
-                        </div>
+                        {isUnlocked ? (
+                          <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 transition-colors" />
+                        ) : (
+                          <Lock className="w-4 h-4 text-slate-700" />
+                        )}
                       </div>
-                      <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 transition-colors" />
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ) : (

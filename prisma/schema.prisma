@@ -111,6 +111,7 @@ model SolvedPuzzle {
 model PuzzleFolder {
   id        String   @id @default(cuid())
   name      String
+  order     Int      @default(0)
   createdAt DateTime @default(now())
   puzzles   Puzzle[]
 }

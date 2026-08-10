@@ -17,7 +17,7 @@ export async function GET(req: Request) {
             orderBy: { date: "desc" },
           },
           solvedPuzzles: {
-            select: { id: true, points: true },
+            select: { id: true, points: true, puzzleId: true },
           },
         },
       });
@@ -38,7 +38,7 @@ export async function GET(req: Request) {
           take: 5,
         },
         solvedPuzzles: {
-          select: { id: true, points: true },
+          select: { id: true, points: true, puzzleId: true },
         },
       },
     });
@@ -68,7 +68,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, age, email, password, phone, batch, level, rating } = body;
+    const { name, age, email, password, phone, batch, level, rating, allowAllCourses } = body;
 
     let student;
     try {
@@ -82,6 +82,7 @@ export async function POST(req: Request) {
           batch: batch || "Beginner Morning",
           level: level || "BEGINNER",
           rating: parseInt(rating) || 1200,
+          allowAllCourses: allowAllCourses ?? false,
         },
       });
     } catch (dbErr: any) {
@@ -96,6 +97,7 @@ export async function POST(req: Request) {
             batch: batch || "Beginner Morning",
             level: level || "BEGINNER",
             rating: parseInt(rating) || 1200,
+            allowAllCourses: allowAllCourses ?? false,
           },
         });
         student = { ...student, password };
@@ -112,6 +114,7 @@ export async function POST(req: Request) {
           level: level || "BEGINNER",
           rating: parseInt(rating) || 1200,
           status: "Active",
+          allowAllCourses: allowAllCourses ?? false,
           createdAt: new Date().toISOString(),
         };
       }
@@ -150,7 +153,7 @@ export async function DELETE(req: Request) {
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
-    const { id, name, age, email, password, phone, batch, level, rating } = body;
+    const { id, name, age, email, password, phone, batch, level, rating, allowAllCourses } = body;
 
     if (!id) {
       return NextResponse.json({ error: "Student ID required" }, { status: 400 });
@@ -169,6 +172,7 @@ export async function PUT(req: Request) {
           batch: batch || "Beginner Morning",
           level: level || "BEGINNER",
           rating: parseInt(rating) || 1200,
+          allowAllCourses: allowAllCourses ?? false,
         },
       });
     } catch (dbErr: any) {
@@ -184,6 +188,7 @@ export async function PUT(req: Request) {
         level: level || "BEGINNER",
         rating: parseInt(rating) || 1200,
         status: "Active",
+        allowAllCourses: allowAllCourses ?? false,
       };
     }
 

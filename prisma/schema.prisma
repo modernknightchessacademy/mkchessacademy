@@ -30,6 +30,7 @@ model Student {
   level         Level        @default(BEGINNER)
   rating        Int          @default(1200)
   status        String       @default("Active")
+  allowAllCourses Boolean    @default(false)
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
   attendances   Attendance[]

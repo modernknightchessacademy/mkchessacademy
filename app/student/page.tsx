@@ -38,6 +38,7 @@ export default function StudentPortalPage() {
     dailyStreak: 14,
     badge: "Master Tactician 🏆",
     batch: "Beginner Morning",
+    allowAllCourses: false,
   });
 
   const [dbPuzzles, setDbPuzzles] = useState<any[]>([]);
@@ -138,6 +139,7 @@ export default function StudentPortalPage() {
           name: parsed.name || prev.name,
           fideRating: parsed.rating || prev.fideRating,
           batch: parsed.batch || prev.batch,
+          allowAllCourses: parsed.allowAllCourses !== undefined ? parsed.allowAllCourses : prev.allowAllCourses,
         }));
         if (parsed.id) {
           fetchSolvedPuzzles(parsed.id);
@@ -153,6 +155,7 @@ export default function StudentPortalPage() {
                 setStudentProfile((prev) => ({
                   ...prev,
                   fideRating: studentData.rating !== undefined ? studentData.rating : prev.fideRating,
+                  allowAllCourses: studentData.allowAllCourses !== undefined ? studentData.allowAllCourses : prev.allowAllCourses,
                 }));
               }
             })
@@ -234,9 +237,9 @@ export default function StudentPortalPage() {
       .filter((f) => f.puzzlesCount > 0)
       .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-    // 2. Determine which folders are unlocked based on previous completion (>= 80% solved)
+    // 2. Determine which folders are unlocked based on previous completion (>= 70% of total points)
     return mapped.map((folder, index) => {
-      if (index === 0) {
+      if (index === 0 || studentProfile.allowAllCourses) {
         return { ...folder, isUnlocked: true };
       }
 
@@ -246,13 +249,89 @@ export default function StudentPortalPage() {
         return { ...folder, isUnlocked: true };
       }
 
-      const solvedCount = prevFolder.puzzles.filter((p: any) => solvedPuzzleIds.includes(p.id)).length;
-      const score = (solvedCount / totalPuzzles) * 100;
-      const isUnlocked = score >= 80;
+      const maxPoints = totalPuzzles * 4;
+      const earnedPoints = prevFolder.puzzles
+        .filter((p: any) => solvedPuzzleIds.includes(p.id))
+        .reduce((sum: number, p: any) => {
+          const att = puzzleAttempts[p.id] || 1;
+          return sum + getPointsForAttempts(att);
+        }, 0);
 
-      return { ...folder, isUnlocked };
+      const score = maxPoints > 0 ? (earnedPoints / maxPoints) * 100 : 100;
+      const isUnlocked = score >= 70;
+
+      return { ...folder, isUnlocked, earnedPoints, maxPoints };
     });
-  }, [folders, dbPuzzles, studentProfile.batch, solvedPuzzleIds]);
+  }, [folders, dbPuzzles, studentProfile.batch, studentProfile.allowAllCourses, solvedPuzzleIds, puzzleAttempts]);
+
+  const getStudentLeague = (studentSolvedPuzzles: any[]) => {
+    const solvedList = studentSolvedPuzzles || [];
+    let completedCount = 0;
+    folders.forEach((folder) => {
+      const folderPuzzles = dbPuzzles.filter((p) => p.folderId === folder.id);
+      const totalPuzzles = folderPuzzles.length;
+      if (totalPuzzles > 0) {
+        const maxPoints = totalPuzzles * 4;
+        const earnedPoints = folderPuzzles
+          .filter((p: any) => solvedList.some((sp: any) => sp.puzzleId === p.id))
+          .reduce((sum: number, p: any) => {
+            const solvedRec = solvedList.find((sp: any) => sp.puzzleId === p.id);
+            return sum + (solvedRec ? Math.min(solvedRec.points || 0, 4) : 0);
+          }, 0);
+        if (maxPoints > 0 && (earnedPoints / maxPoints) >= 0.70) {
+          completedCount++;
+        }
+      }
+    });
+
+    const leagues = [
+      { name: "Bronze League", icon: "🥉", image: "/bronze.png" },
+      { name: "Silver League", icon: "🥈", image: "/silver.png" },
+      { name: "Gold League", icon: "🥇", image: "/gold.png" },
+      { name: "Platinum League", icon: "💎", image: "/platinum.png" },
+      { name: "Diamond League", icon: "👑", image: "/diamond.png" },
+      { name: "Titan League", icon: "🔥", image: "/titan.png" },
+      { name: "Ace League", icon: "⚡", image: "/ace.png" },
+      { name: "Master League", icon: "🏆", image: "/master.png" },
+    ];
+
+    const index = Math.min(completedCount, leagues.length - 1);
+    return leagues[index];
+  };
+
+  // Compute student league based on completed courses
+  const studentLeague = useMemo(() => {
+    let completedCount = 0;
+    allMappedFolders.forEach((folder) => {
+      const totalPuzzles = folder.puzzles.length;
+      if (totalPuzzles > 0) {
+        const maxPoints = totalPuzzles * 4;
+        const earnedPoints = folder.puzzles
+          .filter((p: any) => solvedPuzzleIds.includes(p.id))
+          .reduce((sum: number, p: any) => {
+            const att = puzzleAttempts[p.id] || 1;
+            return sum + getPointsForAttempts(att);
+          }, 0);
+        if (maxPoints > 0 && (earnedPoints / maxPoints) >= 0.70) {
+          completedCount++;
+        }
+      }
+    });
+
+    const leagues = [
+      { name: "Bronze League", icon: "🥉", image: "/bronze.png" },
+      { name: "Silver League", icon: "🥈", image: "/silver.png" },
+      { name: "Gold League", icon: "🥇", image: "/gold.png" },
+      { name: "Platinum League", icon: "💎", image: "/platinum.png" },
+      { name: "Diamond League", icon: "👑", image: "/diamond.png" },
+      { name: "Titan League", icon: "🔥", image: "/titan.png" },
+      { name: "Ace League", icon: "⚡", image: "/ace.png" },
+      { name: "Master League", icon: "🏆", image: "/master.png" },
+    ];
+
+    const index = Math.min(completedCount, leagues.length - 1);
+    return leagues[index];
+  }, [allMappedFolders, solvedPuzzleIds, puzzleAttempts]);
 
   // accessibleFolders is just the unlocked folders
   const accessibleFolders = useMemo(() => {
@@ -605,6 +684,15 @@ export default function StudentPortalPage() {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3 text-xs font-bold bg-slate-950 px-4 py-2 rounded-xl border border-slate-800">
             <span className="text-[#E11D48] flex items-center gap-1">🏆 {studentProfile.fideRating} Points</span>
+            <span className="text-slate-700">|</span>
+            <span className="text-amber-400 flex items-center gap-1.5">
+              {studentLeague.image ? (
+                <img src={studentLeague.image} className="w-5 h-5 object-contain" alt={studentLeague.name} />
+              ) : (
+                <span>{studentLeague.icon}</span>
+              )}
+              {studentLeague.name}
+            </span>
           </div>
 
           <Link
@@ -658,11 +746,16 @@ export default function StudentPortalPage() {
             <div className="bg-gradient-to-r from-[#0B4398] via-[#0052CC] to-[#E11D48] rounded-3xl p-8 text-white shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="space-y-2 text-center md:text-left">
                 <span className="px-3.5 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-black uppercase tracking-wider inline-flex items-center gap-1.5 border border-white/30">
-                  <Layers className="w-3.5 h-3.5" /> Assigned Batch: {studentProfile.batch}
+                  {studentLeague.image ? (
+                    <img src={studentLeague.image} className="w-4 h-4 object-contain" alt={studentLeague.name} />
+                  ) : (
+                    <span>{studentLeague.icon}</span>
+                  )}
+                  {studentLeague.name} Rank
                 </span>
                 <h1 className="text-3xl font-black">Welcome Back, {studentProfile.name}! 👋</h1>
                 <p className="text-sm text-blue-100 max-w-md">
-                  You have access to {accessiblePuzzles.length} tactical puzzles assigned to your batch!
+                  Earn 70% or more of the total points in each course to advance to the next league!
                 </p>
               </div>
 
@@ -670,7 +763,7 @@ export default function StudentPortalPage() {
                 onClick={() => setActiveTab("arena")}
                 className="px-8 py-4 bg-white text-slate-900 rounded-2xl font-black shadow-xl hover:bg-slate-100 transition-all hover:scale-105"
               >
-                ⚔️ Open Grandmaster Arena ({accessiblePuzzles.length} Puzzles)
+                ⚔️ Open Puzzle Arena ({accessiblePuzzles.length} Puzzles)
               </button>
             </div>
 
@@ -679,9 +772,9 @@ export default function StudentPortalPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                    <FolderIcon className="w-5 h-5 text-amber-400" /> Puzzles Library Folder ({studentProfile.batch})
+                    <FolderIcon className="w-5 h-5 text-amber-400" /> Puzzles Library Courses
                   </h3>
-                  <span className="text-xs text-slate-400 font-semibold">Select a folder to begin solving</span>
+                  <span className="text-xs text-slate-400 font-semibold">Select a course to begin solving</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -727,7 +820,7 @@ export default function StudentPortalPage() {
                               </span>
                               {!isUnlocked && (
                                 <span className="text-[10px] text-rose-400 font-extrabold bg-rose-950/40 px-2 py-0.5 rounded border border-rose-500/30">
-                                  Locked 🔒 (Complete 80% of previous folder)
+                                  Locked 🔒 (Earn 70% points in previous course)
                                 </span>
                               )}
                             </div>
@@ -1116,16 +1209,17 @@ export default function StudentPortalPage() {
                 <table className="w-full min-w-[700px] text-left text-xs border-collapse">
                   <thead>
                     <tr className="border-b border-slate-800 text-slate-400 uppercase font-black tracking-wider">
-                      <th className="py-3 px-4 w-[10%]">Rank</th>
-                      <th className="py-3 px-4 w-[35%]">Student Name</th>
-                      <th className="py-3 px-4 w-[25%]">Training Batch</th>
+                      <th className="py-3 px-4 w-[15%]">Rank</th>
+                      <th className="py-3 px-4 w-[40%]">Student Name</th>
+                      <th className="py-3 px-4 w-[20%]">League Rank</th>
                       <th className="py-3 px-4 w-[15%] text-right">Solved Puzzles</th>
-                      <th className="py-3 px-4 w-[15%] text-right">Points</th>
+                      <th className="py-3 px-4 w-[10%] text-right">Points</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800">
                     {leaderboardEntries.map((student, idx) => {
                       const isSelf = student.id === studentProfile.id;
+                      const league = getStudentLeague(student.solvedPuzzles);
                       return (
                         <tr
                           key={student.id}
@@ -1156,7 +1250,16 @@ export default function StudentPortalPage() {
                               )}
                             </div>
                           </td>
-                          <td className="py-4 px-4 text-slate-300">{student.batch}</td>
+                          <td className="py-4 px-4">
+                            <span className="flex items-center gap-1.5 text-amber-400 font-bold">
+                              {league.image ? (
+                                <img src={league.image} className="w-5 h-5 object-contain" alt={league.name} />
+                              ) : (
+                                league.icon
+                              )}
+                              {league.name}
+                            </span>
+                          </td>
                           <td className="py-4 px-4 text-right text-emerald-400 font-extrabold">
                             {student.solvedPuzzles?.length || 0}
                           </td>

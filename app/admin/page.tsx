@@ -129,23 +129,7 @@ export default function AdminOverviewDashboard() {
             </div>
           </Link>
 
-          <Link
-            href="/admin/batches"
-            className="group bg-slate-900 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all space-y-4 hover:shadow-xl"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-3 bg-indigo-500/10 rounded-xl text-indigo-400">
-                <Layers className="w-6 h-6" />
-              </div>
-              <ArrowRight className="w-5 h-5 text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
-            </div>
-            <div>
-              <h4 className="font-extrabold text-white text-base">Batch Management</h4>
-              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                Create new academy training batches, define schedule days, timing slots, and skill tiers.
-              </p>
-            </div>
-          </Link>
+
 
           <Link
             href="/admin/puzzles"

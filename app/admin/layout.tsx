@@ -26,7 +26,6 @@ export default function AdminLayout({
   const navItems = [
     { href: "/admin", label: "📊 Overview", icon: LayoutDashboard },
     { href: "/admin/students", label: "👥 Students", icon: Users },
-    { href: "/admin/batches", label: "📚 Batches", icon: Layers },
     { href: "/admin/puzzles", label: "🧩 Puzzles (PGN)", icon: PuzzleIcon },
     { href: "/admin/attendance", label: "📅 Attendance", icon: CalendarCheck },
     { href: "/admin/achievements", label: "🏆 Achievements", icon: Trophy },

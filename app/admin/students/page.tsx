@@ -14,11 +14,13 @@ interface Student {
   level: "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
   rating: number;
   status: string;
+  allowAllCourses?: boolean;
 }
 
 export default function AdminStudentsPage() {
   const [students, setStudents] = useState<Student[]>([]);
   const [batches, setBatches] = useState<{ id: string; name: string }[]>([]);
+  const [folders, setFolders] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [studentSearch, setStudentSearch] = useState("");
 
@@ -32,6 +34,7 @@ export default function AdminStudentsPage() {
     batch: "Beginner Morning",
     level: "BEGINNER" as "BEGINNER" | "INTERMEDIATE" | "ADVANCED",
     rating: "1200",
+    allowAllCourses: false,
   });
 
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
@@ -43,12 +46,14 @@ export default function AdminStudentsPage() {
   const fetchStudents = async () => {
     setLoading(true);
     try {
-      const [resS, resB] = await Promise.all([
+      const [resS, resB, resF] = await Promise.all([
         fetch("/api/students"),
         fetch("/api/batches"),
+        fetch("/api/puzzles/folders"),
       ]);
       if (resS.ok) setStudents(await resS.json());
       if (resB.ok) setBatches(await resB.json());
+      if (resF.ok) setFolders(await resF.json());
     } catch (e) {
       console.error("Error fetching students:", e);
     } finally {
@@ -77,6 +82,7 @@ export default function AdminStudentsPage() {
           batch: "Beginner Morning",
           level: "BEGINNER",
           rating: "1200",
+          allowAllCourses: false,
         });
       }
     } catch (e) {
@@ -165,9 +171,8 @@ export default function AdminStudentsPage() {
                 <th className="p-4">Name</th>
                 <th className="p-4">Login Email & Password</th>
                 <th className="p-4">Age</th>
-                <th className="p-4">Batch</th>
-                <th className="p-4">Skill Level</th>
-                <th className="p-4">FIDE Rating</th>
+                <th className="p-4">Points</th>
+                <th className="p-4">Bypass Locks</th>
                 <th className="p-4">Phone</th>
                 <th className="p-4 text-right">Actions</th>
               </tr>
@@ -175,13 +180,13 @@ export default function AdminStudentsPage() {
             <tbody className="divide-y divide-slate-800 text-slate-300">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="p-6 text-center text-slate-500">
+                  <td colSpan={7} className="p-6 text-center text-slate-500">
                     Loading student directory...
                   </td>
                 </tr>
               ) : filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="p-6 text-center text-slate-500">
+                  <td colSpan={7} className="p-6 text-center text-slate-500">
                     No students registered yet.
                   </td>
                 </tr>
@@ -196,23 +201,16 @@ export default function AdminStudentsPage() {
                       )}
                     </td>
                     <td className="p-4">{s.age} yrs</td>
-                    <td className="p-4">
-                      <span className="px-2.5 py-1 bg-slate-800 text-slate-300 rounded-md border border-slate-700">
-                        {s.batch}
-                      </span>
-                    </td>
-                    <td className="p-4">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold ${
-                        s.level === "BEGINNER"
-                          ? "bg-emerald-950 text-emerald-300 border border-emerald-500/30"
-                          : s.level === "INTERMEDIATE"
-                          ? "bg-amber-950 text-amber-300 border border-amber-500/30"
-                          : "bg-purple-950 text-purple-300 border border-purple-500/30"
-                      }`}>
-                        {s.level}
-                      </span>
-                    </td>
                     <td className="p-4 font-bold text-amber-400">{s.rating}</td>
+                    <td className="p-4">
+                      <span className={`px-2.5 py-1 text-[10px] font-bold rounded-md border ${
+                        s.allowAllCourses
+                          ? "bg-emerald-950 text-emerald-300 border-emerald-500/30"
+                          : "bg-slate-800 text-slate-400 border-slate-700"
+                      }`}>
+                        {s.allowAllCourses ? "Bypassed" : "Locked"}
+                      </span>
+                    </td>
                     <td className="p-4 text-slate-400">{s.phone || "-"}</td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-1">
@@ -298,7 +296,7 @@ export default function AdminStudentsPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-slate-400 block mb-1">FIDE Rating</label>
+                  <label className="text-slate-400 block mb-1">Starting Points</label>
                   <input
                     type="number"
                     value={newStudent.rating}
@@ -307,33 +305,17 @@ export default function AdminStudentsPage() {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-slate-400 block mb-1">Assigned Batch</label>
-                  <select
-                    value={newStudent.batch}
-                    onChange={(e) => setNewStudent({ ...newStudent, batch: e.target.value })}
-                    className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500"
-                  >
-                    {batches.map((b) => (
-                      <option key={b.id} value={b.name}>
-                        {b.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-slate-400 block mb-1">Skill Tier</label>
-                  <select
-                    value={newStudent.level}
-                    onChange={(e: any) => setNewStudent({ ...newStudent, level: e.target.value })}
-                    className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500"
-                  >
-                    <option value="BEGINNER">BEGINNER</option>
-                    <option value="INTERMEDIATE">INTERMEDIATE</option>
-                    <option value="ADVANCED">ADVANCED</option>
-                  </select>
-                </div>
+              <div className="flex items-center gap-2 py-1">
+                <input
+                  type="checkbox"
+                  id="add-student-bypass"
+                  checked={newStudent.allowAllCourses}
+                  onChange={(e) => setNewStudent({ ...newStudent, allowAllCourses: e.target.checked })}
+                  className="rounded bg-slate-950 border-slate-800 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                />
+                <label htmlFor="add-student-bypass" className="text-slate-400 block cursor-pointer">
+                  Allow Access to All Courses (Bypass Locks)
+                </label>
               </div>
               <div>
                 <label className="text-slate-400 block mb-1">Phone Number</label>
@@ -402,7 +384,7 @@ export default function AdminStudentsPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-slate-400 block mb-1">FIDE Rating</label>
+                  <label className="text-slate-400 block mb-1">Points</label>
                   <input
                     type="number"
                     value={editingStudent.rating}
@@ -411,33 +393,17 @@ export default function AdminStudentsPage() {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-slate-400 block mb-1">Assigned Batch</label>
-                  <select
-                    value={editingStudent.batch}
-                    onChange={(e) => setEditingStudent({ ...editingStudent, batch: e.target.value })}
-                    className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500"
-                  >
-                    {batches.map((b) => (
-                      <option key={b.id} value={b.name}>
-                        {b.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-slate-400 block mb-1">Skill Tier</label>
-                  <select
-                    value={editingStudent.level}
-                    onChange={(e: any) => setEditingStudent({ ...editingStudent, level: e.target.value })}
-                    className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500"
-                  >
-                    <option value="BEGINNER">BEGINNER</option>
-                    <option value="INTERMEDIATE">INTERMEDIATE</option>
-                    <option value="ADVANCED">ADVANCED</option>
-                  </select>
-                </div>
+              <div className="flex items-center gap-2 py-1">
+                <input
+                  type="checkbox"
+                  id="edit-student-bypass"
+                  checked={editingStudent.allowAllCourses || false}
+                  onChange={(e) => setEditingStudent({ ...editingStudent, allowAllCourses: e.target.checked })}
+                  className="rounded bg-slate-950 border-slate-800 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                />
+                <label htmlFor="edit-student-bypass" className="text-slate-400 block cursor-pointer">
+                  Allow Access to All Courses (Bypass Locks)
+                </label>
               </div>
               <div>
                 <label className="text-slate-400 block mb-1">Phone Number</label>
@@ -451,6 +417,56 @@ export default function AdminStudentsPage() {
               <button type="submit" className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-extrabold rounded-xl transition-colors">
                 Save Changes
               </button>
+
+              <div className="border-t border-slate-800 pt-4 mt-4 space-y-3">
+                <h4 className="text-sm font-bold text-white">Reset Course Progress</h4>
+                <p className="text-[10px] text-slate-400">If a student gets stuck or it is impossible to reach 70% points, you can reset their progress for a specific course.</p>
+                <div className="flex gap-2">
+                  <select
+                    id="reset-course-select"
+                    className="flex-1 p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none text-[11px]"
+                  >
+                    <option value="">-- Select Course --</option>
+                    {folders.map((f) => (
+                      <option key={f.id} value={f.id}>{f.name}</option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const select = document.getElementById("reset-course-select") as HTMLSelectElement;
+                      const folderId = select?.value;
+                      if (!folderId) {
+                        alert("Please select a course to reset");
+                        return;
+                      }
+                      if (!confirm("Are you sure you want to reset progress for this course? This will clear all solutions and attempts in this course for this student.")) {
+                        return;
+                      }
+                      try {
+                        const res = await fetch("/api/students/reset-course", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ studentId: editingStudent.id, folderId }),
+                        });
+                        if (res.ok) {
+                          alert("Course progress reset successfully!");
+                          setEditingStudent(null);
+                          fetchStudents();
+                        } else {
+                          alert("Failed to reset course progress");
+                        }
+                      } catch (err) {
+                        console.error(err);
+                        alert("Error resetting progress");
+                      }
+                    }}
+                    className="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl transition-colors text-[11px]"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
             </form>
           </div>
         </div>

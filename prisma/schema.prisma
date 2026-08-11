@@ -36,6 +36,7 @@ model Student {
   attendances   Attendance[]
   solvedPuzzles SolvedPuzzle[]
   puzzleAttempts PuzzleAttempt[]
+  customCourses StudentCourse[]
 }
 
 model Achievement {
@@ -115,6 +116,7 @@ model PuzzleFolder {
   order     Int      @default(0)
   createdAt DateTime @default(now())
   puzzles   Puzzle[]
+  customStudents StudentCourse[]
 }
 
 model PuzzleAttempt {
@@ -143,4 +145,16 @@ model Blog {
   content    String   @db.Text
   createdAt  DateTime @default(now())
 }
+
+model StudentCourse {
+  id        String       @id @default(cuid())
+  studentId String
+  student   Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  folderId  String
+  folder    PuzzleFolder @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  order     Int          @default(0)
+
+  @@unique([studentId, folderId])
+}
+
 

@@ -39,6 +39,7 @@ export default function StudentPortalPage() {
     badge: "Master Tactician 🏆",
     batch: "Beginner Morning",
     allowAllCourses: false,
+    customCourses: [] as { folderId: string; order: number }[],
   });
 
   const [dbPuzzles, setDbPuzzles] = useState<any[]>([]);
@@ -156,6 +157,7 @@ export default function StudentPortalPage() {
                   ...prev,
                   fideRating: studentData.rating !== undefined ? studentData.rating : prev.fideRating,
                   allowAllCourses: studentData.allowAllCourses !== undefined ? studentData.allowAllCourses : prev.allowAllCourses,
+                  customCourses: studentData.customCourses || [],
                 }));
               }
             })
@@ -217,8 +219,11 @@ export default function StudentPortalPage() {
 
   // All folders for student dashboard with lock status
   const allMappedFolders = useMemo(() => {
+    // Determine if student has custom courses assigned
+    const hasCustomCourses = studentProfile.customCourses && studentProfile.customCourses.length > 0;
+
     // 1. First map and extract puzzles
-    const mapped = folders
+    let mapped = folders
       .map((f) => {
         const folderPuzzles = dbPuzzles.filter(
           (p) =>
@@ -234,8 +239,21 @@ export default function StudentPortalPage() {
           puzzles: folderPuzzles,
         };
       })
-      .filter((f) => f.puzzlesCount > 0)
-      .sort((a, b) => (a.order || 0) - (b.order || 0));
+      .filter((f) => f.puzzlesCount > 0);
+
+    if (hasCustomCourses) {
+      // Keep only folders specified in customCourses and sort by the customCourses order
+      mapped = mapped
+        .filter((f) => studentProfile.customCourses.some((cc) => cc.folderId === f.id))
+        .sort((a, b) => {
+          const orderA = studentProfile.customCourses.find((cc) => cc.folderId === a.id)?.order ?? 999;
+          const orderB = studentProfile.customCourses.find((cc) => cc.folderId === b.id)?.order ?? 999;
+          return orderA - orderB;
+        });
+    } else {
+      // Default ordering
+      mapped = mapped.sort((a, b) => (a.order || 0) - (b.order || 0));
+    }
 
     // 2. Determine which folders are unlocked based on previous completion (>= 70% of total points)
     return mapped.map((folder, index) => {
@@ -262,7 +280,7 @@ export default function StudentPortalPage() {
 
       return { ...folder, isUnlocked, earnedPoints, maxPoints };
     });
-  }, [folders, dbPuzzles, studentProfile.batch, studentProfile.allowAllCourses, solvedPuzzleIds, puzzleAttempts]);
+  }, [folders, dbPuzzles, studentProfile.batch, studentProfile.allowAllCourses, studentProfile.customCourses, solvedPuzzleIds, puzzleAttempts]);
 
   const getStudentLeague = (studentSolvedPuzzles: any[]) => {
     const solvedList = studentSolvedPuzzles || [];
@@ -628,10 +646,8 @@ export default function StudentPortalPage() {
         return false;
       }
     } catch (e) {
-      const nextAttempts = attempts + 1;
-      updateAttempts(currentPuzzle.id, nextAttempts);
-      const nextPts = getPointsForAttempts(nextAttempts);
-      setMoveFeedback(`❌ Incorrect move. Try another continuation! (Attempt #${nextAttempts}, next worth ${nextPts} pts)`);
+      // If chess.js throws an error, it is an illegal move, so do NOT increment attempts
+      setMoveFeedback("⚠️ Invalid move. That is not a legal chess move.");
       return false;
     }
   };

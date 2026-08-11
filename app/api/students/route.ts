@@ -19,6 +19,12 @@ export async function GET(req: Request) {
           solvedPuzzles: {
             select: { id: true, points: true, puzzleId: true },
           },
+          customCourses: {
+            orderBy: { order: "asc" },
+            include: {
+              folder: true
+            }
+          }
         },
       });
       if (student) {
@@ -40,6 +46,12 @@ export async function GET(req: Request) {
         solvedPuzzles: {
           select: { id: true, points: true, puzzleId: true },
         },
+        customCourses: {
+          orderBy: { order: "asc" },
+          include: {
+            folder: true
+          }
+        }
       },
     });
 
@@ -161,19 +173,52 @@ export async function PUT(req: Request) {
 
     let updated;
     try {
+      // If customCourses is passed, we handle synchronization
+      if (body.customCourses && Array.isArray(body.customCourses)) {
+        // 1. Delete all existing custom course relations for this student
+        await prisma.studentCourse.deleteMany({
+          where: { studentId: id }
+        });
+        
+        // 2. Create the new custom course relations
+        if (body.customCourses.length > 0) {
+          await prisma.studentCourse.createMany({
+            data: body.customCourses.map((cc: any, index: number) => ({
+              studentId: id,
+              folderId: cc.folderId,
+              order: cc.order !== undefined ? cc.order : index
+            }))
+          });
+        }
+      }
+
+      // Fetch current student to get existing password if none provided
+      const currentStudent = await prisma.student.findUnique({
+        where: { id },
+        select: { password: true }
+      });
+
       updated = await (prisma.student.update as any)({
         where: { id },
         data: {
           name,
           age: parseInt(age) || 10,
           email: email || null,
-          password: password || null,
+          password: password ? password : (currentStudent?.password || null),
           phone: phone || null,
           batch: batch || "Beginner Morning",
           level: level || "BEGINNER",
           rating: parseInt(rating) || 1200,
           allowAllCourses: allowAllCourses ?? false,
         },
+        include: {
+          customCourses: {
+            orderBy: { order: "asc" },
+            include: {
+              folder: true
+            }
+          }
+        }
       });
     } catch (dbErr: any) {
       console.warn("DB Update warning (fallback update):", dbErr);
@@ -189,6 +234,7 @@ export async function PUT(req: Request) {
         rating: parseInt(rating) || 1200,
         status: "Active",
         allowAllCourses: allowAllCourses ?? false,
+        customCourses: body.customCourses || []
       };
     }
 

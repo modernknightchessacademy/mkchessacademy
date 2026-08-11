@@ -15,6 +15,16 @@ interface Student {
   rating: number;
   status: string;
   allowAllCourses?: boolean;
+  customCourses?: {
+    id: string;
+    studentId: string;
+    folderId: string;
+    order: number;
+    folder: {
+      id: string;
+      name: string;
+    };
+  }[];
 }
 
 export default function AdminStudentsPage() {
@@ -337,10 +347,10 @@ export default function AdminStudentsPage() {
       {/* MODAL: EDIT STUDENT */}
       {editingStudent && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full space-y-4 relative shadow-2xl">
-            <button onClick={() => setEditingStudent(null)} className="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
-            <h3 className="text-lg font-bold text-white">Edit Student Profile</h3>
-            <form onSubmit={handleUpdateStudent} className="space-y-3 text-xs">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full relative shadow-2xl flex flex-col max-h-[90vh]">
+            <button onClick={() => setEditingStudent(null)} className="absolute top-4 right-4 text-slate-400 hover:text-white z-10 text-sm font-bold bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center">✕</button>
+            <h3 className="text-lg font-bold text-white mb-4">Edit Student Profile</h3>
+            <form onSubmit={handleUpdateStudent} className="space-y-4 text-xs overflow-y-auto pr-2 custom-scrollbar flex-1">
               <div>
                 <label className="text-slate-400 block mb-1">Student Full Name *</label>
                 <input
@@ -363,10 +373,10 @@ export default function AdminStudentsPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-slate-400 block mb-1">Login Password *</label>
+                  <label className="text-slate-400 block mb-1">Login Password (Leave empty to keep current)</label>
                   <input
                     type="text"
-                    required
+                    placeholder="Keep current password..."
                     value={editingStudent.password || ""}
                     onChange={(e) => setEditingStudent({ ...editingStudent, password: e.target.value })}
                     className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500"
@@ -414,6 +424,113 @@ export default function AdminStudentsPage() {
                   className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500"
                 />
               </div>
+              <div className="border-t border-slate-800 pt-4 mt-4 space-y-3">
+                <h4 className="text-sm font-bold text-white">Custom Course Path & Ordering</h4>
+                <p className="text-[10px] text-slate-400">Add courses in the order you want this student to complete them. If left empty, they will see all default academy courses.</p>
+                
+                {/* Custom Courses List */}
+                <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                  {(editingStudent.customCourses || []).map((cc, idx) => (
+                    <div key={cc.folderId || idx} className="flex items-center justify-between bg-slate-950 p-2 rounded-lg border border-slate-800 text-[11px]">
+                      <span className="text-white truncate font-bold flex-1">
+                        {idx + 1}. {cc.folder?.name || folders.find(f => f.id === cc.folderId)?.name || "Unknown Course"}
+                      </span>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          type="button"
+                          disabled={idx === 0}
+                          onClick={() => {
+                            const list = [...(editingStudent.customCourses || [])];
+                            const temp = list[idx];
+                            list[idx] = list[idx - 1];
+                            list[idx - 1] = temp;
+                            // Re-calculate orders
+                            const updated = list.map((item, i) => ({ ...item, order: i }));
+                            setEditingStudent({ ...editingStudent, customCourses: updated });
+                          }}
+                          className="px-1.5 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded disabled:opacity-30 disabled:cursor-not-allowed"
+                          title="Move Up"
+                        >
+                          ▲
+                        </button>
+                        <button
+                          type="button"
+                          disabled={idx === (editingStudent.customCourses || []).length - 1}
+                          onClick={() => {
+                            const list = [...(editingStudent.customCourses || [])];
+                            const temp = list[idx];
+                            list[idx] = list[idx + 1];
+                            list[idx + 1] = temp;
+                            // Re-calculate orders
+                            const updated = list.map((item, i) => ({ ...item, order: i }));
+                            setEditingStudent({ ...editingStudent, customCourses: updated });
+                          }}
+                          className="px-1.5 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded disabled:opacity-30 disabled:cursor-not-allowed"
+                          title="Move Down"
+                        >
+                          ▼
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const list = (editingStudent.customCourses || []).filter((_, i) => i !== idx);
+                            const updated = list.map((item, i) => ({ ...item, order: i }));
+                            setEditingStudent({ ...editingStudent, customCourses: updated });
+                          }}
+                          className="px-1.5 py-0.5 bg-rose-950 text-rose-300 border border-rose-900 rounded hover:bg-rose-900"
+                          title="Remove Course"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Add new Course Dropdown */}
+                <div className="flex gap-2">
+                  <select
+                    id="add-custom-course-select"
+                    className="flex-1 p-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none text-[11px]"
+                  >
+                    <option value="">-- Add Course to Path --</option>
+                    {folders
+                      .filter(f => !(editingStudent.customCourses || []).some(cc => cc.folderId === f.id))
+                      .map((f) => (
+                        <option key={f.id} value={f.id}>{f.name}</option>
+                      ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const select = document.getElementById("add-custom-course-select") as HTMLSelectElement;
+                      const folderId = select?.value;
+                      if (!folderId) return;
+                      const folderObj = folders.find(f => f.id === folderId);
+                      const currentList = editingStudent.customCourses || [];
+                      const newItem = {
+                        id: "",
+                        studentId: editingStudent.id,
+                        folderId,
+                        order: currentList.length,
+                        folder: {
+                          id: folderId,
+                          name: folderObj?.name || ""
+                        }
+                      };
+                      setEditingStudent({
+                        ...editingStudent,
+                        customCourses: [...currentList, newItem]
+                      });
+                      select.value = "";
+                    }}
+                    className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-colors text-[11px]"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+
               <button type="submit" className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-extrabold rounded-xl transition-colors">
                 Save Changes
               </button>

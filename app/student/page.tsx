@@ -463,9 +463,11 @@ export default function StudentPortalPage() {
 
   const game = useRef(new Chess());
   const [fen, setFen] = useState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+  const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
 
   // Reinitialize board whenever the current puzzle changes
   useEffect(() => {
+    setSelectedSquare(null);
     try {
       let startingFen = currentPuzzle.fen;
       let cleanMoves: string[] = [];
@@ -590,9 +592,13 @@ export default function StudentPortalPage() {
     }
 
     try {
+      // Check if it's a pawn promotion
+      const isPromotion = game.current.get(src as any)?.type === "p" && (tgt.endsWith("8") || tgt.endsWith("1"));
+      const promotionPiece = isPromotion ? (["q", "r", "b", "n"].includes(piece[1]?.toLowerCase()) ? piece[1].toLowerCase() : "q") : undefined;
+
       // Test the move on a temp state
       const tempChess = new Chess(game.current.fen());
-      const move = tempChess.move({ from: src, to: tgt, promotion: "q" });
+      const move = tempChess.move({ from: src, to: tgt, promotion: promotionPiece });
 
       if (!move) {
         setMoveFeedback("⚠️ Invalid move. That is not a legal chess move.");
@@ -607,15 +613,23 @@ export default function StudentPortalPage() {
       const isMatch = (actualClean === expectedClean) || (actualFromToClean === expectedFromToClean);
 
       if (isMatch) {
-        game.current.move({ from: src, to: tgt, promotion: "q" });
+        game.current.move({ from: src, to: tgt, promotion: promotionPiece });
         setFen(game.current.fen());
 
         const newPlayedMoves = [...playedMoves, move.san];
         setPlayedMoves(newPlayedMoves);
 
-        if (newPlayedMoves.length === solutionMoves.length) {
+        if (game.current.isGameOver() || newPlayedMoves.length === solutionMoves.length) {
           const pts = getPointsForAttempts(attempts);
-          setMoveFeedback(`🎉 EXCELLENT MOVE! Tactical Checkmate Solution Verified! (+${pts} points)`);
+          let feedback = `🎉 EXCELLENT MOVE! Puzzle Solution Verified! (+${pts} points)`;
+          if (game.current.isCheckmate()) {
+            feedback = `🎉 EXCELLENT MOVE! Checkmate Solution Verified! (+${pts} points)`;
+          } else if (game.current.isStalemate()) {
+            feedback = `🎉 EXCELLENT MOVE! Stalemate Solution Verified! (+${pts} points)`;
+          } else if (game.current.isDraw()) {
+            feedback = `🎉 EXCELLENT MOVE! Draw Position Verified! (+${pts} points)`;
+          }
+          setMoveFeedback(feedback);
           recordSolve(currentPuzzle.id, pts);
           triggerAutoRedirect(currentPuzzle.id);
         } else {
@@ -629,7 +643,23 @@ export default function StudentPortalPage() {
                 const opponentMove = game.current.move(opponentMoveSan);
                 if (opponentMove) {
                   setFen(game.current.fen());
-                  setPlayedMoves((prev) => [...prev, opponentMove.san]);
+                  const newPlayedMovesOpp = [...newPlayedMoves, opponentMove.san];
+                  setPlayedMoves(newPlayedMovesOpp);
+
+                  if (game.current.isGameOver() || newPlayedMovesOpp.length === solutionMoves.length) {
+                    const pts = getPointsForAttempts(attempts);
+                    let feedback = `🎉 EXCELLENT MOVE! Puzzle Solution Verified! (+${pts} points)`;
+                    if (game.current.isCheckmate()) {
+                      feedback = `🎉 EXCELLENT MOVE! Checkmate Solution Verified! (+${pts} points)`;
+                    } else if (game.current.isStalemate()) {
+                      feedback = `🎉 EXCELLENT MOVE! Stalemate Solution Verified! (+${pts} points)`;
+                    } else if (game.current.isDraw()) {
+                      feedback = `🎉 EXCELLENT MOVE! Draw Position Verified! (+${pts} points)`;
+                    }
+                    setMoveFeedback(feedback);
+                    recordSolve(currentPuzzle.id, pts);
+                    triggerAutoRedirect(currentPuzzle.id);
+                  }
                 }
               } catch (err) {
                 console.error("Opponent play error:", err);
@@ -652,7 +682,39 @@ export default function StudentPortalPage() {
     }
   };
 
+  const handleSquareClick = (square: string) => {
+    const squareLower = square.toLowerCase();
+    
+    if (selectedSquare) {
+      const src = selectedSquare.toLowerCase();
+      const tgt = squareLower;
+      
+      if (src === tgt) {
+        setSelectedSquare(null);
+        return;
+      }
+      
+      const targetPiece = game.current.get(tgt as any);
+      if (targetPiece && targetPiece.color === game.current.turn()) {
+        setSelectedSquare(square);
+        return;
+      }
+      
+      const p = game.current.get(src as any);
+      const pieceStr = p ? `${p.color}${p.type.toUpperCase()}` : "";
+      
+      onPieceDrop(selectedSquare, square, pieceStr);
+      setSelectedSquare(null);
+    } else {
+      const p = game.current.get(squareLower as any);
+      if (p && p.color === game.current.turn()) {
+        setSelectedSquare(square);
+      }
+    }
+  };
+
   const resetBoard = () => {
+    setSelectedSquare(null);
     try {
       let startingFen = currentPuzzle.fen;
       if (currentPuzzle.pgn) {
@@ -1025,6 +1087,12 @@ export default function StudentPortalPage() {
                   <Chessboard
                     position={fen}
                     onPieceDrop={onPieceDrop}
+                    onSquareClick={handleSquareClick}
+                    customSquareStyles={
+                      selectedSquare
+                        ? { [selectedSquare]: { backgroundColor: "rgba(251, 191, 36, 0.5)" } }
+                        : {}
+                    }
                     boardOrientation={puzzleTurn}
                     customDarkSquareStyle={{ backgroundColor: getCustomBoardColors().dark }}
                     customLightSquareStyle={{ backgroundColor: getCustomBoardColors().light }}

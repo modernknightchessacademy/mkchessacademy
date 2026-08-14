@@ -233,6 +233,7 @@ export default function AdminAchievementsPage() {
                 <CloudinaryUpload
                   value={newAchievement.imageUrl}
                   onChange={(url: string) => setNewAchievement({ ...newAchievement, imageUrl: url })}
+                  onRemove={() => setNewAchievement({ ...newAchievement, imageUrl: "" })}
                 />
                 {newAchievement.imageUrl && (
                   <p className="text-[11px] text-emerald-400 mt-1">✓ Image uploaded successfully</p>
@@ -309,6 +310,7 @@ export default function AdminAchievementsPage() {
                 <CloudinaryUpload
                   value={editingAchievement.imageUrl}
                   onChange={(url: string) => setEditingAchievement({ ...editingAchievement, imageUrl: url })}
+                  onRemove={() => setEditingAchievement({ ...editingAchievement, imageUrl: "" })}
                 />
                 {editingAchievement.imageUrl && (
                   <p className="text-[11px] text-emerald-400 mt-1">✓ Image uploaded successfully</p>

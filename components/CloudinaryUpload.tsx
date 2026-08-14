@@ -51,6 +51,14 @@ export function CloudinaryUpload({ value, onChange, onRemove }: CloudinaryUpload
     }
   };
 
+  const handleRemove = () => {
+    if (onRemove) {
+      onRemove();
+    } else {
+      onChange("");
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       {value ? (
@@ -58,7 +66,7 @@ export function CloudinaryUpload({ value, onChange, onRemove }: CloudinaryUpload
           <Image src={value} alt="Uploaded image" fill className="object-cover" />
           <button
             type="button"
-            onClick={onRemove}
+            onClick={handleRemove}
             className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition"
           >
             <X className="w-4 h-4" />

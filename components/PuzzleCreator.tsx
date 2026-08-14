@@ -26,10 +26,40 @@ interface PuzzleCreatorProps {
   batches: Array<{ id: string; name: string }>;
 }
 
+const cleanPgnText = (pgnText: string): string => {
+  let result = "";
+  let curlyDepth = 0;
+  let parenDepth = 0;
+  
+  for (let i = 0; i < pgnText.length; i++) {
+    const char = pgnText[i];
+    if (char === '{') {
+      curlyDepth++;
+    } else if (char === '}') {
+      if (curlyDepth > 0) curlyDepth--;
+    } else if (char === '(') {
+      parenDepth++;
+    } else if (char === ')') {
+      if (parenDepth > 0) parenDepth--;
+    } else {
+      if (curlyDepth === 0 && parenDepth === 0) {
+        result += char;
+      }
+    }
+  }
+  
+  return result
+    .replace(/\[[^\]]*\]/g, "")
+    .replace(/\$\d+/g, "")
+    .replace(/\d+\.+\s*/g, "")
+    .trim();
+};
+
 export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batches }: PuzzleCreatorProps) {
   const game = useRef(new Chess());
   const [description, setDescription] = useState("");
   const [fen, setFen] = useState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+  const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
   const [manualFen, setManualFen] = useState(fen);
   const [moves, setMoves] = useState<string[]>([]);
   const [title, setTitle] = useState("");
@@ -84,13 +114,8 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
             continue;
           }
 
-          // Clean up bracket headers to extract only the move text
-          const movesText = gameText
-            .replace(/\{[^}]*\}/g, "")
-            .replace(/\([^)]*\)/g, "")
-            .replace(/\[[^\]]*\]/g, "")
-            .replace(/\d+\.+\s*/g, "")
-            .trim();
+          // Clean up variations, comments, headers, move numbers, and NAGs
+          const movesText = cleanPgnText(gameText);
 
           const rawMoves = movesText
             .split(/\s+/)
@@ -100,7 +125,8 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
           let isGameValid = true;
           for (const move of rawMoves) {
             try {
-              const result = tempGame.move(move);
+              const cleanMove = move.replace(/[!?]/g, "");
+              const result = tempGame.move(cleanMove);
               if (result) {
                 loadedMoves.push(result.san);
               } else {
@@ -177,12 +203,7 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
 
       tempGame.load(startingFen);
 
-      const movesText = singleGameText
-        .replace(/\{[^}]*\}/g, "")
-        .replace(/\([^)]*\)/g, "")
-        .replace(/\[[^\]]*\]/g, "")
-        .replace(/\d+\.+\s*/g, "")
-        .trim();
+      const movesText = cleanPgnText(singleGameText);
 
       const rawMoves = movesText
         .split(/\s+/)
@@ -191,7 +212,8 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
       const loadedMoves: string[] = [];
       for (const move of rawMoves) {
         try {
-          const result = tempGame.move(move);
+          const cleanMove = move.replace(/[!?]/g, "");
+          const result = tempGame.move(cleanMove);
           if (result) {
             loadedMoves.push(result.san);
           } else {
@@ -273,8 +295,14 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
         backgroundRepeat: "no-repeat",
       };
     });
+    if (selectedSquare) {
+      s[selectedSquare] = {
+        ...s[selectedSquare],
+        backgroundColor: "rgba(251, 191, 36, 0.5)",
+      };
+    }
     return s;
-  }, [stars, sequence, targets, moves]);
+  }, [stars, sequence, targets, moves, selectedSquare]);
 
   useEffect(() => {
     if (existingPuzzle) {
@@ -358,6 +386,7 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
   };
 
   const toggleMode = () => {
+    setSelectedSquare(null);
     if (mode === "SETUP") {
       setCapturedSetupFen(fen);
       setInitialStars([...stars]);
@@ -394,6 +423,34 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
     if (mode === "RECORD" && puzzleSubtype === "SEQUENCE") {
       const marker = sequence.find((item) => item.square === s);
       if (marker) setMoves((prev) => (prev.includes(s) ? prev.filter((m) => m !== s) : [...prev, s]));
+      return;
+    }
+
+    if (selectedSquare) {
+      const src = selectedSquare.toLowerCase();
+      const tgt = s;
+
+      if (src === tgt) {
+        setSelectedSquare(null);
+        return;
+      }
+
+      const targetPiece = game.current.get(tgt as any);
+      if (targetPiece && targetPiece.color === game.current.turn()) {
+        setSelectedSquare(square);
+        return;
+      }
+
+      const p = game.current.get(src as any);
+      const pieceStr = p ? `${p.color}${p.type.toUpperCase()}` : "";
+
+      onPieceDrop(selectedSquare, square, pieceStr);
+      setSelectedSquare(null);
+    } else {
+      const p = game.current.get(s as any);
+      if (p && p.color === game.current.turn()) {
+        setSelectedSquare(square);
+      }
     }
   };
 
@@ -436,7 +493,9 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
     }
     if (mode === "RECORD" && puzzleSubtype === "STANDARD") {
       try {
-        const move = game.current.move({ from: src, to: tgt, promotion: "q" });
+        const isPromotion = game.current.get(src as any)?.type === "p" && (tgt.endsWith("8") || tgt.endsWith("1"));
+        const promotionPiece = isPromotion ? (["q", "r", "b", "n"].includes(piece[1]?.toLowerCase()) ? piece[1].toLowerCase() : "q") : undefined;
+        const move = game.current.move({ from: src, to: tgt, promotion: promotionPiece });
         if (move) {
           setMoves((prev) => [...prev, move.san]);
           updateBoard();

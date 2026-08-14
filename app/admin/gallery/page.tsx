@@ -201,6 +201,7 @@ export default function AdminGalleryPage() {
                 <CloudinaryUpload
                   value={newGallery.imageUrl}
                   onChange={(url: string) => setNewGallery({ ...newGallery, imageUrl: url })}
+                  onRemove={() => setNewGallery({ ...newGallery, imageUrl: "" })}
                 />
                 {newGallery.imageUrl && (
                   <p className="text-[11px] text-emerald-400 mt-1">✓ Photo uploaded successfully</p>
@@ -260,6 +261,7 @@ export default function AdminGalleryPage() {
                 <CloudinaryUpload
                   value={editingGallery.imageUrl}
                   onChange={(url: string) => setEditingGallery({ ...editingGallery, imageUrl: url })}
+                  onRemove={() => setEditingGallery({ ...editingGallery, imageUrl: "" })}
                 />
                 {editingGallery.imageUrl && (
                   <p className="text-[11px] text-emerald-400 mt-1">✓ Photo uploaded successfully</p>

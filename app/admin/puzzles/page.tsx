@@ -197,16 +197,7 @@ export default function AdminPuzzlesPage() {
     }
   };
 
-  const filteredPuzzles = useMemo(() => {
-    return puzzles.filter((p) => {
-      const matchTier = puzzleFilter === "ALL" ? true : p.level === puzzleFilter;
-      const matchBatch =
-        batchFilter === "ALL"
-          ? true
-          : (p.assignedBatch || "All Batches").toLowerCase() === batchFilter.toLowerCase();
-      return matchTier && matchBatch;
-    });
-  }, [puzzles, puzzleFilter, batchFilter]);
+  const filteredPuzzles = puzzles;
 
   if (creatorMode !== "NONE") {
     return (
@@ -443,43 +434,7 @@ export default function AdminPuzzlesPage() {
       {/* 2. VIEW PUZZLES LIST INSIDE FOLDER */}
       {selectedFolder && (
         <div className="space-y-6 animate-in fade-in duration-200">
-          {/* Filters Bar: Tier Tabs & Batch Dropdown Filter */}
-          <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-4">
-            {/* Tier Pills */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1">
-              {(["ALL", "BEGINNER", "INTERMEDIATE", "ADVANCED"] as const).map((tier) => (
-                <button
-                  key={tier}
-                  onClick={() => setPuzzleFilter(tier)}
-                  className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                    puzzleFilter === tier
-                      ? "bg-[#E11D48] text-white shadow-lg font-extrabold"
-                      : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
-                  }`}
-                >
-                  {tier === "ALL" ? "All Difficulty Tiers" : tier}
-                </button>
-              ))}
-            </div>
 
-            {/* Batch Filter Dropdown */}
-            <div className="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
-              <Filter className="w-3.5 h-3.5 text-slate-400" />
-              <span className="text-slate-400 font-bold">Filter Batch:</span>
-              <select
-                value={batchFilter}
-                onChange={(e) => setBatchFilter(e.target.value)}
-                className="bg-transparent text-white font-bold focus:outline-none cursor-pointer"
-              >
-                <option value="ALL" className="bg-slate-900">All Batches</option>
-                {batches.map((b) => (
-                  <option key={b.id} value={b.name} className="bg-slate-900">
-                    {b.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
 
           {/* Grid of Puzzles */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -499,23 +454,7 @@ export default function AdminPuzzlesPage() {
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-3">
-                      <span
-                        className={`px-2.5 py-0.5 rounded text-[10px] font-extrabold ${
-                          p.level === "BEGINNER"
-                            ? "bg-emerald-950 text-emerald-300 border border-emerald-500/30"
-                            : p.level === "INTERMEDIATE"
-                            ? "bg-amber-950 text-amber-300 border border-amber-500/30"
-                            : "bg-purple-950 text-purple-300 border border-purple-500/30"
-                        }`}
-                      >
-                        {p.level}
-                      </span>
-
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-blue-300 font-bold bg-blue-950/80 px-2.5 py-1 rounded-lg border border-blue-500/30 flex items-center gap-1">
-                          <Layers className="w-3 h-3 text-blue-400" />
-                          {p.assignedBatch || "All Batches"}
-                        </span>
                         <button
                           onClick={() => {
                             setEditingPuzzle(p);

@@ -41,7 +41,7 @@ export default function AdminStudentsPage() {
     email: "",
     password: "",
     phone: "",
-    batch: "Beginner Morning",
+    batch: "Auto",
     level: "BEGINNER" as "BEGINNER" | "INTERMEDIATE" | "ADVANCED",
     rating: "1200",
     allowAllCourses: false,
@@ -89,7 +89,7 @@ export default function AdminStudentsPage() {
           email: "",
           password: "",
           phone: "",
-          batch: "Beginner Morning",
+          batch: "Auto",
           level: "BEGINNER",
           rating: "1200",
           allowAllCourses: false,
@@ -140,9 +140,7 @@ export default function AdminStudentsPage() {
   };
 
   const filteredStudents = students.filter(
-    (s) =>
-      s.name.toLowerCase().includes(studentSearch.toLowerCase()) ||
-      s.batch.toLowerCase().includes(studentSearch.toLowerCase())
+    (s) => s.name.toLowerCase().includes(studentSearch.toLowerCase())
   );
 
   return (
@@ -165,7 +163,7 @@ export default function AdminStudentsPage() {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
           <input
             type="text"
-            placeholder="Search students by name or batch..."
+            placeholder="Search students by name..."
             value={studentSearch}
             onChange={(e) => setStudentSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500"
@@ -203,7 +201,14 @@ export default function AdminStudentsPage() {
               ) : (
                 filteredStudents.map((s) => (
                   <tr key={s.id} className="hover:bg-slate-800/50">
-                    <td className="p-4 font-bold text-white">{s.name}</td>
+                    <td className="p-4">
+                      <div className="font-bold text-white">{s.name}</div>
+                      <div className="text-[10px] text-slate-400 font-semibold mt-0.5">
+                        {s.batch && ["Bronze League", "Silver League", "Gold League", "Platinum League", "Diamond League", "Titan League", "Ace League", "Master League"].includes(s.batch)
+                          ? `⭐ ${s.batch}`
+                          : `⚙️ Auto League`}
+                      </div>
+                    </td>
                     <td className="p-4">
                       <div className="font-mono text-slate-300">{s.email || "-"}</div>
                       {s.password && (
@@ -328,6 +333,24 @@ export default function AdminStudentsPage() {
                 </label>
               </div>
               <div>
+                <label className="text-slate-400 block mb-1">League (Manual Override)</label>
+                <select
+                  value={newStudent.batch}
+                  onChange={(e) => setNewStudent({ ...newStudent, batch: e.target.value })}
+                  className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="Auto">Auto (Based on completed courses)</option>
+                  <option value="Bronze League">🥉 Bronze League</option>
+                  <option value="Silver League">🥈 Silver League</option>
+                  <option value="Gold League">🥇 Gold League</option>
+                  <option value="Platinum League">💎 Platinum League</option>
+                  <option value="Diamond League">👑 Diamond League</option>
+                  <option value="Titan League">🔥 Titan League</option>
+                  <option value="Ace League">⚡ Ace League</option>
+                  <option value="Master League">🏆 Master League</option>
+                </select>
+              </div>
+              <div>
                 <label className="text-slate-400 block mb-1">Phone Number</label>
                 <input
                   type="text"
@@ -414,6 +437,24 @@ export default function AdminStudentsPage() {
                 <label htmlFor="edit-student-bypass" className="text-slate-400 block cursor-pointer">
                   Allow Access to All Courses (Bypass Locks)
                 </label>
+              </div>
+              <div>
+                <label className="text-slate-400 block mb-1">League (Manual Override)</label>
+                <select
+                  value={editingStudent.batch || "Auto"}
+                  onChange={(e) => setEditingStudent({ ...editingStudent, batch: e.target.value })}
+                  className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="Auto">Auto (Based on completed courses)</option>
+                  <option value="Bronze League">🥉 Bronze League</option>
+                  <option value="Silver League">🥈 Silver League</option>
+                  <option value="Gold League">🥇 Gold League</option>
+                  <option value="Platinum League">💎 Platinum League</option>
+                  <option value="Diamond League">👑 Diamond League</option>
+                  <option value="Titan League">🔥 Titan League</option>
+                  <option value="Ace League">⚡ Ace League</option>
+                  <option value="Master League">🏆 Master League</option>
+                </select>
               </div>
               <div>
                 <label className="text-slate-400 block mb-1">Phone Number</label>

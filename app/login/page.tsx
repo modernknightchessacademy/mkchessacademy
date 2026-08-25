@@ -37,12 +37,25 @@ export default function SimpleLoginPage() {
     }
 
     if (activeRole === "admin") {
-      if ((u === "admin@modernknight.com" || u === "admin") && p === "admin123") {
-        setSuccessMsg("Valid Admin! Directing to Admin Hub...");
-        window.location.href = "/admin";
-      } else {
-        setErrorMsg("Invalid Admin Credentials. Use: admin / admin123");
+      try {
+        const res = await fetch("/api/auth/admin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: u, password: p }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            setSuccessMsg("Valid Admin! Directing to Admin Hub...");
+            window.location.href = "/admin";
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("Admin login error:", err);
       }
+      setErrorMsg("Invalid Admin Credentials.");
     } else {
       // Check registered students database
       try {
@@ -187,14 +200,6 @@ export default function SimpleLoginPage() {
           </button>
         </div>
 
-        {/* Credentials Helper */}
-        {activeRole === "admin" && (
-          <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1.5">
-            <p className="font-bold text-white text-xs">Credentials for Admin Hub:</p>
-            <p>Username: <code className="text-amber-400 font-bold">admin</code> or <code className="text-amber-400 font-bold">admin@modernknight.com</code></p>
-            <p>Password: <code className="text-amber-400 font-bold">admin123</code></p>
-          </div>
-        )}
 
         {/* Navigation footer */}
         <div className="pt-2 text-center border-t border-slate-800 flex justify-center items-center text-xs">

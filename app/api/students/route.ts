@@ -3,6 +3,11 @@ import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
+const parseRating = (val: any) => {
+  const p = parseInt(val);
+  return isNaN(p) ? 1200 : p;
+};
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -17,7 +22,7 @@ export async function GET(req: Request) {
             orderBy: { date: "desc" },
           },
           solvedPuzzles: {
-            select: { id: true, points: true, puzzleId: true },
+            select: { id: true, points: true, puzzleId: true, solvedAt: true },
           },
           customCourses: {
             orderBy: { order: "asc" },
@@ -31,7 +36,7 @@ export async function GET(req: Request) {
         const totalPoints = student.solvedPuzzles.reduce((sum, sp) => sum + Math.min(sp.points || 0, 4), 0);
         return NextResponse.json({
           ...student,
-          rating: totalPoints,
+          rating: (student.rating || 0) + totalPoints,
         });
       }
       return NextResponse.json(student);
@@ -44,7 +49,7 @@ export async function GET(req: Request) {
           take: 5,
         },
         solvedPuzzles: {
-          select: { id: true, points: true, puzzleId: true },
+          select: { id: true, points: true, puzzleId: true, solvedAt: true },
         },
         customCourses: {
           orderBy: { order: "asc" },
@@ -59,7 +64,7 @@ export async function GET(req: Request) {
       const totalPoints = s.solvedPuzzles.reduce((sum, sp) => sum + Math.min(sp.points || 0, 4), 0);
       return {
         ...s,
-        rating: totalPoints,
+        rating: (s.rating || 0) + totalPoints,
       };
     });
 
@@ -93,7 +98,7 @@ export async function POST(req: Request) {
           phone: phone || null,
           batch: batch || "Beginner Morning",
           level: level || "BEGINNER",
-          rating: parseInt(rating) || 1200,
+          rating: parseRating(rating),
           allowAllCourses: allowAllCourses ?? false,
         },
       });
@@ -108,7 +113,7 @@ export async function POST(req: Request) {
             phone: phone || null,
             batch: batch || "Beginner Morning",
             level: level || "BEGINNER",
-            rating: parseInt(rating) || 1200,
+            rating: parseRating(rating),
             allowAllCourses: allowAllCourses ?? false,
           },
         });
@@ -124,7 +129,7 @@ export async function POST(req: Request) {
           phone: phone || null,
           batch: batch || "Beginner Morning",
           level: level || "BEGINNER",
-          rating: parseInt(rating) || 1200,
+          rating: parseRating(rating),
           status: "Active",
           allowAllCourses: allowAllCourses ?? false,
           createdAt: new Date().toISOString(),
@@ -192,11 +197,19 @@ export async function PUT(req: Request) {
         }
       }
 
-      // Fetch current student to get existing password if none provided
+      // Fetch current student to get existing password and solved puzzles points
       const currentStudent = await prisma.student.findUnique({
         where: { id },
-        select: { password: true }
+        include: {
+          solvedPuzzles: {
+            select: { points: true }
+          }
+        }
       });
+
+      const totalPoints = currentStudent?.solvedPuzzles?.reduce((sum, sp) => sum + Math.min(sp.points || 0, 4), 0) || 0;
+      const desiredRating = parseRating(rating);
+      const adjustedRating = Math.max(0, desiredRating - totalPoints);
 
       updated = await (prisma.student.update as any)({
         where: { id },
@@ -208,10 +221,13 @@ export async function PUT(req: Request) {
           phone: phone || null,
           batch: batch || "Beginner Morning",
           level: level || "BEGINNER",
-          rating: parseInt(rating) || 1200,
+          rating: adjustedRating,
           allowAllCourses: allowAllCourses ?? false,
         },
         include: {
+          solvedPuzzles: {
+            select: { id: true, points: true, puzzleId: true, solvedAt: true },
+          },
           customCourses: {
             orderBy: { order: "asc" },
             include: {
@@ -231,10 +247,18 @@ export async function PUT(req: Request) {
         phone: phone || null,
         batch: batch || "Beginner Morning",
         level: level || "BEGINNER",
-        rating: parseInt(rating) || 1200,
+        rating: parseRating(rating),
         status: "Active",
         allowAllCourses: allowAllCourses ?? false,
         customCourses: body.customCourses || []
+      };
+    }
+
+    if (updated && updated.solvedPuzzles) {
+      const totalPoints = updated.solvedPuzzles.reduce((sum: number, sp: any) => sum + Math.min(sp.points || 0, 4), 0);
+      updated = {
+        ...updated,
+        rating: (updated.rating || 0) + totalPoints,
       };
     }
 

@@ -25,6 +25,11 @@ import {
 
 type BoardTheme = "emerald" | "wood" | "midnight";
 
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
 export default function StudentPortalPage() {
   const [activeTab, setActiveTab] = useState<"dashboard" | "arena" | "leaderboard">("dashboard");
   const [boardTheme, setBoardTheme] = useState<BoardTheme>("emerald");
@@ -48,6 +53,9 @@ export default function StudentPortalPage() {
   const [solvedPuzzleIds, setSolvedPuzzleIds] = useState<string[]>([]);
   const [leaderboardEntries, setLeaderboardEntries] = useState<any[]>([]);
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
+  const [leaderboardTimeframe, setLeaderboardTimeframe] = useState<"all" | "month" | "week">("all");
+  const [selectedLeaderboardMonth, setSelectedLeaderboardMonth] = useState<number>(new Date().getMonth());
+  const [selectedLeaderboardYear, setSelectedLeaderboardYear] = useState<number>(new Date().getFullYear());
   const [attendanceLogs, setAttendanceLogs] = useState<any[]>([]);
   const [attempts, setAttempts] = useState(1);
   const [puzzleAttempts, setPuzzleAttempts] = useState<Record<string, number>>({});
@@ -225,13 +233,7 @@ export default function StudentPortalPage() {
     // 1. First map and extract puzzles
     let mapped = folders
       .map((f) => {
-        const folderPuzzles = dbPuzzles.filter(
-          (p) =>
-            p.folderId === f.id &&
-            (!(p.assignedBatch) ||
-              p.assignedBatch.toLowerCase() === "all batches" ||
-              p.assignedBatch.toLowerCase() === (studentProfile.batch || "").toLowerCase())
-        );
+        const folderPuzzles = dbPuzzles.filter((p) => p.folderId === f.id);
 
         return {
           ...f,
@@ -255,7 +257,7 @@ export default function StudentPortalPage() {
       mapped = mapped.sort((a, b) => (a.order || 0) - (b.order || 0));
     }
 
-    // 2. Determine which folders are unlocked based on previous completion (>= 70% of total points)
+    // 2. Determine which folders are unlocked based on previous completion (>= 70% of total points AND 100% puzzles solved)
     return mapped.map((folder, index) => {
       if (index === 0 || studentProfile.allowAllCourses) {
         return { ...folder, isUnlocked: true };
@@ -268,21 +270,40 @@ export default function StudentPortalPage() {
       }
 
       const maxPoints = totalPuzzles * 4;
-      const earnedPoints = prevFolder.puzzles
-        .filter((p: any) => solvedPuzzleIds.includes(p.id))
+      const prevSolvedPuzzles = prevFolder.puzzles.filter((p: any) => solvedPuzzleIds.includes(p.id));
+      const prevSolvedCount = prevSolvedPuzzles.length;
+
+      const earnedPoints = prevSolvedPuzzles
         .reduce((sum: number, p: any) => {
           const att = puzzleAttempts[p.id] || 1;
           return sum + getPointsForAttempts(att);
         }, 0);
 
       const score = maxPoints > 0 ? (earnedPoints / maxPoints) * 100 : 100;
-      const isUnlocked = score >= 70;
+      const allSolved = prevSolvedCount === totalPuzzles;
+      const isUnlocked = score >= 70 && allSolved;
 
       return { ...folder, isUnlocked, earnedPoints, maxPoints };
     });
   }, [folders, dbPuzzles, studentProfile.batch, studentProfile.allowAllCourses, studentProfile.customCourses, solvedPuzzleIds, puzzleAttempts]);
 
-  const getStudentLeague = (studentSolvedPuzzles: any[]) => {
+  const getStudentLeague = (studentSolvedPuzzles: any[], customLeagueName?: string) => {
+    const leagues = [
+      { name: "Bronze League", icon: "🥉", image: "/bronze.png" },
+      { name: "Silver League", icon: "🥈", image: "/silver.png" },
+      { name: "Gold League", icon: "🥇", image: "/gold.png" },
+      { name: "Platinum League", icon: "💎", image: "/platinum.png" },
+      { name: "Diamond League", icon: "👑", image: "/diamond.png" },
+      { name: "Titan League", icon: "🔥", image: "/titan.png" },
+      { name: "Ace League", icon: "⚡", image: "/ace.png" },
+      { name: "Master League", icon: "🏆", image: "/master.png" },
+    ];
+
+    if (customLeagueName) {
+      const found = leagues.find((l) => l.name.toLowerCase() === customLeagueName.toLowerCase());
+      if (found) return found;
+    }
+
     const solvedList = studentSolvedPuzzles || [];
     let completedCount = 0;
     folders.forEach((folder) => {
@@ -290,28 +311,18 @@ export default function StudentPortalPage() {
       const totalPuzzles = folderPuzzles.length;
       if (totalPuzzles > 0) {
         const maxPoints = totalPuzzles * 4;
+        const solvedCount = folderPuzzles.filter((p: any) => solvedList.some((sp: any) => sp.puzzleId === p.id)).length;
         const earnedPoints = folderPuzzles
           .filter((p: any) => solvedList.some((sp: any) => sp.puzzleId === p.id))
           .reduce((sum: number, p: any) => {
             const solvedRec = solvedList.find((sp: any) => sp.puzzleId === p.id);
             return sum + (solvedRec ? Math.min(solvedRec.points || 0, 4) : 0);
           }, 0);
-        if (maxPoints > 0 && (earnedPoints / maxPoints) >= 0.70) {
+        if (maxPoints > 0 && (earnedPoints / maxPoints) >= 0.70 && solvedCount === totalPuzzles) {
           completedCount++;
         }
       }
     });
-
-    const leagues = [
-      { name: "Bronze League", icon: "🥉", image: "/bronze.png" },
-      { name: "Silver League", icon: "🥈", image: "/silver.png" },
-      { name: "Gold League", icon: "🥇", image: "/gold.png" },
-      { name: "Platinum League", icon: "💎", image: "/platinum.png" },
-      { name: "Diamond League", icon: "👑", image: "/diamond.png" },
-      { name: "Titan League", icon: "🔥", image: "/titan.png" },
-      { name: "Ace League", icon: "⚡", image: "/ace.png" },
-      { name: "Master League", icon: "🏆", image: "/master.png" },
-    ];
 
     const index = Math.min(completedCount, leagues.length - 1);
     return leagues[index];
@@ -319,23 +330,6 @@ export default function StudentPortalPage() {
 
   // Compute student league based on completed courses
   const studentLeague = useMemo(() => {
-    let completedCount = 0;
-    allMappedFolders.forEach((folder) => {
-      const totalPuzzles = folder.puzzles.length;
-      if (totalPuzzles > 0) {
-        const maxPoints = totalPuzzles * 4;
-        const earnedPoints = folder.puzzles
-          .filter((p: any) => solvedPuzzleIds.includes(p.id))
-          .reduce((sum: number, p: any) => {
-            const att = puzzleAttempts[p.id] || 1;
-            return sum + getPointsForAttempts(att);
-          }, 0);
-        if (maxPoints > 0 && (earnedPoints / maxPoints) >= 0.70) {
-          completedCount++;
-        }
-      }
-    });
-
     const leagues = [
       { name: "Bronze League", icon: "🥉", image: "/bronze.png" },
       { name: "Silver League", icon: "🥈", image: "/silver.png" },
@@ -347,9 +341,32 @@ export default function StudentPortalPage() {
       { name: "Master League", icon: "🏆", image: "/master.png" },
     ];
 
+    if (studentProfile.batch) {
+      const found = leagues.find((l) => l.name.toLowerCase() === studentProfile.batch.toLowerCase());
+      if (found) return found;
+    }
+
+    let completedCount = 0;
+    allMappedFolders.forEach((folder) => {
+      const totalPuzzles = folder.puzzles.length;
+      if (totalPuzzles > 0) {
+        const maxPoints = totalPuzzles * 4;
+        const solvedCount = folder.puzzles.filter((p: any) => solvedPuzzleIds.includes(p.id)).length;
+        const earnedPoints = folder.puzzles
+          .filter((p: any) => solvedPuzzleIds.includes(p.id))
+          .reduce((sum: number, p: any) => {
+            const att = puzzleAttempts[p.id] || 1;
+            return sum + getPointsForAttempts(att);
+          }, 0);
+        if (maxPoints > 0 && (earnedPoints / maxPoints) >= 0.70 && solvedCount === totalPuzzles) {
+          completedCount++;
+        }
+      }
+    });
+
     const index = Math.min(completedCount, leagues.length - 1);
     return leagues[index];
-  }, [allMappedFolders, solvedPuzzleIds, puzzleAttempts]);
+  }, [allMappedFolders, solvedPuzzleIds, puzzleAttempts, studentProfile.batch]);
 
   // accessibleFolders is just the unlocked folders
   const accessibleFolders = useMemo(() => {
@@ -367,14 +384,9 @@ export default function StudentPortalPage() {
       list = dbPuzzles;
     }
 
-    const filtered = list.filter((p) => {
-      const b = (p.assignedBatch || "All Batches").toLowerCase();
-      return b === "all batches" || b === (studentProfile.batch || "").toLowerCase();
-    });
-
-    if (filtered.length === 0) return defaultPuzzles;
-    return filtered;
-  }, [dbPuzzles, selectedFolder, accessibleFolders, studentProfile.batch]);
+    if (list.length === 0) return defaultPuzzles;
+    return list;
+  }, [dbPuzzles, selectedFolder, accessibleFolders]);
 
   // Interactive Puzzle Arena State
   const [currentPuzzleIdx, setCurrentPuzzleIdx] = useState(0);
@@ -382,6 +394,46 @@ export default function StudentPortalPage() {
   const [showHint, setShowHint] = useState(false);
   const [playedMoves, setPlayedMoves] = useState<string[]>([]);
   const [solutionMoves, setSolutionMoves] = useState<string[]>([]);
+
+  const filteredLeaderboardEntries = useMemo(() => {
+    const now = new Date();
+    const getStartOfWeek = (d: Date) => {
+      const date = new Date(d);
+      const day = date.getDay();
+      const diff = date.getDate() - day; // adjust when day is Sunday
+      const sunday = new Date(date.setDate(diff));
+      sunday.setHours(0, 0, 0, 0);
+      return sunday;
+    };
+    const startOfWeek = getStartOfWeek(now);
+
+    const mapped = leaderboardEntries.map((student) => {
+      const solvedList = student.solvedPuzzles || [];
+      const filteredSolved = solvedList.filter((sp: any) => {
+        if (!sp.solvedAt) return leaderboardTimeframe === "all";
+
+        const date = new Date(sp.solvedAt);
+        if (leaderboardTimeframe === "month") {
+          return date.getMonth() === selectedLeaderboardMonth && date.getFullYear() === selectedLeaderboardYear;
+        } else if (leaderboardTimeframe === "week") {
+          return date >= startOfWeek;
+        }
+        return true;
+      });
+
+      const rating = filteredSolved.reduce((sum: number, sp: any) => sum + Math.min(sp.points || 0, 4), 0);
+      
+      return {
+        ...student,
+        solvedCount: filteredSolved.length,
+        rating,
+      };
+    });
+
+    return mapped.sort((a, b) => b.rating - a.rating);
+  }, [leaderboardEntries, leaderboardTimeframe, selectedLeaderboardMonth, selectedLeaderboardYear]);
+
+
 
   const lastFolderIdRef = useRef<string | null>(null);
   const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -445,6 +497,83 @@ export default function StudentPortalPage() {
 
   const currentPuzzle = accessiblePuzzles[currentPuzzleIdx] || accessiblePuzzles[0] || defaultPuzzles[0];
 
+  const alternativePaths = useMemo(() => {
+    if (!currentPuzzle || !currentPuzzle.pgn) return [];
+    
+    let startingFen = currentPuzzle.fen;
+    if (currentPuzzle.pgn) {
+      const fenMatch = currentPuzzle.pgn.match(/\[FEN\s+"([^"]+)"\]/i);
+      if (fenMatch && fenMatch[1]) {
+        startingFen = fenMatch[1];
+      }
+    }
+    if (!startingFen) {
+      startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    }
+
+    const parsePgnToMoves = (pgnText: string, startFen: string): string[] => {
+      const tempGame = new Chess();
+      try {
+        tempGame.load(startFen);
+      } catch {
+        return [];
+      }
+      
+      const cleanText = pgnText
+        .replace(/\[[^\]]+\]/g, "")
+        .replace(/\d+\.+\s*/g, "")
+        .trim();
+      const rawMoves = cleanText
+        .split(/\s+/)
+        .filter((m: string) => m && !["1-0", "0-1", "1/2-1/2", "*"].includes(m))
+        .map(m => {
+          let moveStr = m.trim();
+          if (!moveStr) return "";
+          
+          const firstChar = moveStr.charAt(0).toLowerCase();
+          const rest = moveStr.slice(1);
+          let isPiece = ["k", "q", "r", "n"].includes(firstChar);
+          if (firstChar === "b") {
+            const nextChar = rest.charAt(0).toLowerCase();
+            if (nextChar !== "x" && !/[1-8]/.test(nextChar)) {
+              isPiece = true;
+            }
+          }
+          
+          let normalized = moveStr.replace(/([A-H])([1-8])/g, (match, p1, p2) => p1.toLowerCase() + p2);
+          normalized = normalized.replace(/X/g, "x");
+          
+          if (isPiece) {
+            normalized = normalized.charAt(0).toUpperCase() + normalized.slice(1);
+          } else {
+            normalized = normalized.toLowerCase();
+          }
+          return normalized;
+        })
+        .filter(Boolean);
+      
+      const movesList: string[] = [];
+      for (const move of rawMoves) {
+        try {
+          const result = tempGame.move(move.replace(/[!?]/g, ""));
+          if (result) {
+            movesList.push(result.san);
+          } else {
+            break;
+          }
+        } catch {
+          break;
+        }
+      }
+      return movesList;
+    };
+
+    const pgnParts = currentPuzzle.pgn.split("|");
+    return pgnParts
+      .map(part => parsePgnToMoves(part, startingFen))
+      .filter(p => p.length > 0);
+  }, [currentPuzzle]);
+
   const startingFen = useMemo(() => {
     let f = currentPuzzle?.fen;
     if (currentPuzzle?.pgn) {
@@ -473,15 +602,16 @@ export default function StudentPortalPage() {
       let cleanMoves: string[] = [];
 
       if (currentPuzzle.pgn) {
+        const firstPgnPart = currentPuzzle.pgn.split("|")[0].trim();
         // Regex extraction fallback for FEN (extremely robust and ignores layout/syntax bugs in PGN)
-        const fenMatch = currentPuzzle.pgn.match(/\[FEN\s+"([^"]+)"\]/i);
+        const fenMatch = firstPgnPart.match(/\[FEN\s+"([^"]+)"\]/i);
         if (fenMatch && fenMatch[1]) {
           startingFen = fenMatch[1];
         }
 
         try {
           const tempGame = new Chess();
-          tempGame.loadPgn(currentPuzzle.pgn);
+          tempGame.loadPgn(firstPgnPart);
           const fenHeader = tempGame.header().FEN;
           if (fenHeader && !startingFen) {
             startingFen = fenHeader;
@@ -493,7 +623,7 @@ export default function StudentPortalPage() {
 
         // Regex moves extraction if loadPgn history is empty
         if (cleanMoves.length === 0 && currentPuzzle.pgn !== "PLACEMENT_TASK") {
-          const cleanText = currentPuzzle.pgn
+          const cleanText = firstPgnPart
             .replace(/\[[^\]]+\]/g, "")
             .replace(/\d+\.+\s*/g, "")
             .trim();
@@ -584,9 +714,26 @@ export default function StudentPortalPage() {
       return false;
     }
 
-    const expectedMoveSan = solutionMoves[playedMoves.length];
+    // Helper to compare moves
+    const isSanMatch = (san1: string, san2: string) => {
+      const clean = (s: string) => s.replace(/[+#x=!?]/g, "").toLowerCase();
+      return clean(san1) === clean(san2);
+    };
 
-    if (!expectedMoveSan) {
+    const isPathMatching = (path: string[], sequence: string[]) => {
+      if (sequence.length > path.length) return false;
+      for (let i = 0; i < sequence.length; i++) {
+        if (!isSanMatch(path[i], sequence[i])) return false;
+      }
+      return true;
+    };
+
+    // If there are no alternative paths, fall back to solutionMoves
+    const activePaths = alternativePaths.length > 0 ? alternativePaths : [solutionMoves];
+
+    // Check if puzzle was already solved
+    const hasFinishedAnyPath = activePaths.some(path => playedMoves.length >= path.length);
+    if (hasFinishedAnyPath) {
       setMoveFeedback("🎉 Puzzle already solved!");
       return false;
     }
@@ -605,21 +752,21 @@ export default function StudentPortalPage() {
         return false;
       }
 
-      const expectedClean = expectedMoveSan.replace(/[+#x=]/g, "").toLowerCase();
-      const actualClean = move.san.replace(/[+#x=]/g, "").toLowerCase();
-      const actualFromToClean = (move.from + move.to).toLowerCase();
-      const expectedFromToClean = expectedMoveSan.replace(/[+#x=]/g, "").toLowerCase();
+      // Check if the moves played so far + this move matches any active path
+      const candidateSequence = [...playedMoves, move.san];
+      const matchingPaths = activePaths.filter(path => isPathMatching(path, candidateSequence));
 
-      const isMatch = (actualClean === expectedClean) || (actualFromToClean === expectedFromToClean);
-
-      if (isMatch) {
+      if (matchingPaths.length > 0) {
+        // Move is correct!
         game.current.move({ from: src, to: tgt, promotion: promotionPiece });
         setFen(game.current.fen());
 
-        const newPlayedMoves = [...playedMoves, move.san];
+        const newPlayedMoves = candidateSequence;
         setPlayedMoves(newPlayedMoves);
 
-        if (game.current.isGameOver() || newPlayedMoves.length === solutionMoves.length) {
+        const isSolved = game.current.isGameOver() || matchingPaths.some(path => newPlayedMoves.length === path.length);
+
+        if (isSolved) {
           const pts = getPointsForAttempts(attempts);
           let feedback = `🎉 EXCELLENT MOVE! Puzzle Solution Verified! (+${pts} points)`;
           if (game.current.isCheckmate()) {
@@ -636,7 +783,8 @@ export default function StudentPortalPage() {
           setMoveFeedback("🎉 Correct move! Keep going.");
 
           // Auto-play opponent response if solution continues
-          const opponentMoveSan = solutionMoves[newPlayedMoves.length];
+          // Get next move from the first matching path
+          const opponentMoveSan = matchingPaths[0][newPlayedMoves.length];
           if (opponentMoveSan) {
             setTimeout(() => {
               try {
@@ -646,7 +794,10 @@ export default function StudentPortalPage() {
                   const newPlayedMovesOpp = [...newPlayedMoves, opponentMove.san];
                   setPlayedMoves(newPlayedMovesOpp);
 
-                  if (game.current.isGameOver() || newPlayedMovesOpp.length === solutionMoves.length) {
+                  const nextMatching = matchingPaths.filter(path => isPathMatching(path, newPlayedMovesOpp));
+                  const isSolvedAfterOpponent = game.current.isGameOver() || nextMatching.some(path => newPlayedMovesOpp.length === path.length);
+
+                  if (isSolvedAfterOpponent) {
                     const pts = getPointsForAttempts(attempts);
                     let feedback = `🎉 EXCELLENT MOVE! Puzzle Solution Verified! (+${pts} points)`;
                     if (game.current.isCheckmate()) {
@@ -858,6 +1009,20 @@ export default function StudentPortalPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {allMappedFolders.map((f) => {
                     const isUnlocked = f.isUnlocked;
+
+                    const folderPuzzles = f.puzzles || [];
+                    const folderTotalPuzzles = folderPuzzles.length;
+                    const folderMaxPoints = folderTotalPuzzles * 4;
+                    const folderSolvedCount = folderPuzzles.filter((p: any) => solvedPuzzleIds.includes(p.id)).length;
+                    const folderEarnedPoints = folderPuzzles
+                      .filter((p: any) => solvedPuzzleIds.includes(p.id))
+                      .reduce((sum: number, p: any) => {
+                        const att = puzzleAttempts[p.id] || 1;
+                        return sum + getPointsForAttempts(att);
+                      }, 0);
+                    const scorePercent = folderMaxPoints > 0 ? Math.round((folderEarnedPoints / folderMaxPoints) * 100) : 0;
+                    const solvedPercent = folderTotalPuzzles > 0 ? Math.round((folderSolvedCount / folderTotalPuzzles) * 100) : 0;
+
                     return (
                       <div
                         key={f.id}
@@ -888,7 +1053,7 @@ export default function StudentPortalPage() {
                             <h4 className={`font-black text-sm tracking-wide ${isUnlocked ? "text-white" : "text-slate-500"}`}>
                               {f.name}
                             </h4>
-                            <div className="flex items-center gap-2 mt-1">
+                            <div className="flex flex-wrap items-center gap-2 mt-1.5">
                               <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded border inline-block ${
                                 isUnlocked
                                   ? "text-emerald-400 bg-emerald-950/60 border-emerald-500/30"
@@ -896,9 +1061,23 @@ export default function StudentPortalPage() {
                               }`}>
                                 {f.puzzlesCount} Puzzles
                               </span>
+                              {isUnlocked && (
+                                <>
+                                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded border text-blue-400 bg-blue-950/60 border-blue-500/30">
+                                    Score: {scorePercent}%
+                                  </span>
+                                  <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded border ${
+                                    solvedPercent === 100
+                                      ? "text-emerald-400 bg-emerald-950/60 border-emerald-500/30"
+                                      : "text-amber-400 bg-amber-950/60 border-amber-500/30"
+                                  }`}>
+                                    Solved: {solvedPercent}%
+                                  </span>
+                                </>
+                              )}
                               {!isUnlocked && (
                                 <span className="text-[10px] text-rose-400 font-extrabold bg-rose-950/40 px-2 py-0.5 rounded border border-rose-500/30">
-                                  Locked 🔒 (Earn 70% points in previous course)
+                                  Locked 🔒 (Need 70% points & 100% solved in previous)
                                 </span>
                               )}
                             </div>
@@ -943,12 +1122,6 @@ export default function StudentPortalPage() {
                       className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-3 hover:border-slate-700 transition-all"
                     >
                       <div className="flex justify-between items-center text-xs">
-                        <span className="px-2.5 py-0.5 bg-emerald-950 text-emerald-300 font-extrabold rounded-md border border-emerald-500/30">
-                          {p.level}
-                        </span>
-                        <span className="text-[11px] text-blue-400 font-bold bg-blue-950/80 px-2 py-0.5 rounded border border-blue-500/30">
-                          {p.assignedBatch || "All Batches"}
-                        </span>
                       </div>
 
                       <div className="flex justify-between items-start gap-4">
@@ -1209,13 +1382,10 @@ export default function StudentPortalPage() {
                 )}
               </div>
 
-              {/* Batch Puzzle Selection Roster */}
+              {/* Puzzle Selection Roster */}
               <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 space-y-4 shadow-xl">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                  <h3 className="font-extrabold text-white text-base">Batch Puzzle Roster</h3>
-                  <span className="text-xs text-blue-400 font-mono font-bold bg-blue-950 px-2.5 py-1 rounded-lg border border-blue-500/30">
-                    {studentProfile.batch}
-                  </span>
+                  <h3 className="font-extrabold text-white text-base">Puzzle Roster</h3>
                 </div>
 
                 <div className="flex flex-col gap-2 pb-3 border-b border-slate-800">
@@ -1251,7 +1421,7 @@ export default function StudentPortalPage() {
                     >
                       <div className="space-y-0.5">
                         <span className="text-[10px] font-extrabold uppercase text-amber-400 block">
-                          Puzzle #{idx + 1} • {p.level}
+                          Puzzle #{idx + 1}
                         </span>
                         <span className="text-xs font-bold text-white block truncate max-w-[180px]">
                           {p.title}
@@ -1277,16 +1447,69 @@ export default function StudentPortalPage() {
         {/* 3. ACADEMY LEADERBOARD TAB */}
         {activeTab === "leaderboard" && (
           <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 space-y-6 shadow-2xl">
-            <div>
-              <h2 className="text-2xl font-black text-white flex items-center gap-2">
-                <Trophy className="w-6 h-6 text-amber-400 animate-bounce" /> Grandmaster Student Leaderboard
-              </h2>
-              <p className="text-xs text-slate-400">Rankings based on points earned from solving academy puzzles.</p>
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+              <div>
+                <h2 className="text-2xl font-black text-white flex items-center gap-2">
+                  <Trophy className="w-6 h-6 text-amber-400 animate-bounce" /> Grandmaster Student Leaderboard
+                </h2>
+                <p className="text-xs text-slate-400">Rankings based on points earned from solving academy puzzles.</p>
+              </div>
+
+              {/* Timeframe Filter Buttons */}
+              <div className="flex flex-wrap items-center gap-3">
+                {leaderboardTimeframe === "month" && (
+                  <div className="flex items-center gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
+                    <select
+                      value={selectedLeaderboardMonth}
+                      onChange={(e) => setSelectedLeaderboardMonth(parseInt(e.target.value))}
+                      className="bg-transparent text-white text-xs font-extrabold focus:outline-none cursor-pointer border-none px-2 py-1 rounded"
+                    >
+                      {MONTHS.map((m, idx) => (
+                        <option key={idx} value={idx} className="bg-slate-900 text-white">
+                          {m}
+                        </option>
+                      ))}
+                    </select>
+                    
+                    <select
+                      value={selectedLeaderboardYear}
+                      onChange={(e) => setSelectedLeaderboardYear(parseInt(e.target.value))}
+                      className="bg-transparent text-white text-xs font-extrabold focus:outline-none cursor-pointer border-none px-2 py-1 rounded"
+                    >
+                      {[2025, 2026, 2027].map((yr) => (
+                        <option key={yr} value={yr} className="bg-slate-900 text-white">
+                          {yr}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
+                  {[
+                    { id: "all", label: "All Time" },
+                    { id: "month", label: "Month" },
+                    { id: "week", label: "This Week" },
+                  ].map((tf) => (
+                    <button
+                      key={tf.id}
+                      onClick={() => setLeaderboardTimeframe(tf.id as any)}
+                      className={`px-4 py-2 rounded-xl text-xs font-extrabold transition cursor-pointer ${
+                        leaderboardTimeframe === tf.id
+                          ? "bg-[#0B4398] text-white shadow"
+                          : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      {tf.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {leaderboardLoading ? (
               <div className="text-slate-400 text-center py-8">Loading leaderboard rankings...</div>
-            ) : leaderboardEntries.length === 0 ? (
+            ) : filteredLeaderboardEntries.length === 0 ? (
               <div className="text-slate-500 text-center py-8">No students found.</div>
             ) : (
               <div className="overflow-x-auto w-full">
@@ -1301,9 +1524,9 @@ export default function StudentPortalPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800">
-                    {leaderboardEntries.map((student, idx) => {
+                    {filteredLeaderboardEntries.map((student, idx) => {
                       const isSelf = student.id === studentProfile.id;
-                      const league = getStudentLeague(student.solvedPuzzles);
+                      const league = getStudentLeague(student.solvedPuzzles, student.batch);
                       return (
                         <tr
                           key={student.id}
@@ -1345,7 +1568,7 @@ export default function StudentPortalPage() {
                             </span>
                           </td>
                           <td className="py-4 px-4 text-right text-emerald-400 font-extrabold">
-                            {student.solvedPuzzles?.length || 0}
+                            {student.solvedCount || 0}
                           </td>
                           <td className="py-4 px-4 text-right text-amber-400 font-black">
                             🏆 {student.rating}

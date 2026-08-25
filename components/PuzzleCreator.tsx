@@ -48,11 +48,51 @@ const cleanPgnText = (pgnText: string): string => {
     }
   }
   
-  return result
-    .replace(/\[[^\]]*\]/g, "")
-    .replace(/\$\d+/g, "")
-    .replace(/\d+\.+\s*/g, "")
-    .trim();
+};
+
+const normalizeMovesText = (text: string): string => {
+  if (!text) return "";
+  
+  const normalizeSingleMove = (move: string): string => {
+    let m = move.trim();
+    if (!m) return "";
+    
+    const firstChar = m.charAt(0).toLowerCase();
+    const rest = m.slice(1);
+    
+    let isPiece = false;
+    if (["k", "q", "r", "n"].includes(firstChar)) {
+      isPiece = true;
+    } else if (firstChar === "b") {
+      const nextChar = rest.charAt(0).toLowerCase();
+      if (nextChar !== "x" && !/[1-8]/.test(nextChar)) {
+        isPiece = true;
+      }
+    }
+    
+    let normalized = m.replace(/([A-H])([1-8])/g, (match, p1, p2) => p1.toLowerCase() + p2);
+    normalized = normalized.replace(/X/g, "x");
+    
+    if (isPiece) {
+      normalized = normalized.charAt(0).toUpperCase() + normalized.slice(1);
+    } else {
+      normalized = normalized.toLowerCase();
+    }
+    
+    return normalized;
+  };
+
+  const parts = text.split("|");
+  return parts
+    .map((part) => {
+      const movesList = part
+        .trim()
+        .split(/\s+/)
+        .map(normalizeSingleMove)
+        .filter(Boolean);
+      return movesList.join(" ");
+    })
+    .join(" | ");
 };
 
 export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batches }: PuzzleCreatorProps) {
@@ -62,6 +102,7 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
   const [manualFen, setManualFen] = useState(fen);
   const [moves, setMoves] = useState<string[]>([]);
+  const [movesInputText, setMovesInputText] = useState("");
   const [title, setTitle] = useState("");
   const [mode, setMode] = useState<"SETUP" | "RECORD">("SETUP");
   const [selectedTool, setSelectedTool] = useState<Tool>(null);
@@ -192,46 +233,68 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
         return;
       }
 
-      // Single puzzle flow
-      const tempGame = new Chess();
+      // Single/Multiple puzzle flow (separated by |)
       const singleGameText = pgnGames[0].trim();
-      const fenRegex = /\[FEN\s+"([^"]+)"\]/i;
-      const fenMatch = singleGameText.match(fenRegex);
-      const startingFen = fenMatch && fenMatch[1] 
-        ? fenMatch[1] 
-        : "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+      const pgnParts = singleGameText.split("|");
+      const loadedPaths: string[][] = [];
+      let startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-      tempGame.load(startingFen);
-
-      const movesText = cleanPgnText(singleGameText);
-
-      const rawMoves = movesText
-        .split(/\s+/)
-        .filter((m) => m && !["1-0", "0-1", "1/2-1/2", "*"].includes(m));
-
-      const loadedMoves: string[] = [];
-      for (const move of rawMoves) {
-        try {
-          const cleanMove = move.replace(/[!?]/g, "");
-          const result = tempGame.move(cleanMove);
-          if (result) {
-            loadedMoves.push(result.san);
-          } else {
-            throw new Error(`Illegal move: ${move}`);
-          }
-        } catch (moveErr: any) {
-          alert(`Move validation failed at "${move}": ${moveErr.message}`);
-          return;
+      // Try to find FEN in any of the parts
+      for (const part of pgnParts) {
+        const fenMatch = part.match(/\[FEN\s+"([^"]+)"\]/i);
+        if (fenMatch && fenMatch[1]) {
+          startingFen = fenMatch[1];
+          break;
         }
       }
 
+      for (let index = 0; index < pgnParts.length; index++) {
+        const part = pgnParts[index].trim();
+        const tempGame = new Chess();
+        try {
+          tempGame.load(startingFen);
+        } catch (e) {
+          alert(`Invalid FEN layout in solution #${index + 1}`);
+          return;
+        }
+
+        const movesText = cleanPgnText(part);
+        const rawMoves = movesText
+          .split(/\s+/)
+          .filter((m) => m && !["1-0", "0-1", "1/2-1/2", "*"].includes(m));
+
+        const loadedMoves: string[] = [];
+        for (const move of rawMoves) {
+          try {
+            const cleanMove = move.replace(/[!?]/g, "");
+            const result = tempGame.move(cleanMove);
+            if (result) {
+              loadedMoves.push(result.san);
+            } else {
+              throw new Error(`Illegal move: ${move}`);
+            }
+          } catch (moveErr: any) {
+            alert(`Move validation failed in solution #${index + 1} at "${move}": ${moveErr.message}`);
+            return;
+          }
+        }
+        if (loadedMoves.length > 0) {
+          loadedPaths.push(loadedMoves);
+        }
+      }
+
+      if (loadedPaths.length === 0) {
+        alert("No valid moves could be parsed.");
+        return;
+      }
+
       const eventRegex = /\[Event\s+"([^"]+)"\]/i;
-      const eventMatch = singleGameText.match(eventRegex);
+      const eventMatch = pgnParts[0].match(eventRegex);
       if (eventMatch && eventMatch[1] && eventMatch[1] !== "?") {
         setTitle(eventMatch[1]);
       } else {
         const whiteRegex = /\[White\s+"([^"]+)"\]/i;
-        const whiteMatch = singleGameText.match(whiteRegex);
+        const whiteMatch = pgnParts[0].match(whiteRegex);
         if (whiteMatch && whiteMatch[1] && whiteMatch[1] !== "?") {
           setTitle(whiteMatch[1]);
         }
@@ -239,7 +302,11 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
 
       safeLoadFen(startingFen);
       setCapturedSetupFen(startingFen);
-      setMoves(loadedMoves);
+      if (loadedPaths.length > 1) {
+        setMoves(loadedPaths.map(path => path.join(" ")));
+      } else {
+        setMoves(loadedPaths[0]);
+      }
       setMode("RECORD");
     } catch (e: any) {
       alert("Error parsing PGN: " + e.message);
@@ -366,6 +433,9 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
       if (cleanMoves.length > 0) {
         setMoves(cleanMoves);
       }
+      if (existingPuzzle.pgn && existingPuzzle.pgn !== "PLACEMENT_TASK") {
+        setMovesInputText(existingPuzzle.pgn);
+      }
 
       setCapturedSetupFen(loadedFen);
       setMode("RECORD");
@@ -391,6 +461,7 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
       setCapturedSetupFen(fen);
       setInitialStars([...stars]);
       setMoves([]);
+      setMovesInputText("");
       setMode("RECORD");
       setSelectedTool(null);
     } else {
@@ -422,7 +493,13 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
     }
     if (mode === "RECORD" && puzzleSubtype === "SEQUENCE") {
       const marker = sequence.find((item) => item.square === s);
-      if (marker) setMoves((prev) => (prev.includes(s) ? prev.filter((m) => m !== s) : [...prev, s]));
+      if (marker) {
+        setMoves((prev) => {
+          const next = prev.includes(s) ? prev.filter((m) => m !== s) : [...prev, s];
+          setMovesInputText(next.join(" "));
+          return next;
+        });
+      }
       return;
     }
 
@@ -473,7 +550,11 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
         if (p) {
           game.current.remove(src as any);
           game.current.put(p, tgt as any);
-          setMoves((prev) => [...prev, tgt]);
+          setMoves((prev) => {
+            const next = [...prev, tgt];
+            setMovesInputText(next.join(" "));
+            return next;
+          });
           updateBoard();
           return true;
         }
@@ -486,7 +567,11 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
       if (p) {
         game.current.remove(src as any);
         game.current.put(p, tgt as any);
-        setMoves((prev) => [...prev, `${src}-${tgt}`]);
+        setMoves((prev) => {
+          const next = [...prev, `${src}-${tgt}`];
+          setMovesInputText(next.join(" "));
+          return next;
+        });
         updateBoard();
         return true;
       }
@@ -497,7 +582,11 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
         const promotionPiece = isPromotion ? (["q", "r", "b", "n"].includes(piece[1]?.toLowerCase()) ? piece[1].toLowerCase() : "q") : undefined;
         const move = game.current.move({ from: src, to: tgt, promotion: promotionPiece });
         if (move) {
-          setMoves((prev) => [...prev, move.san]);
+          setMoves((prev) => {
+            const next = [...prev, move.san];
+            setMovesInputText(next.join(" "));
+            return next;
+          });
           updateBoard();
           return true;
         }
@@ -534,7 +623,7 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
       payload.data = { subtype: "PLACEMENT" };
     } else {
       payload.fen = capturedSetupFen || fen;
-      payload.pgn = moves.join(" ");
+      payload.pgn = normalizeMovesText(movesInputText);
       payload.data = { stars: initialStars, sequence, targets, subtype: puzzleSubtype };
     }
     if (existingPuzzle) {
@@ -741,8 +830,28 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
                     : "Make the moves on the chessboard in the correct order to record them."}
                 </p>
                 {puzzleSubtype !== "PLACEMENT" && (
-                  <div className="mt-4 bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs min-h-[40px] shadow-inner uppercase tracking-wider text-emerald-400 break-all">
-                    {moves.join(" ") || "No moves recorded yet..."}
+                  <div className="space-y-2 mt-4">
+                    <label className="block text-xs font-bold text-slate-400">
+                      Solution Moves (space-separated, use "|" for alternative paths)
+                    </label>
+                    <textarea
+                      value={movesInputText}
+                      onChange={(e) => setMovesInputText(e.target.value)}
+                      onBlur={() => {
+                        const val = normalizeMovesText(movesInputText);
+                        setMovesInputText(val);
+                        if (!val.trim()) {
+                          setMoves([]);
+                        } else if (val.includes("|")) {
+                          setMoves(val.split("|").map(p => p.trim()));
+                        } else {
+                          setMoves(val.split(/\s+/).filter(Boolean));
+                        }
+                      }}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 font-mono text-xs text-emerald-400 outline-none focus:border-emerald-500/50 uppercase tracking-wider"
+                      rows={3}
+                      placeholder="e.g. Nf7+ Kg8 Nh6+ Kh8 | Nf7+ Kg8 Qxe5"
+                    />
                   </div>
                 )}
               </div>
@@ -767,35 +876,7 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-slate-400 block mb-1">Difficulty Tier</label>
-                    <select
-                      value={level}
-                      onChange={(e: any) => setLevel(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white font-bold focus:outline-none focus:border-blue-500"
-                    >
-                      <option value="BEGINNER">BEGINNER</option>
-                      <option value="INTERMEDIATE">INTERMEDIATE</option>
-                      <option value="ADVANCED">ADVANCED</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-slate-400 block mb-1">Grant Access to Batch</label>
-                    <select
-                      value={assignedBatch}
-                      onChange={(e) => setAssignedBatch(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white font-bold focus:outline-none focus:border-blue-500"
-                    >
-                      <option value="All Batches">All Batches (Public)</option>
-                      {batches.map((b) => (
-                        <option key={b.id} value={b.name}>
-                          {b.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+
 
                 <div>
                   <label className="text-slate-400 block mb-1">Solution Hint (Optional)</label>

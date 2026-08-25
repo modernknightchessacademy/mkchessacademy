@@ -242,111 +242,8 @@ export default function AboutPage() {
 
       {/* 3. Founders & Head Coaches Information */}
       <section className="py-24 bg-white overflow-hidden space-y-24">
-        {/* G Hema Chandra Mouli Section */}
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            
-            {/* Left Column: Image with Offset Frame & FIDE Badge */}
-            <div className="lg:col-span-5 relative flex justify-center lg:justify-start">
-              
-              {/* Offset Background Shape */}
-              <div className="absolute top-4 left-4 w-full max-w-[340px] md:max-w-[400px] aspect-[3/4] bg-[#0B4398] rounded-[2.5rem] rounded-tr-[8rem] -z-10 shadow-2xl" />
-
-              {/* Founder Image Wrapper */}
-              <div className="relative w-full max-w-[340px] md:max-w-[400px] aspect-[3/4] bg-white border-[12px] border-white shadow-2xl rounded-[2.5rem] rounded-tr-[8rem] overflow-hidden">
-                <img
-                  src="/founder.jpg"
-                  alt="G Hema Chandra Mouli - Founder"
-                  className="w-full h-full object-cover rounded-[1.5rem] rounded-tr-[7rem]"
-                />
-              </div>
-
-              {/* Floating FIDE ID Badge */}
-              <div className="absolute -left-4 bottom-8 bg-slate-900 border border-slate-800 text-white rounded-2xl p-4 shadow-2xl flex items-center gap-3 select-none z-20">
-                <div className="w-10 h-10 rounded-xl bg-[#E11D48]/10 text-[#E11D48] flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider">FIDE Certified</p>
-                  <p className="text-xs font-black text-white mt-0.5">FIDE ID: 5021626</p>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Right Column: Founder Details, Bio & FIDE Credentials */}
-            <div className="lg:col-span-7 space-y-6">
-              
-              {/* Tag Label */}
-              <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-[#E11D48]">
-                <span className="w-8 h-[2px] bg-[#E11D48]" />
-                <span>Founder & Lead Coach</span>
-              </div>
-
-              {/* Title Name */}
-              <h3 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-none">
-                G Hema Chandra <span className="text-[#E11D48]">Mouli.</span>
-              </h3>
-
-              {/* Bio Description Paragraphs */}
-              <div className="space-y-4 text-slate-600 text-sm md:text-base font-light leading-relaxed">
-                <p>
-                  As the Founder of <strong className="text-slate-950 font-bold">Modern Knight Chess Academy</strong>, G Hema Chandra Mouli is dedicated to raising the standard of chess coaching. He blends deep positional knowledge with modern software analysis to train the next generation of chess masters.
-                </p>
-                <p>
-                  His coaching philosophy focuses on building strong fundamentals, improving calculation skills, and developing strategic thinking, while ensuring chess remains an engaging tool for academic and personal growth.
-                </p>
-              </div>
-
-              {/* FIDE Credentials Grid */}
-              <div className="pt-2">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3.5">FIDE Credentials</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  
-                  {/* Rating */}
-                  <div className="flex items-center gap-2 px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-xl">
-                    <Target className="w-4 h-4 text-blue-500 shrink-0" />
-                    <span className="text-xs font-black text-slate-800">FIDE 1987</span>
-                  </div>
-
-                  {/* AGM */}
-                  <div className="flex items-center gap-2 px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-xl">
-                    <Crown className="w-4 h-4 text-amber-500 shrink-0" />
-                    <span className="text-xs font-black text-slate-800">Arena GM</span>
-                  </div>
-
-                  {/* Arbiter */}
-                  <div className="flex items-center gap-2 px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-xl">
-                    <ShieldCheck className="w-4 h-4 text-purple-500 shrink-0" />
-                    <span className="text-xs font-black text-slate-800">FIDE Arbiter</span>
-                  </div>
-
-                  {/* Instructor */}
-                  <div className="flex items-center gap-2 px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-xl">
-                    <Zap className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span className="text-xs font-black text-slate-800">Nat. Instructor</span>
-                  </div>
-
-                  {/* Trainer */}
-                  <div className="flex items-center gap-2 px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-xl sm:col-span-2">
-                    <Trophy className="w-4 h-4 text-rose-500 shrink-0" />
-                    <span className="text-xs font-black text-slate-800">Schools Trainer</span>
-                  </div>
-
-                </div>
-              </div>
-
-              {/* Quote Block */}
-              <div className="relative bg-slate-50/70 border-l-4 border-l-[#E11D48] p-6 rounded-2xl rounded-l-none font-serif italic text-slate-700 text-sm leading-relaxed shadow-sm">
-                "We don't just teach moves; we cultivate the discipline, patience, and strategic foresight required for life beyond the 64 squares."
-              </div>
-
-            </div>
-          </div>
-        </div>
-
         {/* G Karthik Gopal Section */}
-        <div className="max-w-7xl mx-auto px-4 md:px-8 border-t border-slate-100 pt-20">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             
             {/* Left Column: Image with Offset Frame & FIDE Badge */}
@@ -442,6 +339,109 @@ export default function AboutPage() {
               {/* Quote Block */}
               <div className="relative bg-slate-50/70 border-l-4 border-l-[#0B4398] p-6 rounded-2xl rounded-l-none font-serif italic text-slate-700 text-sm leading-relaxed shadow-sm">
                 "Through structured study, customized evaluation, and consistent practice, we help children unleash their strategic genius."
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        {/* G Hema Chandra Mouli Section */}
+        <div className="max-w-7xl mx-auto px-4 md:px-8 border-t border-slate-100 pt-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            
+            {/* Left Column: Image with Offset Frame & FIDE Badge */}
+            <div className="lg:col-span-5 relative flex justify-center lg:justify-start">
+              
+              {/* Offset Background Shape */}
+              <div className="absolute top-4 left-4 w-full max-w-[340px] md:max-w-[400px] aspect-[3/4] bg-[#0B4398] rounded-[2.5rem] rounded-tr-[8rem] -z-10 shadow-2xl" />
+
+              {/* Founder Image Wrapper */}
+              <div className="relative w-full max-w-[340px] md:max-w-[400px] aspect-[3/4] bg-white border-[12px] border-white shadow-2xl rounded-[2.5rem] rounded-tr-[8rem] overflow-hidden">
+                <img
+                  src="/founder.jpg"
+                  alt="G Hema Chandra Mouli - Founder"
+                  className="w-full h-full object-cover rounded-[1.5rem] rounded-tr-[7rem]"
+                />
+              </div>
+
+              {/* Floating FIDE ID Badge */}
+              <div className="absolute -left-4 bottom-8 bg-slate-900 border border-slate-800 text-white rounded-2xl p-4 shadow-2xl flex items-center gap-3 select-none z-20">
+                <div className="w-10 h-10 rounded-xl bg-[#E11D48]/10 text-[#E11D48] flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider">FIDE Certified</p>
+                  <p className="text-xs font-black text-white mt-0.5">FIDE ID: 5021626</p>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Right Column: Founder Details, Bio & FIDE Credentials */}
+            <div className="lg:col-span-7 space-y-6">
+              
+              {/* Tag Label */}
+              <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-[#E11D48]">
+                <span className="w-8 h-[2px] bg-[#E11D48]" />
+                <span>Founder & Lead Coach</span>
+              </div>
+
+              {/* Title Name */}
+              <h3 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-none">
+                G Hema Chandra <span className="text-[#E11D48]">Mouli.</span>
+              </h3>
+
+              {/* Bio Description Paragraphs */}
+              <div className="space-y-4 text-slate-600 text-sm md:text-base font-light leading-relaxed">
+                <p>
+                  As the Founder of <strong className="text-slate-950 font-bold">Modern Knight Chess Academy</strong>, G Hema Chandra Mouli is dedicated to raising the standard of chess coaching. He blends deep positional knowledge with modern software analysis to train the next generation of chess masters.
+                </p>
+                <p>
+                  His coaching philosophy focuses on building strong fundamentals, improving calculation skills, and developing strategic thinking, while ensuring chess remains an engaging tool for academic and personal growth.
+                </p>
+              </div>
+
+              {/* FIDE Credentials Grid */}
+              <div className="pt-2">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3.5">FIDE Credentials</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  
+                  {/* Rating */}
+                  <div className="flex items-center gap-2 px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-xl">
+                    <Target className="w-4 h-4 text-blue-500 shrink-0" />
+                    <span className="text-xs font-black text-slate-800">FIDE 1987</span>
+                  </div>
+
+                  {/* AGM */}
+                  <div className="flex items-center gap-2 px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-xl">
+                    <Crown className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span className="text-xs font-black text-slate-800">Arena GM</span>
+                  </div>
+
+                  {/* Arbiter */}
+                  <div className="flex items-center gap-2 px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-xl">
+                    <ShieldCheck className="w-4 h-4 text-purple-500 shrink-0" />
+                    <span className="text-xs font-black text-slate-800">FIDE Arbiter</span>
+                  </div>
+
+                  {/* Instructor */}
+                  <div className="flex items-center gap-2 px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-xl">
+                    <Zap className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span className="text-xs font-black text-slate-800">Nat. Instructor</span>
+                  </div>
+
+                  {/* Trainer */}
+                  <div className="flex items-center gap-2 px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-xl sm:col-span-2">
+                    <Trophy className="w-4 h-4 text-rose-500 shrink-0" />
+                    <span className="text-xs font-black text-slate-800">Schools Trainer</span>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* Quote Block */}
+              <div className="relative bg-slate-50/70 border-l-4 border-l-[#E11D48] p-6 rounded-2xl rounded-l-none font-serif italic text-slate-700 text-sm leading-relaxed shadow-sm">
+                "We don't just teach moves; we cultivate the discipline, patience, and strategic foresight required for life beyond the 64 squares."
               </div>
 
             </div>

@@ -1,2 +1,2 @@
-﻿# Future-Mind-Skills
+﻿# mk-chess-academy
 

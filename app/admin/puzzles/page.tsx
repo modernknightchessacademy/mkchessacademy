@@ -447,13 +447,16 @@ export default function AdminPuzzlesPage() {
                 No puzzles match the selected tier or batch filters.
               </div>
             ) : (
-              filteredPuzzles.map((p) => (
+              filteredPuzzles.map((p, idx) => (
                 <div
                   key={p.id}
                   className="bg-slate-900 rounded-2xl p-6 border border-slate-800 space-y-4 relative flex flex-col justify-between hover:border-slate-700 transition-all shadow-xl"
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="text-[10px] font-extrabold uppercase text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-500/30">
+                        Puzzle #{idx + 1}
+                      </span>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => {

@@ -47,7 +47,7 @@ const cleanPgnText = (pgnText: string): string => {
       }
     }
   }
-  
+  return result;
 };
 
 const normalizeMovesText = (text: string): string => {
@@ -579,7 +579,17 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
     if (mode === "RECORD" && puzzleSubtype === "STANDARD") {
       try {
         const isPromotion = game.current.get(src as any)?.type === "p" && (tgt.endsWith("8") || tgt.endsWith("1"));
-        const promotionPiece = isPromotion ? (["q", "r", "b", "n"].includes(piece[1]?.toLowerCase()) ? piece[1].toLowerCase() : "q") : undefined;
+        let promotionPiece: string | undefined = undefined;
+        if (isPromotion) {
+          const cleanP = piece ? piece.toLowerCase() : "";
+          if (cleanP.length === 2 && ["q", "r", "b", "n"].includes(cleanP[1])) {
+            promotionPiece = cleanP[1];
+          } else if (cleanP.length === 1 && ["q", "r", "b", "n"].includes(cleanP[0])) {
+            promotionPiece = cleanP[0];
+          } else {
+            promotionPiece = "q";
+          }
+        }
         const move = game.current.move({ from: src, to: tgt, promotion: promotionPiece });
         if (move) {
           setMoves((prev) => {

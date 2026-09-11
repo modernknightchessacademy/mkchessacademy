@@ -4,7 +4,7 @@ import { blogs as staticBlogs } from "@/lib/blogs-data";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
-export const revalidate = 0;
+export const revalidate = 3600; // Cache for 1 hour (ISR)
 
 export async function generateStaticParams() {
   try {

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { blogs as staticBlogs } from "@/lib/blogs-data";
 
+export const revalidate = 3600; // Cache for 1 hour
+
 export async function GET(req: NextRequest) {
   try {
     const dbBlogs = await prisma.blog.findMany({

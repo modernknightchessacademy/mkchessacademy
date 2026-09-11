@@ -258,15 +258,17 @@ export default function StudentPortalPage() {
     }
 
     // 2. Determine which folders are unlocked based on previous completion (>= 70% of total points AND 100% puzzles solved)
+    let prevUnlocked = true;
     return mapped.map((folder, index) => {
       if (index === 0 || studentProfile.allowAllCourses) {
+        prevUnlocked = true;
         return { ...folder, isUnlocked: true };
       }
 
       const prevFolder = mapped[index - 1];
       const totalPuzzles = prevFolder.puzzles.length;
       if (totalPuzzles === 0) {
-        return { ...folder, isUnlocked: true };
+        return { ...folder, isUnlocked: prevUnlocked };
       }
 
       const maxPoints = totalPuzzles * 4;
@@ -280,8 +282,12 @@ export default function StudentPortalPage() {
         }, 0);
 
       const score = maxPoints > 0 ? (earnedPoints / maxPoints) * 100 : 100;
-      const allSolved = prevSolvedCount === totalPuzzles;
-      const isUnlocked = score >= 70 && allSolved;
+      const scorePercent = Math.round(score);
+      const solvedPercent = totalPuzzles > 0 ? Math.round((prevSolvedCount / totalPuzzles) * 100) : 100;
+      const allSolved = prevSolvedCount >= totalPuzzles || solvedPercent >= 100;
+      const isUnlocked = prevUnlocked && (scorePercent >= 70 || score >= 70) && allSolved;
+
+      prevUnlocked = isUnlocked;
 
       return { ...folder, isUnlocked, earnedPoints, maxPoints };
     });
@@ -358,7 +364,10 @@ export default function StudentPortalPage() {
             const att = puzzleAttempts[p.id] || 1;
             return sum + getPointsForAttempts(att);
           }, 0);
-        if (maxPoints > 0 && (earnedPoints / maxPoints) >= 0.70 && solvedCount === totalPuzzles) {
+        const score = maxPoints > 0 ? (earnedPoints / maxPoints) * 100 : 100;
+        const scorePercent = Math.round(score);
+        const solvedPercent = totalPuzzles > 0 ? Math.round((solvedCount / totalPuzzles) * 100) : 100;
+        if (maxPoints > 0 && (scorePercent >= 70 || score >= 70) && (solvedCount >= totalPuzzles || solvedPercent >= 100)) {
           completedCount++;
         }
       }
@@ -570,8 +579,8 @@ export default function StudentPortalPage() {
 
     const pgnParts = currentPuzzle.pgn.split("|");
     return pgnParts
-      .map(part => parsePgnToMoves(part, startingFen))
-      .filter(p => p.length > 0);
+      .map((part: string) => parsePgnToMoves(part, startingFen))
+      .filter((p: string[]) => p.length > 0);
   }, [currentPuzzle]);
 
   const startingFen = useMemo(() => {
@@ -732,7 +741,7 @@ export default function StudentPortalPage() {
     const activePaths = alternativePaths.length > 0 ? alternativePaths : [solutionMoves];
 
     // Check if puzzle was already solved
-    const hasFinishedAnyPath = activePaths.some(path => playedMoves.length >= path.length);
+    const hasFinishedAnyPath = activePaths.some((path: string[]) => playedMoves.length >= path.length);
     if (hasFinishedAnyPath) {
       setMoveFeedback("🎉 Puzzle already solved!");
       return false;
@@ -741,7 +750,17 @@ export default function StudentPortalPage() {
     try {
       // Check if it's a pawn promotion
       const isPromotion = game.current.get(src as any)?.type === "p" && (tgt.endsWith("8") || tgt.endsWith("1"));
-      const promotionPiece = isPromotion ? (["q", "r", "b", "n"].includes(piece[1]?.toLowerCase()) ? piece[1].toLowerCase() : "q") : undefined;
+      let promotionPiece: string | undefined = undefined;
+      if (isPromotion) {
+        const cleanP = piece ? piece.toLowerCase() : "";
+        if (cleanP.length === 2 && ["q", "r", "b", "n"].includes(cleanP[1])) {
+          promotionPiece = cleanP[1];
+        } else if (cleanP.length === 1 && ["q", "r", "b", "n"].includes(cleanP[0])) {
+          promotionPiece = cleanP[0];
+        } else {
+          promotionPiece = "q";
+        }
+      }
 
       // Test the move on a temp state
       const tempChess = new Chess(game.current.fen());
@@ -754,7 +773,7 @@ export default function StudentPortalPage() {
 
       // Check if the moves played so far + this move matches any active path
       const candidateSequence = [...playedMoves, move.san];
-      const matchingPaths = activePaths.filter(path => isPathMatching(path, candidateSequence));
+      const matchingPaths = activePaths.filter((path: string[]) => isPathMatching(path, candidateSequence));
 
       if (matchingPaths.length > 0) {
         // Move is correct!
@@ -764,7 +783,7 @@ export default function StudentPortalPage() {
         const newPlayedMoves = candidateSequence;
         setPlayedMoves(newPlayedMoves);
 
-        const isSolved = game.current.isGameOver() || matchingPaths.some(path => newPlayedMoves.length === path.length);
+        const isSolved = game.current.isGameOver() || matchingPaths.some((path: string[]) => newPlayedMoves.length === path.length);
 
         if (isSolved) {
           const pts = getPointsForAttempts(attempts);
@@ -794,8 +813,8 @@ export default function StudentPortalPage() {
                   const newPlayedMovesOpp = [...newPlayedMoves, opponentMove.san];
                   setPlayedMoves(newPlayedMovesOpp);
 
-                  const nextMatching = matchingPaths.filter(path => isPathMatching(path, newPlayedMovesOpp));
-                  const isSolvedAfterOpponent = game.current.isGameOver() || nextMatching.some(path => newPlayedMovesOpp.length === path.length);
+                  const nextMatching = matchingPaths.filter((path: string[]) => isPathMatching(path, newPlayedMovesOpp));
+                  const isSolvedAfterOpponent = game.current.isGameOver() || nextMatching.some((path: string[]) => newPlayedMovesOpp.length === path.length);
 
                   if (isSolvedAfterOpponent) {
                     const pts = getPointsForAttempts(attempts);
@@ -862,6 +881,19 @@ export default function StudentPortalPage() {
         setSelectedSquare(square);
       }
     }
+  };
+
+  const onPromotionPieceSelect = (piece?: string, promoteFromSquare?: string, promoteToSquare?: string): boolean => {
+    if (!piece) return false;
+    const src = promoteFromSquare || selectedSquare || "";
+    const tgt = promoteToSquare || "";
+    if (!src || !tgt) return false;
+
+    const success = onPieceDrop(src, tgt, piece);
+    if (success) {
+      setSelectedSquare(null);
+    }
+    return success;
   };
 
   const resetBoard = () => {
@@ -1261,6 +1293,7 @@ export default function StudentPortalPage() {
                     position={fen}
                     onPieceDrop={onPieceDrop}
                     onSquareClick={handleSquareClick}
+                    onPromotionPieceSelect={onPromotionPieceSelect}
                     customSquareStyles={
                       selectedSquare
                         ? { [selectedSquare]: { backgroundColor: "rgba(251, 191, 36, 0.5)" } }

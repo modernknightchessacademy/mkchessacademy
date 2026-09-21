@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, ArrowLeft, Loader2, Sparkles, BookOpen } from "lucide-react";
 import Link from "next/link";
+import { CloudinaryUpload } from "@/components/CloudinaryUpload";
 
 interface Blog {
   id: string;
@@ -253,14 +254,26 @@ export default function AdminBlogsPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-slate-400 uppercase">Cover Image Path/URL</label>
-              <input
-                type="text"
-                placeholder="e.g. /blog1.jpg or external url"
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-rose-500 font-bold"
-              />
+              <label className="text-slate-400 uppercase">Cover Image *</label>
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3">
+                <CloudinaryUpload
+                  value={image}
+                  onChange={(url: string) => setImage(url)}
+                  onRemove={() => setImage("")}
+                />
+                <div className="pt-2 border-t border-slate-900">
+                  <label className="text-slate-400 text-[11px] block mb-1">
+                    Or paste an external image URL / path manually:
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. /blog1.jpg or https://images.unsplash.com/..."
+                    value={image}
+                    onChange={(e) => setImage(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-rose-500 font-medium"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="space-y-1.5">

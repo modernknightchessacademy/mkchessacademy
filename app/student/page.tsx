@@ -750,19 +750,32 @@ export default function StudentPortalPage() {
       return false;
     }
 
+    // Helper to extract clean single-character promotion piece
+    const getPromotionChar = (p?: string): string | undefined => {
+      if (!p) return undefined;
+      const clean = p.toLowerCase().trim();
+      if (clean.length === 2 && ["q", "r", "b", "n"].includes(clean[1])) {
+        return clean[1];
+      }
+      if (clean.length === 1 && ["q", "r", "b", "n"].includes(clean)) {
+        return clean;
+      }
+      if (clean.startsWith("q")) return "q";
+      if (clean.startsWith("r")) return "r";
+      if (clean.startsWith("b")) return "b";
+      if (clean.startsWith("k") && clean.includes("night")) return "n";
+      if (clean.startsWith("n")) return "n";
+      return undefined;
+    };
+
     try {
       // Check if it's a pawn promotion
       const isPromotion = game.current.get(src as any)?.type === "p" && (tgt.endsWith("8") || tgt.endsWith("1"));
       let promotionPiece: string | undefined = undefined;
       if (isPromotion) {
-        const cleanP = piece ? piece.toLowerCase() : "";
-        if (cleanP.length === 2 && ["q", "r", "b", "n"].includes(cleanP[1])) {
-          promotionPiece = cleanP[1];
-        } else if (cleanP.length === 1 && ["q", "r", "b", "n"].includes(cleanP[0])) {
-          promotionPiece = cleanP[0];
-        }
+        promotionPiece = getPromotionChar(piece);
 
-        // If no explicit promotion piece choice was passed, let the on-board promotion dialog handle it
+        // If no explicit promotion piece choice was passed, reject the raw drop (let on-board promotion dialog handle it)
         if (!promotionPiece) {
           return false;
         }
@@ -819,46 +832,56 @@ export default function StudentPortalPage() {
                   const newPlayedMovesOpp = [...newPlayedMoves, opponentMove.san];
                   setPlayedMoves(newPlayedMovesOpp);
 
-                  const nextMatching = matchingPaths.filter((path: string[]) => isPathMatching(path, newPlayedMovesOpp));
-                  const isSolvedAfterOpponent = game.current.isGameOver() || nextMatching.some((path: string[]) => newPlayedMovesOpp.length === path.length);
-
-                  if (isSolvedAfterOpponent) {
+                  // Check if puzzle is completed after opponent move
+                  const isFinished = matchingPaths.some((path: string[]) => newPlayedMovesOpp.length >= path.length);
+                  if (isFinished) {
                     const pts = getPointsForAttempts(attempts);
-                    let feedback = `🎉 EXCELLENT MOVE! Puzzle Solution Verified! (+${pts} points)`;
-                    if (game.current.isCheckmate()) {
-                      feedback = `🎉 EXCELLENT MOVE! Checkmate Solution Verified! (+${pts} points)`;
-                    } else if (game.current.isStalemate()) {
-                      feedback = `🎉 EXCELLENT MOVE! Stalemate Solution Verified! (+${pts} points)`;
-                    } else if (game.current.isDraw()) {
-                      feedback = `🎉 EXCELLENT MOVE! Draw Position Verified! (+${pts} points)`;
-                    }
-                    setMoveFeedback(feedback);
+                    setMoveFeedback(`🎉 Puzzle Completed! (+${pts} points)`);
                     recordSolve(currentPuzzle.id, pts);
                     triggerAutoRedirect(currentPuzzle.id);
                   }
                 }
-              } catch (err) {
-                console.error("Opponent play error:", err);
+              } catch (e) {
+                console.error("Error making opponent move", e);
               }
             }, 600);
           }
         }
         return true;
       } else {
-        const nextAttempts = attempts + 1;
-        updateAttempts(currentPuzzle.id, nextAttempts);
-        const nextPts = getPointsForAttempts(nextAttempts);
-        setMoveFeedback(`❌ Incorrect move. Try another continuation! (Attempt #${nextAttempts}, next worth ${nextPts} pts)`);
+        // Wrong move
+        setAttempts((prev) => prev + 1);
+        setMoveFeedback("❌ Incorrect move. Try a different line!");
         return false;
       }
     } catch (e) {
-      // If chess.js throws an error, it is an illegal move, so do NOT increment attempts
+      console.error(e);
       setMoveFeedback("⚠️ Invalid move. That is not a legal chess move.");
       return false;
     }
   };
 
+  const onPromotionCheck = (sourceSquare: string, targetSquare: string, piece: string): boolean => {
+    const src = sourceSquare.toLowerCase();
+    const tgt = targetSquare.toLowerCase();
+    const movingPiece = game.current.get(src as any);
+    const isPawn = (piece && piece.toLowerCase().endsWith("p")) || movingPiece?.type === "p";
+    const isPromotionRank = tgt.endsWith("8") || tgt.endsWith("1");
+    if (!isPawn || !isPromotionRank) return false;
+    try {
+      const tempChess = new Chess(game.current.fen());
+      const testMove = tempChess.move({ from: src, to: tgt, promotion: "q" });
+      return !!testMove;
+    } catch {
+      return false;
+    }
+  };
+
   const handleSquareClick = (square: string) => {
+    // If promotion dialog is currently active or a promotion square is targeted, ignore square clicks
+    if (showPromotionDialog || promotionToSquare) {
+      return;
+    }
     const squareLower = square.toLowerCase();
     
     if (selectedSquare) {
@@ -886,6 +909,7 @@ export default function StudentPortalPage() {
           setPromotionFromSquare(src);
           setPromotionToSquare(tgt);
           setShowPromotionDialog(true);
+          setSelectedSquare(null);
           return;
         } else {
           setMoveFeedback("⚠️ Invalid move. That is not a legal chess move.");
@@ -896,8 +920,8 @@ export default function StudentPortalPage() {
       
       const pieceStr = movingPiece ? `${movingPiece.color}${movingPiece.type.toUpperCase()}` : "";
       
-      onPieceDrop(selectedSquare, square, pieceStr);
       setSelectedSquare(null);
+      onPieceDrop(src, tgt, pieceStr);
     } else {
       const p = game.current.get(squareLower as any);
       if (p && p.color === game.current.turn()) {
@@ -907,6 +931,15 @@ export default function StudentPortalPage() {
   };
 
   const onPromotionPieceSelect = (piece?: string, promoteFromSquare?: string, promoteToSquare?: string): boolean => {
+    // If user cancelled / clicked backdrop
+    if (!piece) {
+      setShowPromotionDialog(false);
+      setPromotionToSquare(null);
+      setPromotionFromSquare(null);
+      setSelectedSquare(null);
+      return false;
+    }
+
     const from = (promoteFromSquare || promotionFromSquare || selectedSquare || "").toLowerCase();
     const to = (promoteToSquare || promotionToSquare || "").toLowerCase();
 
@@ -916,10 +949,28 @@ export default function StudentPortalPage() {
     setPromotionFromSquare(null);
     setSelectedSquare(null);
 
-    if (!piece || !from || !to) return false;
+    if (!from || !to) return false;
 
-    const promotionChar = piece.length === 2 ? piece[1].toLowerCase() : piece.toLowerCase();
-    return onPieceDrop(from, to, promotionChar);
+    // Helper to extract clean promotion char
+    const clean = piece.toLowerCase().trim();
+    let promotionChar = "q";
+    if (clean.length === 2 && ["q", "r", "b", "n"].includes(clean[1])) {
+      promotionChar = clean[1];
+    } else if (clean.length === 1 && ["q", "r", "b", "n"].includes(clean)) {
+      promotionChar = clean;
+    } else if (clean.startsWith("r")) {
+      promotionChar = "r";
+    } else if (clean.startsWith("b")) {
+      promotionChar = "b";
+    } else if (clean.startsWith("n") || (clean.startsWith("k") && clean.includes("night"))) {
+      promotionChar = "n";
+    }
+
+    // Execute move directly (works reliably and identically for both drag-and-drop and click-to-move)
+    onPieceDrop(from, to, promotionChar);
+
+    // Return false so react-chessboard does not attempt a second internal handleSetPosition call
+    return false;
   };
 
   const resetBoard = () => {
@@ -1321,8 +1372,10 @@ export default function StudentPortalPage() {
                   <Chessboard
                     position={fen}
                     onPieceDrop={onPieceDrop}
+                    onPieceDragBegin={() => setSelectedSquare(null)}
                     onSquareClick={handleSquareClick}
                     onPromotionPieceSelect={onPromotionPieceSelect}
+                    onPromotionCheck={onPromotionCheck}
                     showPromotionDialog={showPromotionDialog}
                     promotionToSquare={promotionToSquare as any}
                     customSquareStyles={

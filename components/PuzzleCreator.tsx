@@ -506,6 +506,10 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
       return;
     }
 
+    if (showPromotionDialog || promotionToSquare) {
+      return;
+    }
+
     if (selectedSquare) {
       const src = selectedSquare.toLowerCase();
       const tgt = s;
@@ -531,6 +535,7 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
             setPromotionFromSquare(src);
             setPromotionToSquare(tgt);
             setShowPromotionDialog(true);
+            setSelectedSquare(null);
             return;
           }
         }
@@ -549,7 +554,33 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
     }
   };
 
+  const onPromotionCheck = (sourceSquare: string, targetSquare: string, piece: string): boolean => {
+    if (mode !== "RECORD" || puzzleSubtype !== "STANDARD") return false;
+    const src = sourceSquare.toLowerCase();
+    const tgt = targetSquare.toLowerCase();
+    const movingPiece = game.current.get(src as any);
+    const isPawn = (piece && piece.toLowerCase().endsWith("p")) || movingPiece?.type === "p";
+    const isPromotionRank = tgt.endsWith("8") || tgt.endsWith("1");
+    if (!isPawn || !isPromotionRank) return false;
+    try {
+      const tempChess = new Chess(game.current.fen());
+      const testMove = tempChess.move({ from: src, to: tgt, promotion: "q" });
+      return !!testMove;
+    } catch {
+      return false;
+    }
+  };
+
   const onPromotionPieceSelect = (piece?: string, promoteFromSquare?: string, promoteToSquare?: string): boolean => {
+    // If user cancelled / clicked backdrop
+    if (!piece) {
+      setShowPromotionDialog(false);
+      setPromotionToSquare(null);
+      setPromotionFromSquare(null);
+      setSelectedSquare(null);
+      return false;
+    }
+
     const from = (promoteFromSquare || promotionFromSquare || selectedSquare || "").toLowerCase();
     const to = (promoteToSquare || promotionToSquare || "").toLowerCase();
 
@@ -558,10 +589,28 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
     setPromotionFromSquare(null);
     setSelectedSquare(null);
 
-    if (!piece || !from || !to) return false;
+    if (!from || !to) return false;
 
-    const promotionChar = piece.length === 2 ? piece[1].toLowerCase() : piece.toLowerCase();
-    return onPieceDrop(from, to, promotionChar);
+    // Helper to extract clean promotion char
+    const clean = piece.toLowerCase().trim();
+    let promotionChar = "q";
+    if (clean.length === 2 && ["q", "r", "b", "n"].includes(clean[1])) {
+      promotionChar = clean[1];
+    } else if (clean.length === 1 && ["q", "r", "b", "n"].includes(clean)) {
+      promotionChar = clean;
+    } else if (clean.startsWith("r")) {
+      promotionChar = "r";
+    } else if (clean.startsWith("b")) {
+      promotionChar = "b";
+    } else if (clean.startsWith("n") || (clean.startsWith("k") && clean.includes("night"))) {
+      promotionChar = "n";
+    }
+
+    // Execute move directly (works reliably and identically for both drag-and-drop and click-to-move)
+    onPieceDrop(from, to, promotionChar);
+
+    // Return false so react-chessboard does not attempt a second internal handleSetPosition call
+    return false;
   };
 
   const onPieceDrop = (source: string, target: string, piece: string): boolean => {
@@ -614,11 +663,19 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
         const isPromotion = game.current.get(src as any)?.type === "p" && (tgt.endsWith("8") || tgt.endsWith("1"));
         let promotionPiece: string | undefined = undefined;
         if (isPromotion) {
-          const cleanP = piece ? piece.toLowerCase() : "";
-          if (cleanP.length === 2 && ["q", "r", "b", "n"].includes(cleanP[1])) {
-            promotionPiece = cleanP[1];
-          } else if (cleanP.length === 1 && ["q", "r", "b", "n"].includes(cleanP[0])) {
-            promotionPiece = cleanP[0];
+          const clean = piece ? piece.toLowerCase().trim() : "";
+          if (clean.length === 2 && ["q", "r", "b", "n"].includes(clean[1])) {
+            promotionPiece = clean[1];
+          } else if (clean.length === 1 && ["q", "r", "b", "n"].includes(clean)) {
+            promotionPiece = clean;
+          } else if (clean.startsWith("r")) {
+            promotionPiece = "r";
+          } else if (clean.startsWith("b")) {
+            promotionPiece = "b";
+          } else if (clean.startsWith("n") || (clean.startsWith("k") && clean.includes("night"))) {
+            promotionPiece = "n";
+          } else if (clean.startsWith("q")) {
+            promotionPiece = "q";
           }
 
           if (!promotionPiece) {
@@ -725,8 +782,10 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
           <Chessboard
             position={fen}
             onPieceDrop={onPieceDrop}
+            onPieceDragBegin={() => setSelectedSquare(null)}
             onSquareClick={onSquareClick}
             onPromotionPieceSelect={onPromotionPieceSelect}
+            onPromotionCheck={onPromotionCheck}
             showPromotionDialog={showPromotionDialog}
             promotionToSquare={promotionToSquare as any}
             onSquareRightClick={(s) => {

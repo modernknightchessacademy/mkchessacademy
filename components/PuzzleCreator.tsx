@@ -103,7 +103,9 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
   const [manualFen, setManualFen] = useState(fen);
   const [moves, setMoves] = useState<string[]>([]);
   const [movesInputText, setMovesInputText] = useState("");
-  const [pendingPromotion, setPendingPromotion] = useState<{ src: string; tgt: string; color: "w" | "b" } | null>(null);
+  const [showPromotionDialog, setShowPromotionDialog] = useState<boolean>(false);
+  const [promotionToSquare, setPromotionToSquare] = useState<string | null>(null);
+  const [promotionFromSquare, setPromotionFromSquare] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [mode, setMode] = useState<"SETUP" | "RECORD">("SETUP");
   const [selectedTool, setSelectedTool] = useState<Tool>(null);
@@ -519,6 +521,21 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
         return;
       }
 
+      if (mode === "RECORD" && puzzleSubtype === "STANDARD") {
+        const movingPiece = game.current.get(src as any);
+        const isPromotion = movingPiece?.type === "p" && (tgt.endsWith("8") || tgt.endsWith("1"));
+        if (isPromotion) {
+          const tempChessTest = new Chess(game.current.fen());
+          const testMove = tempChessTest.move({ from: src, to: tgt, promotion: "q" });
+          if (testMove) {
+            setPromotionFromSquare(src);
+            setPromotionToSquare(tgt);
+            setShowPromotionDialog(true);
+            return;
+          }
+        }
+      }
+
       const p = game.current.get(src as any);
       const pieceStr = p ? `${p.color}${p.type.toUpperCase()}` : "";
 
@@ -530,6 +547,21 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
         setSelectedSquare(square);
       }
     }
+  };
+
+  const onPromotionPieceSelect = (piece?: string, promoteFromSquare?: string, promoteToSquare?: string): boolean => {
+    const from = (promoteFromSquare || promotionFromSquare || selectedSquare || "").toLowerCase();
+    const to = (promoteToSquare || promotionToSquare || "").toLowerCase();
+
+    setShowPromotionDialog(false);
+    setPromotionToSquare(null);
+    setPromotionFromSquare(null);
+    setSelectedSquare(null);
+
+    if (!piece || !from || !to) return false;
+
+    const promotionChar = piece.length === 2 ? piece[1].toLowerCase() : piece.toLowerCase();
+    return onPieceDrop(from, to, promotionChar);
   };
 
   const onPieceDrop = (source: string, target: string, piece: string): boolean => {
@@ -590,16 +622,6 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
           }
 
           if (!promotionPiece) {
-            const tempChessTest = new Chess(game.current.fen());
-            const testMove = tempChessTest.move({ from: src, to: tgt, promotion: "q" });
-            if (testMove) {
-              const movingPiece = game.current.get(src as any);
-              setPendingPromotion({
-                src,
-                tgt,
-                color: movingPiece?.color || "w",
-              });
-            }
             return false;
           }
         }
@@ -704,6 +726,9 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
             position={fen}
             onPieceDrop={onPieceDrop}
             onSquareClick={onSquareClick}
+            onPromotionPieceSelect={onPromotionPieceSelect}
+            showPromotionDialog={showPromotionDialog}
+            promotionToSquare={promotionToSquare as any}
             onSquareRightClick={(s) => {
               if (mode === "SETUP") {
                 const sq = s.toLowerCase();
@@ -714,50 +739,6 @@ export function PuzzleCreator({ folderId = "root", existingPuzzle, onBack, batch
             customDarkSquareStyle={{ backgroundColor: "#769656" }}
             customLightSquareStyle={{ backgroundColor: "#eeeed2" }}
           />
-
-          {/* Pawn Promotion Choice Modal Overlay */}
-          {pendingPromotion && (
-            <div className="absolute inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-amber-500/50 shadow-2xl">
-              <div className="text-center space-y-1 mb-5">
-                <span className="text-xs font-black text-amber-400 uppercase tracking-widest block">
-                  Pawn Promotion
-                </span>
-                <h4 className="text-base font-extrabold text-white">Select Promotion Piece</h4>
-              </div>
-              <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
-                {[
-                  { key: "q", label: "Queen", icon: pendingPromotion.color === "w" ? "♕" : "♛" },
-                  { key: "r", label: "Rook", icon: pendingPromotion.color === "w" ? "♖" : "♜" },
-                  { key: "b", label: "Bishop", icon: pendingPromotion.color === "w" ? "♗" : "♝" },
-                  { key: "n", label: "Knight", icon: pendingPromotion.color === "w" ? "♘" : "♞" },
-                ].map((item) => (
-                  <button
-                    key={item.key}
-                    type="button"
-                    onClick={() => {
-                      const src = pendingPromotion.src;
-                      const tgt = pendingPromotion.tgt;
-                      setPendingPromotion(null);
-                      onPieceDrop(src, tgt, item.key);
-                    }}
-                    className="flex flex-col items-center justify-center p-3.5 bg-slate-900 hover:bg-slate-800 border-2 border-slate-750 hover:border-amber-400 rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-xl group cursor-pointer"
-                  >
-                    <span className="text-4xl text-amber-400 group-hover:scale-110 transition-transform">
-                      {item.icon}
-                    </span>
-                    <span className="text-xs font-black text-slate-100 mt-1">{item.label}</span>
-                  </button>
-                ))}
-              </div>
-              <button
-                type="button"
-                onClick={() => setPendingPromotion(null)}
-                className="mt-5 text-xs font-bold text-slate-400 hover:text-white transition-colors"
-              >
-                Cancel Move
-              </button>
-            </div>
-          )}
         </div>
         <div className="mt-4 p-3 bg-slate-950 border border-slate-800 rounded-2xl text-[10px] font-mono w-full break-all text-slate-400 uppercase select-all">
           FEN: {fen}

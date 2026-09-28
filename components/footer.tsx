@@ -103,7 +103,7 @@ const Footer: React.FC = () => {
                 <Link href="/bookdemo" className="hover:text-[#E11D48] transition-colors duration-300">Registration</Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-[#E11D48] transition-colors duration-300">Policies</Link>
+                <Link href="/privacy" className="hover:text-[#E11D48] transition-colors duration-300">Privacy Policy</Link>
               </li>
             </ul>
           </div>
